@@ -8,11 +8,14 @@ import DebugConfig from '../Config/DebugConfig'
 // import { StartupTypes } from '../Redux/StartupRedux'
 // import { GithubTypes } from '../Redux/GithubRedux'
 import { LoginTypes } from '../Redux/LoginRedux'
-
+import { VerifiedSignUpTypes } from '../Redux/VerifiedSignUpRedux'
+import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
 /* ------------- Sagas ------------- */
 
 // import { startup } from './StartupSagas'
-import { login } from './LoginSaga'
+import { login, getOTP, verifyOTP } from './LoginSaga'
+import { getBeneficiary } from './BeneficiarySagas'
+import { getAllPositions, singupRequest } from './VerifiedSignUpSagas'
 // import { getUserAvatar } from './GithubSagas'
 
 /* ------------- API ------------- */
@@ -22,13 +25,15 @@ import { login } from './LoginSaga'
 const api = DebugConfig.useFixtures ? FixtureAPI : API.create()
 
 /* ------------- Connect Types To Sagas ------------- */
-
-export default function * root () {
+export default function* root() {
   yield all([
     // some sagas only receive an action
-    // takeLatest(StartupTypes.STARTUP, startup),
     takeLatest(LoginTypes.LOGIN_REQUEST, login),
-    // some sagas receive extra parameters in addition to an action
-    // takeLatest(GithubTypes.USER_REQUEST, getUserAvatar, api)
+    takeLatest(LoginTypes.OTP_REQUEST, getOTP),
+    takeLatest(LoginTypes.VERIFY_OTP, verifyOTP),
+    takeLatest(LoginTypes.VERIFY_OTP, verifyOTP),
+    takeLatest(VerifiedSignUpTypes.GET_POSITIONS, getAllPositions),
+    takeLatest(VerifiedSignUpTypes.SIGNUP_REQUEST, singupRequest),
+    takeLatest(BeneficiaryTypes.BENEFICIARY_REQUEST, getBeneficiary),
   ])
 }

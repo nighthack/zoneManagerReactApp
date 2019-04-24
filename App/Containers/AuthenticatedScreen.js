@@ -1,8 +1,12 @@
 import React, { Component } from 'react'
-import { ScrollView, WebView } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import { connect } from 'react-redux'
+import { List, Avatar, Button, Card, Title, Paragraph, DataTable, IconButton } from 'react-native-paper';
+import ListView from '../Containers/DemoList'
+import HeaderComponent from '../Components/HeaderComponent'
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 // import YourActions from '../Redux/YourRedux'
+import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 
 // Styles
 import styles from './Styles/AuthenticatedScreenStyle'
@@ -12,36 +16,35 @@ class AuthenticatedScreen extends Component {
   //   super(props)
   //   this.state = {}
   // }
-
+  componentDidMount() {
+    // this.props.getBeneficiarySchemesList();
+  }
+  static navigationOptions = {
+    headerTitle: 'Beneficiary Schemes',
+  };
   render() {
-    const { partial } = this.props;
-    let addExternalFiles = `
-    var link = document.createElement( "link" );
-    link.href = "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css";
-    link.type = "text/css";
-    link.rel = "stylesheet";
-    link.media = "screen,print";
-    document.getElementsByTagName( "head" )[0].appendChild( link );`;
-    console.log(partial);
+    const { token } = this.props;
     return (
-      <WebView
-        source={{ uri: partial }}
-        javaScriptEnabled={true}
-        domStorageEnabled={true}
-        injectedJavaScript={addExternalFiles}
-      />
+      <View style={{ flex: 1 }}>
+        <HeaderComponent title={'Beneficiary Schemes'} {...this.props} />
+        <ScrollView>
+          <ListView />
+        </ScrollView>
+      </View>
+
     )
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    partial: state.login.responsePartial,
+    token: state.login.token,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    getBeneficiarySchemesList: () => dispatch(BeneficiaryActions.beneficiaryRequest())
   }
 }
 

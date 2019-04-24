@@ -1,4 +1,5 @@
 import { combineReducers } from 'redux'
+import { toastReducer as toast } from 'react-native-redux-toast';
 import configureStore from './CreateStore'
 import rootSaga from '../Sagas/'
 
@@ -6,6 +7,8 @@ import rootSaga from '../Sagas/'
 export const reducers = combineReducers({
   nav: require('./NavigationRedux').reducer,
   login: require('./LoginRedux').reducer,
+  verifiedSignUp: require('./VerifiedSignUpRedux').reducer,
+  toast,
   // github: require('./GithubRedux').reducer,
   // search: require('./SearchRedux').reducer
 })

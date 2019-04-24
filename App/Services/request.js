@@ -9,19 +9,6 @@ function parseJSON(response) {
   return response.json();
 }
 
-function parseHTML(response) {
-  debugger;
-  return response.text();
-}
-
-function parseBlob(response) {
-  // console.log(response.getFirstHeader('Content-Disposition'));
-  // return {
-  //   body: response.blob()
-  //   filename: response.
-  // };
-  return response.blob();
-}
 
 /**
  * Checks if a network request came back fine, and throws an error if not
@@ -31,6 +18,7 @@ function parseBlob(response) {
  * @return {object|undefined} Returns either the response, or throws an error
  */
 function checkStatus(response) {
+  console.log(response);
   if (response.status >= 200 && response.status < 300) {
     return response;
   }
@@ -46,25 +34,12 @@ function checkStatus(response) {
  *
  * @return {object}           The response data
  */
-export default function request(url, options, isHTML) {
-  if (isHTML) {
-    return fetch(url, options)
-      .then((response) =>response)
-      .then((responseJson) => {
-        debugger;
-        return responseJson.url;
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  }
+export default function request(url, options) {
+  console.log(url, options);
   return fetch(url, options)
     .then(checkStatus)
     .then(parseJSON)
     .catch((error) => {
-      if (!error.status) {
-        // toastr.error('Unable to connect to internet. Please check your connection once and refresh', { timeOut: 15000 });
-      }
       throw error;
     });
 }

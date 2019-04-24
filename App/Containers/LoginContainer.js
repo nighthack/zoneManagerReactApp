@@ -23,7 +23,9 @@ class LoginContainer extends Component {
     snack: '',
     showOTP: false,
   };
-  isAttempting = false
+  isAttempting = false;
+  isOTPFetched = false;
+  isOTPverified = false;
   static propTypes = {
     dispatch: PropTypes.func,
     fetching: PropTypes.bool,
@@ -31,22 +33,61 @@ class LoginContainer extends Component {
   }
 
   componentWillReceiveProps(newProps) {
-    this.forceUpdate()
-    if (this.isAttempting && !newProps.fetching) {
-      const { navigate } = this.props.navigation;
-      navigate('Home', { partial: newProps.responsePartial })
+    if (!this.OTPFetched && !newProps.fetching) {
+      this.OTPFetched = true,
+      this.setState({
+        visible: true,
+        snack: newProps.otpMessage
+      });
     }
+    if(newProps.verifyOTPapiStatus === 1 && !newProps.fetching) {
+        const { navigate } = this.props.navigation;
+        navigate('SignUpVerified')
+    }
+    if(newProps.verifyOTPapiStatus === 2 && !newProps.fetching && !this.isOTPverified) {
+      this.setState({
+        visible: true,
+        snack: newProps.verifyOTPResponse ? newProps.verifyOTPResponse.message : 'Oops',
+      });
+      this.isOTPverified = true;
+    }
+    // this.forceUpdate()
+    // if (this.isAttempting && !newProps.fetching) {
+    //   const { navigate } = this.props.navigation;
+    //   navigate('Home')
+    // }
   }
   onPress = () => {
     this.dismissKeyboard();
+    const regex = /^[6-9]\d{9}$/; //eslint-disable-line
     const { phone, password } = this.state;
-    if (phone.length > 0 && password.length > 0) {
+    if (regex.test(phone) && password.length > 0) {
       this.isAttempting = true
       this.props.attemptLogin(phone, password);
     } else {
+      let errorMsg = '';
+      if(!regex.test(phone)) {
+        errorMsg += 'Enter a valid Indian Phone Number' 
+      }
       this.setState({
         visible: true,
-        snack: 'Missing Credentials'
+        snack: `Missing Credentials ${errorMsg}`
+      });
+    }
+  };
+
+  verifyOTP = () => {
+    this.dismissKeyboard();
+    const { phone, otp } = this.state;
+    const regex = /^[6-9]\d{9}$/; //eslint-disable-line
+    if (regex.test(phone) && otp && otp.length === 4) {
+      this.isAttempting = true;
+      this.isOTPverified = false;
+      this.props.verifyOtpAction(phone, otp);
+    } else {
+      this.setState({
+        visible: true,
+        snack: 'Missing OTP or Phone Number'
       });
     }
   };
@@ -59,6 +100,12 @@ class LoginContainer extends Component {
   onPasswordChanged = text => {
     this.setState({
       password: text
+    });
+  };
+
+  onOTPchange = text => {
+    this.setState({
+      otp: text
     });
   };
 
@@ -82,8 +129,18 @@ class LoginContainer extends Component {
         snack: 'Enter Valid Phone Number and Click Forgot Password'
       });
     } else {
-      
+      this.setState({
+        showOTP: true,
+      });
+      this.OTPFetched = false,
+      this.props.getOTPForNumber(phone)
     }
+  };
+
+  onSignIn = () => {
+    this.setState({
+      showOTP: false,
+    });
   };
 
   renderSnackBar = () => {
@@ -104,40 +161,82 @@ class LoginContainer extends Component {
   };
 
   renderInputView = () => {
+    const { fetching, otpMessage } = this.props;
+    const { showOTP } = this.state;
     return (
       <View style={styles.inputView}>
         <TextInput
           label="Phone Number"
           mode="outlined"
           keyboardType="phone-pad"
-          value={this.state.email}
+          value={this.state.phone}
           style={styles.input}
           onChangeText={this.onPhoneChanged}
           error={this.state.emailError}
+          disabled={fetching}
         />
-        <TextInput
-          label="Password"
-          mode="outlined"
-          secureTextEntry
-          value={this.state.password}
-          style={styles.input}
-          onChangeText={this.onPasswordChanged}
-        />
+        {
+          !showOTP ?
+            <TextInput
+              label="Password"
+              mode="outlined"
+              secureTextEntry
+              value={this.state.password}
+              style={styles.input}
+              onChangeText={this.onPasswordChanged}
+              disabled={fetching}
+            /> :
+            <TextInput
+              label="OTP"
+              mode="outlined"
+              keyboardType="phone-pad"
+              value={this.state.otp}
+              style={styles.input}
+              onChangeText={this.onOTPchange}
+              disabled={fetching}
+            />
+        }
 
-        <Button
-          mode="contained"
-          onPress={this.onPress}
-          style={styles.btn}
-        >
-          <Text style={styles.loginText}>LOGIN</Text>
-        </Button>
-        <Button
-          mode="flat"
-          onPress={this.onForgot}
-          style={styles.forgot}
-        >
-          <Text>Forgot Password</Text>
-        </Button>
+        {
+          showOTP ?
+            <Button
+              mode="contained"
+              onPress={this.verifyOTP}
+              style={styles.btn}
+              loading={fetching}
+              disabled={fetching}
+            >
+              <Text style={styles.loginText}>Verify OTP</Text>
+            </Button> :
+            <Button
+              mode="contained"
+              onPress={this.onPress}
+              style={styles.btn}
+              loading={fetching}
+              disabled={fetching}
+            >
+              <Text style={styles.loginText}>LOGIN</Text>
+            </Button>
+        }
+
+        {
+          showOTP ?
+            <Button
+              mode="flat"
+              onPress={this.onSignIn}
+              style={styles.forgot}
+            >
+              <Text>Sign In</Text>
+            </Button> :
+            <Button
+              mode="flat"
+              onPress={this.onForgot}
+              style={styles.forgot}
+            >
+              <Text>Forgot Password</Text>
+            </Button>
+        }
+
         <Text style={styles.account}>Dont have an account</Text>
 
         <Button mode="flat" onPress={this.onRegister}>
@@ -176,14 +275,18 @@ class LoginContainer extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    fetching: state.login.fetching
+    fetching: state.login.fetching,
+    otpMessage: state.login.otpMessage,
+    verifyOTPResponse: state.login.verifyOtpResponse,
+    verifyOTPapiStatus: state.login.verifyOTPapiStatus,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     attemptLogin: (phone, password) => dispatch(LoginActions.loginRequest(phone, password)),
-    getOTPForNumber: (phone) => dispatch(LoginActions.loginRequest(phone))
+    verifyOtpAction: (phone, otp) => dispatch(LoginActions.verifyOtp(phone, otp)),
+    getOTPForNumber: (phone) => dispatch(LoginActions.otpRequest(phone))
   }
 }
 

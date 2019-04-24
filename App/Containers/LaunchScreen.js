@@ -6,7 +6,16 @@ import { Images } from '../Themes'
 import styles from './Styles/LaunchScreenStyles'
 
 export default class LaunchScreen extends Component {
-  render () {
+// static navigationOptions = {
+  //   drawerLabel: 'Lalith',
+  //   drawerIcon: ({ tintColor }) => (
+  //     <Image
+  //       source={Images.logo}
+  //       style={[styles.icon, { tintColor: tintColor }]}
+  //     />
+  //   ),
+  // };
+  render() {
     return (
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />

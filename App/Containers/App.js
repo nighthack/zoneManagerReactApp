@@ -2,6 +2,8 @@ import '../Config'
 import DebugConfig from '../Config/DebugConfig'
 import React, { Component } from 'react'
 import { Provider } from 'react-redux'
+import { View } from 'react-native'
+import { Toast } from 'react-native-redux-toast';
 import RootContainer from './RootContainer'
 import createStore from '../Redux'
 
@@ -18,10 +20,13 @@ const store = createStore()
  * We separate like this to play nice with React Native's hot reloading.
  */
 class App extends Component {
-  render () {
+  render() {
     return (
       <Provider store={store}>
-        <RootContainer />
+        <View style={{ flex: 1 }}>
+          <Toast />
+          <RootContainer />
+        </View>
       </Provider>
     )
   }
@@ -31,3 +36,7 @@ class App extends Component {
 export default DebugConfig.useReactotron
   ? console.tron.overlay(App)
   : App
+
+if (__DEV__) {
+  import('../ReactotronConfig').then(() => console.log('Reactotron Configured'))
+}
