@@ -40,6 +40,7 @@ export default function request(url, options) {
     .then(checkStatus)
     .then(parseJSON)
     .catch((error) => {
+      debugger;
       throw error;
     });
 }

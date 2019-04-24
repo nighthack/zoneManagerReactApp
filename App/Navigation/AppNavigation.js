@@ -3,9 +3,10 @@ import { createStackNavigator, createAppContainer, createSwitchNavigator, create
 import RegisterScreen from '../Containers/Register'
 import LaunchScreen from '../Containers/LaunchScreen'
 import LoginScreen from '../Containers/LoginScreen'
+import SplashScreen from '../Components/SplashScreen';
 
 import AuthenticatedScreen from '../Containers/AuthenticatedScreen'
-import DrawerComponent from '../Components/DrawerLayout';
+import DrawerComponent from '../Containers/SideMenu';
 import { View, Text, Image, Button } from 'react-native'
 import React, { Component } from 'react'
 import { Images, Metrics } from '../Themes/'
@@ -27,18 +28,6 @@ import styles from './Styles/NavigationStyles'
 // })
 
 // export default createAppContainer(PrimaryNav)
-
-class SunilImage extends React.Component {
-  render() {
-    return (
-      <Image
-        source={Images.sunil}
-        style={styles.MLAImage}
-      />
-    );
-  }
-}
-
 const MyDrawerNavigator = createDrawerNavigator({
   Home: {
     screen: AuthenticatedScreen,
@@ -56,24 +45,6 @@ const AppStack = createStackNavigator({
 },
   {
     headerMode: 'none',
-    defaultNavigationOptions: {
-      drawerIcon: () => <Image style={styles.MLAImage} source={Images.hamburger} />,
-      headerStyle: {
-        backgroundColor: '#f4511e',
-        padding: Metrics.baseMargin,
-      },
-      headerTintColor: '#fff',
-      headerTitleStyle: {
-        fontWeight: 'bold',
-      },
-      headerLeft: () => (<Image onPress={() => navigation.navigate('DrawerOpen')} style={styles.MLAImage} source={Images.hamburger} />),
-      headerRight: (
-        <SunilImage />
-      ),
-    },
-    navigationOptions: {
-      drawerIcon: () => <Image style={styles.MLAImage} source={Images.hamburger} />,
-    }
   });
 
 const AuthStack = createStackNavigator(
@@ -85,11 +56,12 @@ const AuthStack = createStackNavigator(
   },
   {
     headerMode: 'none',
-    initialRouteName: 'RegisterScreen'
+    initialRouteName: 'Login'
   }
 );
 
-export default createAppContainer(createSwitchNavigator(
+
+const AppNavigator = createSwitchNavigator(
   {
     // AuthLoading: AuthLoadingScreen,
     App: AppStack,
@@ -98,4 +70,13 @@ export default createAppContainer(createSwitchNavigator(
   {
     initialRouteName: 'Auth',
   }
-));
+);
+const InitialNavigator = createSwitchNavigator({
+  Splash: SplashScreen,
+  App: AppNavigator
+});
+
+export default createAppContainer(InitialNavigator);
+
+
+// export default createAppContainer(AppNavigator);

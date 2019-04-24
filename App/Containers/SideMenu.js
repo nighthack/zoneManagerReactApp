@@ -1,24 +1,20 @@
 import React, { Component } from 'react'
-// import PropTypes from 'prop-types';
-import { NavigationActions } from 'react-navigation';
-import { Image, FlatList, TouchableOpacity, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
+import { Image, TouchableOpacity, ScrollView } from 'react-native';
+import LoginActions from '../Redux/LoginRedux'
 import {
   Content,
   Text,
-  List,
-  ListItem,
+  // List,
+  // ListItem,
   Icon,
   Container,
-  Left,
+  // Left,
   Right,
   Badge,
-  View,
-  Footer
+  View
 } from 'native-base';
-import Styles from './Styles/DrawerLayoutStyle'
+import Styles from './Styles/SideMenuStyle'
 import { Images } from '../Themes'
-const drawerImage = 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500'
 
 export const Menulist = [
   /** Transporter **/
@@ -59,17 +55,14 @@ export const Menulist = [
   //   route: 'TransporterSettings'
   // }
 ]
-export default class DrawerLayout extends Component {
-  // // Prop type warnings
-  // static propTypes = {
-  //   someProperty: PropTypes.object,
-  //   someSetting: PropTypes.bool.isRequired,
-  // }
-  //
-  // // Defaults for props
-  // static defaultProps = {
-  //   someSetting: false
-  // }
+import { connect } from 'react-redux'
+// Add Actions - replace 'Your' with whatever your reducer is called :)
+// import YourActions from '../Redux/YourRedux'
+
+// Styles
+import styles from './Styles/SideMenuStyle'
+
+class SideMenu extends Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -85,16 +78,12 @@ export default class DrawerLayout extends Component {
       navigate(route)
     })
   onLogout = () => {
-    console.log(AsyncStorage)
-    async () => {
-      try {
-        await AsyncStorage.removeItem('user')
-      } catch (e) {
-        debugger;
-      }
-      console.log('Done.')
-    }
-    this.navigateToScreen('Home');
+    const { access_token } = this.props.token.user;
+    const accessToken = access_token;
+    this.props.deleteToken(accessToken);
+    debugger;
+    const { navigate } = this.props.navigation;
+    navigate('Login')
   }
   renderMenuList(menus) {
     return menus.map((menu) => {
@@ -123,6 +112,8 @@ export default class DrawerLayout extends Component {
     })
   }
   render() {
+    console.log(this.props.token);
+    const { user } = this.props.token;
     return (
       <Container>
         <Content
@@ -135,7 +126,7 @@ export default class DrawerLayout extends Component {
             <View style={Styles.navProfile}>
               <Image source={Images.background} style={Styles.bgImg} />
               <Image style={Styles.navAvatar} source={{ uri: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' }} />
-              <Text style={Styles.navName}>Megan Fox</Text>
+              <Text style={Styles.navName}>{user ? user.name : 'Citizen'}</Text>
             </View>
 
             <View style={Styles.navMenu}>
@@ -154,3 +145,17 @@ export default class DrawerLayout extends Component {
     )
   }
 }
+
+const mapStateToProps = (state) => {
+  return {
+    token: state.login.user,
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteToken: (accessToken) => dispatch(LoginActions.logoutRequest(accessToken))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SideMenu)

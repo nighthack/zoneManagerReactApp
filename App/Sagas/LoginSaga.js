@@ -4,9 +4,10 @@ import request from '../Services/request'
 import AsyncStorage from '@react-native-community/async-storage';
 import { ToastActionsCreators } from 'react-native-redux-toast';
 import { NavigationActions } from 'react-navigation'
+import { debug } from 'util';
+import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
 
-// attempts to login
-const BASE_URL = 'http://localhost:3000/api/v1/';
+
 export function* login({ phone, password }) {
   try {
     const headers = new Headers({
@@ -16,7 +17,7 @@ export function* login({ phone, password }) {
     var form = new FormData();
     form.append("phone", phone);
     form.append("password", password);
-    form.append("app_token", "4ec581692ba08f69d91254fe91314da083591675fa7173c87a88890b621aa9f1");
+    form.append("app_token", APP_TOKEN);
     const options = {
       method: 'POST',
       body: form,
@@ -26,26 +27,7 @@ export function* login({ phone, password }) {
       credentials: 'same-origin'
 
     };
-    const token = yield call(request, `${BASE_URL}users/sign_in`, options);
-    storeData = async () => {
-      try {
-        await AsyncStorage.setItem('user', token)
-      } catch (e) {
-        // saving error
-      }
-      getData = async () => {
-        try {
-          const value = await AsyncStorage.getItem('user')
-          if (value !== null) {
-            // value previously stored
-            debugger;
-          }
-        } catch (e) {
-          // error reading value
-        }
-      }
-      console.log(getData);
-    }
+    const token = yield call(request, `${BASE_URL}${API_VERSION}users/sign_in`, options);
     yield put(LoginActions.loginSuccess(token))
     yield put(NavigationActions.navigate({ routeName: 'Home' }))
 
@@ -74,12 +56,14 @@ export function* getOTP({ phone }) {
       contentType: false,
       credentials: 'same-origin'
     };
-    const response = yield call(request, `${BASE_URL}users/otp`, options);
+    const response = yield call(request, `${BASE_URL}${API_VERSION}users/otp`, options);
+    yield put(ToastActionsCreators.displayInfo(response.message))
     yield put(LoginActions.otpSuccess(response));
-    // yield put(NavigationActions.navigate({ routeName: 'Home' })
+    
 
   } catch (e) {
-    const response = { message: "Oops Please try" };
+    const response = { message: "Oops Please try again" };
+    yield put(ToastActionsCreators.displayInfo(response.message))
     yield put(LoginActions.otpFailure(response))
   }
 }
@@ -103,10 +87,56 @@ export function* verifyOTP({ phone, otp }) {
       contentType: false,
       credentials: 'same-origin'
     };
-    const response = yield call(request, `${BASE_URL}users/otp_verify`, options);
+    const response = yield call(request, `${BASE_URL}${API_VERSION}users/otp_verify`, options);
     yield put(LoginActions.verifyOtpSuccess(response))
+    const { user } = response;
+    if(user) {
+      yield put(NavigationActions.navigate({ routeName: 'Home'}, { user } ))
+    }
   } catch (e) {
     const response = { message: "Oops Please try" };
     yield put(LoginActions.verifyOtpFailure(response))
   }
 }
+
+
+export function* singupRequest({ data }) {
+  try {
+    const headers = new Headers({
+      'Content-Type': 'multipart/form-data',
+      "cache-control": "no-cache",
+    });
+    data.append("app_token", APP_TOKEN);
+    const options = {
+      method: 'POST',
+      headers,
+      processData: false,
+      contentType: false,
+      credentials: 'same-origin',
+      body: data,
+    };
+    const response = yield call(request, `${BASE_URL}${API_VERSION}users`, options);
+    yield put(LoginActions.signupSuccess(response));
+  } catch (e) {
+    yield put(LoginActions.signupFailure({}))
+    yield put(ToastActionsCreators.displayInfo('Please Make sure you have filled all the fields'))
+  }
+}
+
+export function* onLogout({ accessToken }) {
+  try {
+    const headers = new Headers({
+      "cache-control": "no-cache",
+    });
+    const options = {
+      method: 'DELETE',
+      headers,
+    };
+    yield call(request, `${BASE_URL}${API_VERSION}users/sign_out?access_token=${accessToken}`, options);
+
+  } catch (e) {
+    // yield put(LoginActions.logoutRequest(accessToken))
+    yield put(ToastActionsCreators.displayInfo('Unable to logout Currently'))
+  }
+}
+

@@ -36,12 +36,13 @@ export default StyleSheet.create({
   navAvatar: {
     width: 64,
     height: 64,
-    borderRadius: 37
+    borderRadius: 37,
+    alignItems: 'center'
   },
   navName: {
     fontSize: 14,
     // fontFamily: 'Montserrat-SemiBold',
-    color: '#FFD328',
+    color: '#F5821F',
     marginTop: 10
   },
 

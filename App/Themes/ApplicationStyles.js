@@ -77,7 +77,7 @@ const ApplicationStyles = {
       alignItems: 'center'
     },
     navIcon: {
-      color: '#FFD328'
+      color: '#F5821F'
     },
     navIconDark: {
       color: '#000'
@@ -171,7 +171,7 @@ const ApplicationStyles = {
     },
     logo: {
       fontSize: 16,
-      color: '#FFD328'
+      color: '#F5821F'
     },
     fPickerItem: {
       flex: 1,

@@ -5,18 +5,16 @@ import DebugConfig from '../Config/DebugConfig'
 
 /* ------------- Types ------------- */
 
-// import { StartupTypes } from '../Redux/StartupRedux'
-// import { GithubTypes } from '../Redux/GithubRedux'
 import { LoginTypes } from '../Redux/LoginRedux'
 import { VerifiedSignUpTypes } from '../Redux/VerifiedSignUpRedux'
 import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
 /* ------------- Sagas ------------- */
 
 // import { startup } from './StartupSagas'
-import { login, getOTP, verifyOTP } from './LoginSaga'
+import { login, getOTP, verifyOTP, singupRequest, onLogout } from './LoginSaga'
 import { getBeneficiary } from './BeneficiarySagas'
-import { getAllPositions, singupRequest } from './VerifiedSignUpSagas'
-// import { getUserAvatar } from './GithubSagas'
+// import { getAllPositions,  } from './VerifiedSignUpSagas'
+
 
 /* ------------- API ------------- */
 
@@ -32,8 +30,8 @@ export default function* root() {
     takeLatest(LoginTypes.OTP_REQUEST, getOTP),
     takeLatest(LoginTypes.VERIFY_OTP, verifyOTP),
     takeLatest(LoginTypes.VERIFY_OTP, verifyOTP),
-    takeLatest(VerifiedSignUpTypes.GET_POSITIONS, getAllPositions),
-    takeLatest(VerifiedSignUpTypes.SIGNUP_REQUEST, singupRequest),
+    takeLatest(LoginTypes.SIGNUP_REQUEST, singupRequest),
+    takeLatest(LoginTypes.LOGOUT_REQUEST, onLogout),
     takeLatest(BeneficiaryTypes.BENEFICIARY_REQUEST, getBeneficiary),
   ])
 }

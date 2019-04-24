@@ -123,7 +123,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FF8901',
+    backgroundColor: '#F5821F',
     paddingVertical: 15,
     paddingHorizontal: 15,
     borderRadius: 3,
