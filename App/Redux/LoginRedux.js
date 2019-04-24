@@ -21,6 +21,11 @@ const { Types, Creators } = createActions({
   signupSuccess: ['response'],
   signupFailure: ['response'],
 
+  // Reset Password Actions
+  resetPasswordRequest: ['data'],
+  resetPasswordSuccess: ['response'],
+  resetPasswordFailure: ['response'],
+
   logoutRequest: ['accessToken'],
 })
 
@@ -89,6 +94,16 @@ export const onSignUpsuccess = (state, { response }) => {
 export const onSignUpfailure = state =>
   state.merge({ fetching: false, error: true, signupApiStatus: 2 })
 
+export const onResetPassword = (state) => state.merge({ fetching: true, resetPasswordApiStatus: 0 })
+
+// successful api lookup
+export const onResetPasswordsuccess = (state, { response }) => {
+  return state.merge({ fetching: false, error: null, user: response, resetPasswordApiStatus: 1 })
+}
+// Something went wrong somewhere.
+export const onResetPasswordfailure = state =>
+  state.merge({ fetching: false, error: true, resetPasswordApiStatus: 2 })
+
 export const onLogout = state =>
   state.merge(INITIAL_STATE)
 
@@ -105,5 +120,8 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.SIGNUP_REQUEST]: onSignUp,
   [Types.SIGNUP_SUCCESS]: onSignUpsuccess,
   [Types.SIGNUP_FAILURE]: onSignUpfailure,
+  [Types.RESET_PASSWORD_REQUEST]: onResetPassword,
+  [Types.RESET_PASSWORD_SUCCESS]: onResetPasswordsuccess,
+  [Types.RESET_PASSWORD_FAILURE]: onResetPasswordfailure,
   [Types.LOGOUT_REQUEST]: onLogout,
 })

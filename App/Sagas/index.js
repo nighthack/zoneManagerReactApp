@@ -11,7 +11,7 @@ import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
 /* ------------- Sagas ------------- */
 
 // import { startup } from './StartupSagas'
-import { login, getOTP, verifyOTP, singupRequest, onLogout } from './LoginSaga'
+import { login, getOTP, verifyOTP, singupRequest, onLogout, onResetPasswordAction } from './LoginSaga'
 import { getBeneficiary } from './BeneficiarySagas'
 // import { getAllPositions,  } from './VerifiedSignUpSagas'
 
@@ -32,6 +32,7 @@ export default function* root() {
     takeLatest(LoginTypes.VERIFY_OTP, verifyOTP),
     takeLatest(LoginTypes.SIGNUP_REQUEST, singupRequest),
     takeLatest(LoginTypes.LOGOUT_REQUEST, onLogout),
+    takeLatest(LoginTypes.RESET_PASSWORD_REQUEST, onResetPasswordAction),
     takeLatest(BeneficiaryTypes.BENEFICIARY_REQUEST, getBeneficiary),
   ])
 }

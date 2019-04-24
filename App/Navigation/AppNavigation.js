@@ -4,7 +4,7 @@ import RegisterScreen from '../Containers/Register'
 import LaunchScreen from '../Containers/LaunchScreen'
 import LoginScreen from '../Containers/LoginScreen'
 import SplashScreen from '../Components/SplashScreen';
-
+import ForgotPasswordScreen from '../Containers/ForgotPassword'
 import AuthenticatedScreen from '../Containers/AuthenticatedScreen'
 import DrawerComponent from '../Containers/SideMenu';
 import { View, Text, Image, Button } from 'react-native'
@@ -53,10 +53,13 @@ const AuthStack = createStackNavigator(
     RegisterScreen: {
       screen: RegisterScreen
     },
+    ForgotPassword: {
+      screen: ForgotPasswordScreen,
+    }
   },
   {
     headerMode: 'none',
-    initialRouteName: 'Login'
+    initialRouteName: 'ForgotPassword'
   }
 );
 

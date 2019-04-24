@@ -70,7 +70,7 @@ class LoginScreen extends Component {
                 </View>
                 <View>
                   <TouchableOpacity style={Styles.accountBtn} onPress={() => {
-                    navigate("PublicForgotPassword")
+                    navigate("ForgotPassword")
                   }}>
                     <Text style={Styles.forgotPassword}>Forgot your password?</Text>
                   </TouchableOpacity>

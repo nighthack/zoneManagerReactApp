@@ -47,7 +47,7 @@ export function* getOTP({ phone }) {
     });
     var form = new FormData();
     form.append("phone", phone);
-    form.append("app_token", "4ec581692ba08f69d91254fe91314da083591675fa7173c87a88890b621aa9f1");
+    form.append("app_token", APP_TOKEN);
     const options = {
       method: 'POST',
       body: form,
@@ -78,7 +78,7 @@ export function* verifyOTP({ phone, otp }) {
     var form = new FormData();
     form.append("phone", phone);
     form.append("otp", otp);
-    form.append("app_token", "4ec581692ba08f69d91254fe91314da083591675fa7173c87a88890b621aa9f1");
+    form.append("app_token", APP_TOKEN);
     const options = {
       method: 'POST',
       body: form,
@@ -137,6 +137,29 @@ export function* onLogout({ accessToken }) {
   } catch (e) {
     // yield put(LoginActions.logoutRequest(accessToken))
     yield put(ToastActionsCreators.displayInfo('Unable to logout Currently'))
+  }
+}
+
+export function* onResetPasswordAction({ data }) {
+  try {
+    const headers = new Headers({
+      'Content-Type': 'multipart/form-data',
+      "cache-control": "no-cache",
+    });
+    data.append("app_token", APP_TOKEN);
+    const options = {
+      method: 'POST',
+      headers,
+      processData: false,
+      contentType: false,
+      credentials: 'same-origin',
+      body: data,
+    };
+    const response = yield call(request, `${BASE_URL}${API_VERSION}users/reset_password`, options);
+    yield put(LoginActions.resetPasswordSuccess(response));
+  } catch (e) {
+    yield put(LoginActions.resetPasswordFailure({}))
+    yield put(ToastActionsCreators.displayInfo('Please try again'))
   }
 }
 
