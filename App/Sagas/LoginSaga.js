@@ -117,6 +117,13 @@ export function* singupRequest({ data }) {
     };
     const response = yield call(request, `${BASE_URL}${API_VERSION}users`, options);
     yield put(LoginActions.signupSuccess(response));
+    const { user, errors } = response;
+    if(user) {
+      yield put(NavigationActions.navigate({ routeName: 'Home'}, { user } ))
+    }
+    if(errors) {
+      yield put(ToastActionsCreators.displayInfo('Errors In form'))
+    }
   } catch (e) {
     yield put(LoginActions.signupFailure({}))
     yield put(ToastActionsCreators.displayInfo('Please Make sure you have filled all the fields'))

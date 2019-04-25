@@ -13,21 +13,6 @@ import { Images, Metrics } from '../Themes/'
 
 import styles from './Styles/NavigationStyles'
 
-// // Manifest of possible screens
-// const PrimaryNav = createStackNavigator({
-//   LoginContainer: { screen: LoginContainer },
-//   LaunchScreen: { screen: LaunchScreen },
-//   Home: { screen: AuthenticatedScreen},
-// }, {
-//   // Default config for all screens
-//   headerMode: 'none',
-//   initialRouteName: 'LoginContainer',
-//   navigationOptions: {
-//     headerStyle: styles.header
-//   }
-// })
-
-// export default createAppContainer(PrimaryNav)
 const MyDrawerNavigator = createDrawerNavigator({
   Home: {
     screen: AuthenticatedScreen,
@@ -59,7 +44,7 @@ const AuthStack = createStackNavigator(
   },
   {
     headerMode: 'none',
-    initialRouteName: 'ForgotPassword'
+    initialRouteName: 'Login'
   }
 );
 

@@ -9,25 +9,19 @@
 *  - This template uses the api declared in sagas/index.js, so
 *    you'll need to define a constant in that file.
 *************************************************************/
-
-import { call, put } from 'redux-saga/effects'
+import { put, call } from 'redux-saga/effects'
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
-// import { BeneficiarySelectors } from '../Redux/BeneficiaryRedux'
+import request from '../Services/request'
+import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
 
-export function * getBeneficiary (api, action) {
-  debugger;
-  const { data } = action
-  // get current data from Store
-  // const currentData = yield select(BeneficiarySelectors.getData)
-  // make the call to the api
-  const response = yield call(api.getbeneficiary, data)
-
-  // success?
-  if (response.ok) {
-    // You might need to change the response here - do this with a 'transform',
-    // located in ../Transforms/. Otherwise, just pass the data back from the api.
-    yield put(BeneficiaryActions.beneficiarySuccess(response.data))
-  } else {
+export function * getBeneficiary ({ accessToken }) {
+  try {
+    const options = {
+      method: 'GET',
+    };
+    const response = yield call(request, `${BASE_URL}${API_VERSION}development_works?access_token=${accessToken}`, options);
+    yield put(BeneficiaryActions.beneficiarySuccess(response))
+  } catch (e) {
     yield put(BeneficiaryActions.beneficiaryFailure())
   }
 }

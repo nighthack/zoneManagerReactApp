@@ -100,7 +100,7 @@ class ForgotPassword extends Component {
                 {
                   otpStatus > 0 ?
                     <View style={Styles.fRow}>
-                      <Icon name='cellphone-android' type="MaterialCommunityIcons" style={Styles.fIcon} />
+                      <Icon name='cellphone-key' type="MaterialCommunityIcons" style={Styles.fIcon} />
                       <TextInput
                         style={Styles.fInput}
                         placeholder='OTP'
@@ -114,7 +114,7 @@ class ForgotPassword extends Component {
                 {
                   otpStatus > 0 ?
                     <View style={Styles.fRow}>
-                      <Icon name='cellphone-android' type="MaterialCommunityIcons" style={Styles.fIcon} />
+                      <Icon name='textbox-password' type="MaterialCommunityIcons" style={Styles.fIcon} />
                       <TextInput
                         style={Styles.fInput}
                         placeholder='New Password'

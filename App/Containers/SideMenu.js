@@ -81,7 +81,6 @@ class SideMenu extends Component {
     const { access_token } = this.props.token.user;
     const accessToken = access_token;
     this.props.deleteToken(accessToken);
-    debugger;
     const { navigate } = this.props.navigation;
     navigate('Login')
   }
@@ -112,7 +111,6 @@ class SideMenu extends Component {
     })
   }
   render() {
-    console.log(this.props.token);
     const { user } = this.props.token;
     return (
       <Container>

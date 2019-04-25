@@ -1,15 +1,14 @@
 import React, { Component } from 'react'
-import { ScrollView, View } from 'react-native'
 import { connect } from 'react-redux'
-import { List, Avatar, Button, Card, Title, Paragraph, DataTable, IconButton } from 'react-native-paper';
-import ListView from '../Containers/DemoList'
+import { TouchableOpacity, FlatList } from 'react-native'
+import { Icon, Text, View, Badge } from 'native-base'
 import HeaderComponent from '../Components/HeaderComponent'
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 // import YourActions from '../Redux/YourRedux'
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 
 // Styles
-import styles from './Styles/AuthenticatedScreenStyle'
+import Styles from './Styles/AuthenticatedScreenStyle'
 
 class AuthenticatedScreen extends Component {
   // constructor (props) {
@@ -17,19 +16,91 @@ class AuthenticatedScreen extends Component {
   //   this.state = {}
   // }
   componentDidMount() {
-    // this.props.getBeneficiarySchemesList();
+    const { user } = this.props.token;
+    this.props.getBeneficiarySchemesList(user.access_token);
   }
   static navigationOptions = {
     headerTitle: 'Beneficiary Schemes',
   };
-  render() {
-    const { token } = this.props;
+  renderRow({ item, index }) {
     return (
-      <View style={{ flex: 1 }}>
+      <TouchableOpacity onPress={() => this.goToBeneficiaryDetailView(item)}>
+        <View style={Styles.tripItem}>
+          <View style={Styles.truckInfo}>
+            <View>
+              <Text style={Styles.truckTrip}>{item.name}</Text>
+              <Text style={Styles.truckData}>{item.desc}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              </View>
+            </View>
+          </View>
+          <View style={Styles.truckInfo}>
+            <View>
+              <Text style={Styles.placeText}>Sanctioned</Text>
+              <Text style={Styles.price}>₹ {item.sanctioned_amount}</Text>
+            </View>
+            <View>
+              <Text style={Styles.placeText}>Estimated</Text>
+              <Text style={Styles.price}>₹ {item.estimated_amount}</Text>
+            </View>
+          </View>
+          <View style={Styles.truckInfo}>
+            <View>
+              <Text style={Styles.placeText}>Status</Text>
+              <Text style={Styles.price}>{item.status}</Text>
+            </View>
+          </View>
+          <View style={Styles.tripInfo}>
+            <View style={Styles.rowSpaceAlignment}>
+              <View style={Styles.tripPlaces}>
+                <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
+                <Text style={Styles.placeText}>Foundation</Text>
+              </View>
+              <View style={Styles.tripPlaces}>
+                <Icon name='calendar-clock' type="MaterialCommunityIcons" style={Styles.checkIcon} />
+                <Text style={Styles.placeText}>{item.foundation_date || 'NA'}</Text>
+              </View>
+            </View>
+            <Text style={Styles.lineTracker}>|</Text>
+            <View style={Styles.rowSpaceAlignment}>
+              <View style={Styles.tripPlaces}>
+                <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
+                <Text style={Styles.placeText}>Inauguration</Text>
+              </View>
+              <View style={Styles.tripPlaces}>
+                <Icon name='calendar-clock' type="MaterialCommunityIcons" style={Styles.checkIcon} />
+                <Text style={Styles.placeText}>{item.inaugration_date || 'NA'}</Text>
+              </View>
+            </View>
+          </View>
+          <View style={Styles.more}>
+            <Text style={Styles.postedOn}>Posted on: {item.posted}</Text>
+            <TouchableOpacity style={Styles.editBtn} onPress={() => {
+              NavigationService.navigate("PublicShipmentDetail")
+            }}>
+              <Text style={Styles.editText}>READ MORE</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+      </TouchableOpacity>
+    )
+  }
+
+  render() {
+    const { beneficiaryList } = this.props;
+    console.log(beneficiaryList);
+    return (
+      <View style={Styles.layoutDefault}>
         <HeaderComponent title={'Beneficiary Schemes'} {...this.props} />
-        <ScrollView>
-          <ListView />
-        </ScrollView>
+        <FlatList
+          contentContainerStyle={Styles.listContent}
+          data={beneficiaryList}
+          renderItem={this.renderRow}
+          keyExtractor={this.keyExtractor}
+          initialNumToRender={this.oneScreensWorth}
+          ListEmptyComponent={this.renderEmpty}
+        />
       </View>
 
     )
@@ -39,12 +110,13 @@ class AuthenticatedScreen extends Component {
 const mapStateToProps = (state) => {
   return {
     token: state.login.user,
+    beneficiaryList: state.beneficiary.beneficiaryList
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getBeneficiarySchemesList: () => dispatch(BeneficiaryActions.beneficiaryRequest())
+    getBeneficiarySchemesList: (accessToken) => dispatch(BeneficiaryActions.beneficiaryRequest(accessToken))
   }
 }
 
