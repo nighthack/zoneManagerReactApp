@@ -20,7 +20,7 @@ class AuthenticatedScreen extends Component {
     this.props.getBeneficiarySchemesList(user.access_token);
   }
   static navigationOptions = {
-    headerTitle: 'Beneficiary Schemes',
+    headerTitle: 'Development Works',
   };
   renderRow({ item, index }) {
     return (
@@ -92,7 +92,7 @@ class AuthenticatedScreen extends Component {
     console.log(beneficiaryList);
     return (
       <View style={Styles.layoutDefault}>
-        <HeaderComponent title={'Beneficiary Schemes'} {...this.props} />
+        <HeaderComponent title={'Development Works'} {...this.props} />
         <FlatList
           contentContainerStyle={Styles.listContent}
           data={beneficiaryList}

@@ -19,7 +19,7 @@ import { Images } from '../Themes'
 export const Menulist = [
   /** Transporter **/
   {
-    name: 'Beneficiary Schemes',
+    name: 'Development Works',
     icon: 'dashboard',
     type: 'Octicons',
     route: 'Home'
