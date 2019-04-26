@@ -1,95 +1,66 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { TouchableOpacity, FlatList } from 'react-native'
+import { TouchableOpacity, FlatList, Image } from 'react-native'
 import { Icon, Text, View, Badge } from 'native-base'
 import HeaderComponent from '../Components/HeaderComponent'
-// Add Actions - replace 'Your' with whatever your reducer is called :)
-// import YourActions from '../Redux/YourRedux'
+
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 
-// Styles
-import Styles from './Styles/AuthenticatedScreenStyle'
+import Styles from './Styles/BenefeciaryDetailViewStyle'
 
 class AuthenticatedScreen extends Component {
-  // constructor (props) {
-  //   super(props)
-  //   this.state = {}
-  // }
+
   componentDidMount() {
     const { user } = this.props.token;
     this.props.getBeneficiarySchemesList(user.access_token);
+    this.renderRow = this.renderRow.bind(this);
   }
   static navigationOptions = {
     headerTitle: 'Beneficiary Schemes',
   };
+
+  goToBeneficiaryDetailView(selectedScheme) {
+    const { navigate } = this.props.navigation;
+    navigate('BenfeciaryDetail', { selectedScheme });
+
+  }
+
   renderRow({ item, index }) {
     return (
-      <TouchableOpacity onPress={() => this.goToBeneficiaryDetailView(item)}>
+      <TouchableOpacity onPress={()=> this.goToBeneficiaryDetailView(item)}>
         <View style={Styles.tripItem}>
           <View style={Styles.truckInfo}>
             <View>
-              <Text style={Styles.truckTrip}>{item.name}</Text>
-              <Text style={Styles.truckData}>{item.desc}</Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <View>
+                <Text style={Styles.msgName}>{item.beneficiary_name}</Text>
+                <Text style={Styles.msgContent}>{item.beneficiary_phone}</Text>
+                <Text style={Styles.msgContent}>{item.place_id}</Text>
+                <Text style={Styles.msgDate}> Applied on {item.application_date}</Text>
               </View>
             </View>
           </View>
           <View style={Styles.truckInfo}>
             <View>
-              <Text style={Styles.placeText}>Sanctioned</Text>
-              <Text style={Styles.price}>₹ {item.sanctioned_amount}</Text>
+            <Text style={Styles.truckTrip}>Status</Text>
+            <Text style={Styles.truckData}>{item.status}</Text>
             </View>
+          </View>
+          <View  style={Styles.truckInfo}>
             <View>
-              <Text style={Styles.placeText}>Estimated</Text>
-              <Text style={Styles.price}>₹ {item.estimated_amount}</Text>
+              <Text style={Styles.truckTrip}>Granted Relief</Text>
+              <Text style={Styles.truckData}>{item.granted_relief}</Text>
             </View>
           </View>
-          <View style={Styles.truckInfo}>
-            <View>
-              <Text style={Styles.placeText}>Status</Text>
-              <Text style={Styles.price}>{item.status}</Text>
-            </View>
+          <View style={Styles.msgBox}>
+            <Text style={Styles.msgText}>{item.remarks || 'No Remarks'}</Text>
           </View>
-          <View style={Styles.tripInfo}>
-            <View style={Styles.rowSpaceAlignment}>
-              <View style={Styles.tripPlaces}>
-                <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
-                <Text style={Styles.placeText}>Foundation</Text>
-              </View>
-              <View style={Styles.tripPlaces}>
-                <Icon name='calendar-clock' type="MaterialCommunityIcons" style={Styles.checkIcon} />
-                <Text style={Styles.placeText}>{item.foundation_date || 'NA'}</Text>
-              </View>
-            </View>
-            <Text style={Styles.lineTracker}>|</Text>
-            <View style={Styles.rowSpaceAlignment}>
-              <View style={Styles.tripPlaces}>
-                <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
-                <Text style={Styles.placeText}>Inauguration</Text>
-              </View>
-              <View style={Styles.tripPlaces}>
-                <Icon name='calendar-clock' type="MaterialCommunityIcons" style={Styles.checkIcon} />
-                <Text style={Styles.placeText}>{item.inaugration_date || 'NA'}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={Styles.more}>
-            <Text style={Styles.postedOn}>Posted on: {item.posted}</Text>
-            <TouchableOpacity style={Styles.editBtn} onPress={() => {
-              NavigationService.navigate("PublicShipmentDetail")
-            }}>
-              <Text style={Styles.editText}>READ MORE</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-      </TouchableOpacity>
+      </View>
+    </TouchableOpacity>
     )
   }
 
   render() {
     const { beneficiaryList } = this.props;
-    console.log(beneficiaryList);
     return (
       <View style={Styles.layoutDefault}>
         <HeaderComponent title={'Beneficiary Schemes'} {...this.props} />

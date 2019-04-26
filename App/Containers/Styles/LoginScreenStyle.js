@@ -38,18 +38,7 @@ export default StyleSheet.create({
     justifyContent: 'center',
     marginLeft: 10
   },
-  hTopText: {
-    fontSize: 20,
-     
-    color: '#FFF',
-    marginBottom: 10
-  },
-  hTopDesc: {
-    fontSize: 12,
-     
-    color: 'rgba(255,255,255,0.6)',
-    marginBottom: 10
-  },
+
 
   /** Form **/
   regForm: {

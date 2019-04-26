@@ -8,11 +8,13 @@ import DebugConfig from '../Config/DebugConfig'
 import { LoginTypes } from '../Redux/LoginRedux'
 import { VerifiedSignUpTypes } from '../Redux/VerifiedSignUpRedux'
 import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
+import { DevelopmentWorkTypes } from '../Redux/DevelopmentWorkRedux'
 /* ------------- Sagas ------------- */
 
 // import { startup } from './StartupSagas'
 import { login, getOTP, verifyOTP, singupRequest, onLogout, onResetPasswordAction } from './LoginSaga'
-import { getBeneficiary } from './BeneficiarySagas'
+import { getBeneficiary, getBeneficiaryDetails } from './BeneficiarySagas'
+import { getDevelopmentList, getDevelopmentDetails } from './DevelopmentWorkSagas'
 // import { getAllPositions,  } from './VerifiedSignUpSagas'
 
 
@@ -24,6 +26,7 @@ const api = DebugConfig.useFixtures ? FixtureAPI : API.create()
 
 /* ------------- Connect Types To Sagas ------------- */
 export default function* root() {
+    console.log(DevelopmentWorkTypes.DEVELOPMENT_WORK_DETAILS_REQUEST)
   yield all([
     // some sagas only receive an action
     takeLatest(LoginTypes.LOGIN_REQUEST, login),
@@ -33,6 +36,11 @@ export default function* root() {
     takeLatest(LoginTypes.SIGNUP_REQUEST, singupRequest),
     takeLatest(LoginTypes.LOGOUT_REQUEST, onLogout),
     takeLatest(LoginTypes.RESET_PASSWORD_REQUEST, onResetPasswordAction),
+    // Beneficiary Module
     takeLatest(BeneficiaryTypes.BENEFICIARY_REQUEST, getBeneficiary),
+    takeLatest(BeneficiaryTypes.BENEFICIARY_DETAILS_REQUEST, getBeneficiaryDetails),
+    // Development Module
+    takeLatest(DevelopmentWorkTypes.DEVELOPMENT_WORK_REQUEST, getDevelopmentList),
+    takeLatest(DevelopmentWorkTypes.DEVELOPMENT_WORK_DETAILS_REQUEST, getDevelopmentDetails),
   ])
 }

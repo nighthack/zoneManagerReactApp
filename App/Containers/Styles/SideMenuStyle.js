@@ -41,7 +41,7 @@ export default StyleSheet.create({
   },
   navName: {
     fontSize: 14,
-    // fontFamily: 'Montserrat-SemiBold',
+    // 
     color: '#F5821F',
     marginTop: 10
   },
@@ -64,12 +64,12 @@ export default StyleSheet.create({
     marginRight: 20
   },
   navBtnText: {
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 12,
     color: '#333'
   },
   navHeader: {
-    // fontFamily: 'Montserrat-SemiBold',
+    // 
     fontSize: 14,
     color: '#242A38',
     marginTop: 20,
@@ -81,7 +81,7 @@ export default StyleSheet.create({
   },
   navFooterText: {
     fontSize: 12,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(0,0,0,0.5)'
   }
 
