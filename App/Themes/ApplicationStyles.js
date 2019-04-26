@@ -228,7 +228,7 @@ const ApplicationStyles = {
   },
   truckFare: {
     // fontFamily: 'Montserrat-SemiBold',
-    fontSize: 18,
+    fontSize: 34,
     color: 'rgba(36,42,56,0.99)'
   },
   checkIcon: {

@@ -85,7 +85,7 @@ class DevelopmentWorksList extends Component {
               </View>
               <View style={Styles.tripPlaces}>
                 <Icon
-                  name="clock-outline"
+                  name="calendar-clock"
                   type="MaterialCommunityIcons"
                   style={Styles.checkIcon}
                 />
@@ -104,7 +104,7 @@ class DevelopmentWorksList extends Component {
               </View>
               <View style={Styles.tripPlaces}>
                 <Icon
-                  name="clock-outline"
+                  name="calendar-clock"
                   type="MaterialCommunityIcons"
                   style={Styles.checkIcon}
                 />
