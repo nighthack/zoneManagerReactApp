@@ -9,14 +9,19 @@ const { Types, Creators } = createActions({
   loginSuccess: ['user', 'message'],
   loginFailure: ['response'],
   resetStateOnNavigation: ['payload'],
+
+// VERIFY USER
+  verifyUser: ['phone'],
+  verifyUserSuccess: ['payload'],
+  verifyUserFail: ['payload'],
   // GET OTP Actions
   otpRequest: ['phone'],
   otpSuccess: ['response'],
   otpFailure: ['response'],
   // Verify OTP Actions
-  verifyOtp: ['phone', 'otp'],
-  verifyOtpSuccess: ['response'],
-  verifyOtpFailure: ['response'],
+  // verifyOtp: ['phone', 'otp'],
+  // verifyOtpSuccess: ['response'],
+  // verifyOtpFailure: ['response'],
   // SignUp Actions
   signupRequest: ['data'],
   signupSuccess: ['response'],
@@ -53,24 +58,25 @@ export const LoginSelectors = {
 
 // request the data from an api
 export const request = (state, { data }) =>
-  state.merge({ fetching: true, data, payload: null })
+  state.merge({ fetching: true, data })
 
 // successful api lookup
-export const success = (state, { user, message }) => { 
-  if(user) {
-    return state.merge({ fetching: false, error: null, user: user })    
-  } else {
-    return state.merge({ fetching: false, error: true, user: null })  
-  }
-}
-
+export const success = (state, { user }) => state.merge({ fetching: false, error: null, user })
 
 // Something went wrong somewhere.
 export const failure = state =>
-  state.merge({ fetching: false, error: true, payload: null })
+  state.merge({ fetching: false, error: true })
 
 export const changeStateOnNavigation = state =>
-  state.merge({ fetching: null, error: null })
+  state.merge(
+    { 
+      fetching: null,
+      error: null, 
+      getOtpStatus: null, 
+      signupApiStatus: null, 
+      resetPasswordApiStatus: null,
+      resetPasswordError: null,
+    })
 
 // request the data from an api
 export const getOTPrequest = (state, { otp, phone }) => state.merge({ fetching: true, getOtpStatus: 0 })
@@ -82,17 +88,17 @@ export const getOTPsuccess = (state, { response }) => state.merge({ fetching: fa
 export const getOTPfailure = (state, { response }) => state.merge({ fetching: false, getOtpStatus: 2 })
 
 
-// Something went wrong somewhere.
-export const verifyOTPRequest = (state, { otp, phone }) =>
-  state.merge({ fetching: true, verifyOTPapiStatus: 0, otpOptions: { otp, phone } })
+// // Something went wrong somewhere.
+// export const verifyOTPRequest = (state, { otp, phone }) =>
+//   state.merge({ fetching: true, verifyOTPapiStatus: 0, otpOptions: { otp, phone } })
 
-export const verifyOTPsuccess = (state, { response }) => {
-  return state.merge({ fetching: false, error: null, verifyOtpResponse: response, verifyOTPapiStatus: 1 })
-};
+// export const verifyOTPsuccess = (state, { response }) => {
+//   return state.merge({ fetching: false, error: null, verifyOtpResponse: response, verifyOTPapiStatus: 1 })
+// };
 
-export const verifyOTPfailure = (state, { response }) => {
-  return state.merge({ fetching: false, error: true, verifyOtpResponse: response, verifyOTPapiStatus: 2 })
-}
+// export const verifyOTPfailure = (state, { response }) => {
+//   return state.merge({ fetching: false, error: true, verifyOtpResponse: response, verifyOTPapiStatus: 2 })
+// }
 
 export const onSignUp = (state) => state.merge({ fetching: true, signupApiStatus: 0 })
 
@@ -111,28 +117,43 @@ export const onResetPasswordsuccess = (state, { response }) => {
   return state.merge({ fetching: false, error: null, user: response, resetPasswordApiStatus: 1 })
 }
 // Something went wrong somewhere.
-export const onResetPasswordfailure = state =>
-  state.merge({ fetching: false, error: true, resetPasswordApiStatus: 2 })
+export const onResetPasswordfailure = (state, { response }) =>
+  state.merge({ fetching: false, error: true, resetPasswordApiStatus: 2, resetPasswordError: response })
+
+export const onVerifyUser = state =>  state.merge({ fetching: true })
+export const onVerifyUserSuccess = state =>  state.merge({ fetching: false })
+export const onVerifyUserFail = state => state.merge({ fetching: false })
 
 export const onLogout = state =>
   state.merge(INITIAL_STATE)
 
 export const reducer = createReducer(INITIAL_STATE, {
+  // Login Requests
   [Types.LOGIN_REQUEST]: request,
   [Types.LOGIN_SUCCESS]: success,
   [Types.LOGIN_FAILURE]: failure,
+  // Reset States On Navigation
   [Types.RESET_STATE_ON_NAVIGATION]: changeStateOnNavigation,
+  // Verify User
+  [Types.VERIFY_USER]: onVerifyUser,
+  [Types.VERIFY_USER_SUCCESS]: onVerifyUserSuccess,
+  [Types.VERIFY_USER_FAIL]: onVerifyUserFail,
+  // OTP Requests
   [Types.OTP_REQUEST]: getOTPrequest,
   [Types.OTP_SUCCESS]: getOTPsuccess,
   [Types.OTP_FAILURE]: getOTPfailure,
-  [Types.VERIFY_OTP]: verifyOTPRequest,
-  [Types.VERIFY_OTP_SUCCESS]: verifyOTPsuccess,
-  [Types.VERIFY_OTP_FAILURE]: verifyOTPfailure,
+  // // Verify OTP
+  // [Types.VERIFY_OTP]: verifyOTPRequest,
+  // [Types.VERIFY_OTP_SUCCESS]: verifyOTPsuccess,
+  // [Types.VERIFY_OTP_FAILURE]: verifyOTPfailure,
+  // Sign Up Requests
   [Types.SIGNUP_REQUEST]: onSignUp,
   [Types.SIGNUP_SUCCESS]: onSignUpsuccess,
   [Types.SIGNUP_FAILURE]: onSignUpfailure,
+  // Reset Password Request
   [Types.RESET_PASSWORD_REQUEST]: onResetPassword,
   [Types.RESET_PASSWORD_SUCCESS]: onResetPasswordsuccess,
   [Types.RESET_PASSWORD_FAILURE]: onResetPasswordfailure,
+  // Logout Request
   [Types.LOGOUT_REQUEST]: onLogout,
 })

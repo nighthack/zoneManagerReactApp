@@ -19,7 +19,7 @@ import { Images } from '../Themes'
 export const Menulist = [
   /** Transporter **/
   {
-    name: 'Development Works',
+    name: 'Beneficiary Schemes',
     icon: 'dashboard',
     type: 'Octicons',
     route: 'Home'
@@ -76,7 +76,7 @@ class SideMenu extends Component {
 
   }
   onLogout = () => {
-    const { access_token } = this.props.token.user;
+    const { access_token } = this.props.user;
     const accessToken = access_token;
     this.props.deleteToken(accessToken);
     const { navigate } = this.props.navigation;
@@ -109,7 +109,7 @@ class SideMenu extends Component {
     })
   }
   render() {
-    const { user } = this.props.token;
+    const { user } = this.props;
     return (
       <Container>
         <Content
@@ -144,7 +144,7 @@ class SideMenu extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    token: state.login.user,
+    user: state.login.user,
   }
 }
 
