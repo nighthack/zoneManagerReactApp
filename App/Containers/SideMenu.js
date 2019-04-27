@@ -36,18 +36,18 @@ export const Menulist = [
     type: 'FontAwesome',
     route: 'EventsListScreen'
   },
-  // {
-  //   name: 'Messages',
-  //   icon: 'envelope',
-  //   type: 'SimpleLineIcons',
-  //   route: 'TransporterMessage'
-  // },
-  // {
-  //   name: 'Profile',
-  //   icon: 'user',
-  //   type: 'Feather',
-  //   route: 'TransporterProfile'
-  // },
+  {
+    name: 'Feedback',
+    icon: 'envelope',
+    type: 'SimpleLineIcons',
+    route: 'FeedbackList'
+  },
+  {
+    name: 'Profile',
+    icon: 'user',
+    type: 'Feather',
+    route: 'UserSettings'
+  },
   // {
   //   name: 'Settings',
   //   icon: 'settings',
@@ -121,7 +121,8 @@ class SideMenu extends Component {
           <View style={Styles.nav}>
             <View style={Styles.navProfile}>
               <Image source={Images.background} style={Styles.bgImg} />
-              <Image style={Styles.navAvatar} source={{ uri: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500' }} />
+              <Icon name='user' type="FontAwesome5" style={Styles.hUserIcon} />
+              
               <Text style={Styles.navName}>{user ? user.name : 'Citizen'}</Text>
             </View>
 

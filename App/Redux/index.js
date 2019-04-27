@@ -10,6 +10,7 @@ export const reducers = combineReducers({
   beneficiary: require('./BeneficiaryRedux').reducer,
   development: require('./DevelopmentWorkRedux').reducer,
   event: require('./EventRedux').reducer,
+  feedback: require('./FeedbackRedux').reducer,
   toast,
 })
 

@@ -10,6 +10,7 @@ import { VerifiedSignUpTypes } from '../Redux/VerifiedSignUpRedux'
 import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
 import { DevelopmentWorkTypes } from '../Redux/DevelopmentWorkRedux'
 import { EventTypes } from '../Redux/EventRedux'
+import { FeedbackTypes } from '../Redux/FeedbackRedux'
 /* ------------- Sagas ------------- */
 
 // import { startup } from './StartupSagas'
@@ -25,6 +26,7 @@ import {
 import { getBeneficiary, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevelopmentList, getDevelopmentDetails } from './DevelopmentWorkSagas'
 import { getEventsList, getEventDetails } from './EventSagas';
+import { getPlacesList, getDepartmentsList, getFeedbackList } from './FeedbackSagas';
 // import { getAllPositions,  } from './VerifiedSignUpSagas'
 
 
@@ -53,7 +55,11 @@ export default function* root() {
     // Development Module
     takeLatest(DevelopmentWorkTypes.DEVELOPMENT_WORK_REQUEST, getDevelopmentList),
     takeLatest(DevelopmentWorkTypes.DEVELOPMENT_WORK_DETAILS_REQUEST, getDevelopmentDetails),
-    // Events Module
+    // Feedback Module
+    takeLatest(FeedbackTypes.GET_PLACES_LIST, getPlacesList),
+    takeLatest(FeedbackTypes.GET_DEPARTMENTS_LIST, getDepartmentsList),
+    takeLatest(FeedbackTypes.FEEDBACK_REQUEST,getFeedbackList),
+    // Events
     takeLatest(EventTypes.EVENT_REQUEST, getEventsList),
     takeLatest(EventTypes.EVENT_DETAILS_REQUEST,getEventDetails),
   ])

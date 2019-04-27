@@ -18,6 +18,13 @@ import BeneficiaryDetailScreen from '../Containers/BenefeciaryDetailView'
 import EventsListScreen from '../Containers/EventsList';
 import EventDetailScreen from '../Containers/EventDetail';
 
+// FeedBack Screen
+import FeedbackScreen from '../Containers/FeedbackScreen';
+import FeedbackList from '../Containers/FeedbackList';
+import FeedbackDetailScreen from '../Containers/FeedbackDetail';
+
+import UserSettings from '../Containers/UserSettings';
+
 // These Are the post authencation Screens
 import DevelopmentWorksList from '../Containers/DevelopmentWorksList'
 import DevelopmentWorkDetail from '../Containers/DevelopmentWorkDetail'
@@ -42,6 +49,18 @@ const MyDrawerNavigator = createDrawerNavigator({
   },
   EventDetailScreen: {
     screen: EventDetailScreen,
+  },
+  FeedbackScreen: {
+    screen: FeedbackScreen,
+  },
+  FeedbackList: {
+    screen: FeedbackList,
+  },
+  FeedbackDetailScreen: {
+    screen: FeedbackDetailScreen,
+  },
+  UserSettings: {
+    screen: UserSettings,
   },
   Notifications: {
     screen: LaunchScreen,
