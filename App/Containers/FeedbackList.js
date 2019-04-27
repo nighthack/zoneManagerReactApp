@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Images } from '../Themes/'
 import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
-
+import HeaderComponent from "../Components/HeaderComponent";
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 import FeedbackActions from '../Redux/FeedbackRedux';
 
@@ -24,23 +24,8 @@ class FeedbackList extends Component {
 		console.log(data);
 		return (
 			<Container>
-				<Header style={Styles.navigation}>
-					<StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
-					<View style={Styles.nav}>
-						<View style={Styles.navLeft}>
-							<TouchableOpacity style={Styles.navLeft} onPress={() => {
-								navigation.navigate("CustomerDashboard")
-							}}>
-								<Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
-							</TouchableOpacity>
-						</View>
-						<View style={Styles.navMiddle} />
-						<View style={Styles.navRight} />
-					</View>
-				</Header>
-
+				<HeaderComponent title={"Feedback"} {...this.props} />
 				<Content contentContainerStyle={Styles.layoutDefault}>
-
 					<Image source={Images.background} style={Styles.bgImg} />
 					<View style={Styles.bgLayout}>
 						<View style={Styles.hTop}>
