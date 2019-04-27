@@ -24,12 +24,12 @@ export const Menulist = [
     type: 'Octicons',
     route: 'Home'
   },
-  // {
-  //   name: 'Trip',
-  //   icon: 'map-pin',
-  //   type: 'Feather',
-  //   route: 'TransporterTrip'
-  // },
+  {
+    name: 'Development Works',
+    icon: 'map-pin',
+    type: 'Feather',
+    route: 'DevelopmentWorksList'
+  },
   // {
   //   name: 'Truck',
   //   icon: 'truck',
@@ -56,8 +56,6 @@ export const Menulist = [
   // }
 ]
 import { connect } from 'react-redux'
-// Add Actions - replace 'Your' with whatever your reducer is called :)
-// import YourActions from '../Redux/YourRedux'
 
 // Styles
 import styles from './Styles/SideMenuStyle'
@@ -72,11 +70,11 @@ class SideMenu extends Component {
 
     this.renderMenuList = this.renderMenuList.bind(this)
   }
-  navigateToScreen = (route) => (
-    () => {
-      const { navigate } = this.props.navigation;
-      navigate(route)
-    })
+  navigateToScreen = (route) =>  {
+    const { navigate } = this.props.navigation;
+    navigate(route)
+
+  }
   onLogout = () => {
     const { access_token } = this.props.token.user;
     const accessToken = access_token;

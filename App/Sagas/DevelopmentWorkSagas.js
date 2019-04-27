@@ -9,31 +9,32 @@
 *  - This template uses the api declared in sagas/index.js, so
 *    you'll need to define a constant in that file.
 *************************************************************/
-import { put, call } from 'redux-saga/effects'
-import BeneficiaryActions from '../Redux/BeneficiaryRedux'
+
+import { call, put } from 'redux-saga/effects'
+import DevelopmentWorkActions from '../Redux/DevelopmentWorkRedux'
 import request from '../Services/request'
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
 
-export function * getBeneficiary ({ accessToken }) {
+export function * getDevelopmentList ({ accessToken }) {
   try {
     const options = {
       method: 'GET',
     };
-    const response = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes?access_token=${accessToken}`, options);
-    yield put(BeneficiaryActions.beneficiarySuccess(response))
+    const response = yield call(request, `${BASE_URL}${API_VERSION}development_works?access_token=${accessToken}`, options);
+    yield put(DevelopmentWorkActions.developmentWorkSuccess(response))
   } catch (e) {
-    yield put(BeneficiaryActions.beneficiaryFailure())
+    yield put(DevelopmentWorkActions.developmentWorkFailure())
   }
 }
 
-export function * getBeneficiaryDetails ({ accessToken, id }) {
+export function * getDevelopmentDetails ({ accessToken, id }) {
   try {
     const options = {
       method: 'GET',
     };
-    const response = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes/${id}?access_token=${accessToken}`, options);
-    yield put(BeneficiaryActions.beneficiaryDetailsSuccess(response))
+    const response = yield call(request, `${BASE_URL}${API_VERSION}development_works/${id}?access_token=${accessToken}`, options);
+    yield put(DevelopmentWorkActions.developmentWorkDetailsSuccess(response))
   } catch (e) {
-    yield put(BeneficiaryActions.beneficiaryDetailsFailure())
+    yield put(DevelopmentWorkActions.developmentWorkDetailsFailure())
   }
 }

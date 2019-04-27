@@ -1,10 +1,8 @@
 import { put, call } from 'redux-saga/effects'
 import LoginActions from '../Redux/LoginRedux'
 import request from '../Services/request'
-import AsyncStorage from '@react-native-community/async-storage';
 import { ToastActionsCreators } from 'react-native-redux-toast';
 import { NavigationActions } from 'react-navigation'
-import { debug } from 'util';
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
 
 

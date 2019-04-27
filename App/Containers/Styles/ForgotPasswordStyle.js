@@ -36,13 +36,13 @@ export default StyleSheet.create({
     },
     hTopText: {
       fontSize: 20,
-      // fontFamily: 'Montserrat-Regular',
+      // 
       color: '#FFF',
       marginBottom: 10
     },
     hTopDesc: {
       fontSize: 12,
-      // fontFamily: 'Montserrat-Regular',
+      // 
       color: 'rgba(255,255,255,0.5)',
       lineHeight: 18,
       marginBottom: 10,
@@ -56,7 +56,7 @@ export default StyleSheet.create({
     },
     regText: {
       fontSize: 12,
-      // fontFamily: 'Montserrat-Regular',
+      // 
       color: '#FFF'
     },
     infoBox: {
@@ -114,7 +114,7 @@ export default StyleSheet.create({
     },
     fInput: {
       flex: 1,
-      // fontFamily: 'Montserrat-Regular',
+      // 
       fontSize: 12
     },
   
@@ -129,17 +129,17 @@ export default StyleSheet.create({
       marginTop: 15
     },
     fBtnText: {
-      // fontFamily: 'Montserrat-SemiBold',
+      // 
       fontSize: 14,
       color: '#FFF'
     },
     fBtnIcon: {
-      // fontFamily: 'Montserrat-Regular',
+      // 
       fontSize: 16,
       color: '#FFF'
     },
     forgotPassword: {
-      // fontFamily: 'Montserrat-Regular',
+      // 
       fontSize: 12,
       alignSelf: 'flex-end',
       color: 'rgba(36,42,56,0.8)'
@@ -152,7 +152,7 @@ export default StyleSheet.create({
       marginHorizontal: 20
     },
     accountText: {
-      // fontFamily: 'Montserrat-Regular',
+      // 
       fontSize: 12,
       color: 'rgba(36,42,56,0.8)'
     },
@@ -161,7 +161,7 @@ export default StyleSheet.create({
       paddingHorizontal: 5
     },
     accountBtnText: {
-      // fontFamily: 'Montserrat-SemiBold',
+      // 
       fontSize: 12,
       color: 'rgba(36,42,56,0.99)'
     },
@@ -177,7 +177,7 @@ export default StyleSheet.create({
       width: '100%'
     },
     connectText: {
-      // fontFamily: 'Montserrat-SemiBold',
+      // 
       fontSize: 18,
       marginBottom: 15,
       color: 'rgba(36,42,56,0.99)',
@@ -190,7 +190,7 @@ export default StyleSheet.create({
       borderColor: '#FF0000'
     },
     connectHeader: {
-      // fontFamily: 'Montserrat-SemiBold',
+      // 
       fontSize: 12,
       color: 'rgba(36,42,56,0.99)',
       alignSelf: 'center',
@@ -214,7 +214,7 @@ export default StyleSheet.create({
       marginRight: 5
     },
     smnText: {
-      // fontFamily: 'Montserrat-SemiBold',
+      // 
       fontSize: 14,
       color: '#FFF'
     },
