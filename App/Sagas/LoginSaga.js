@@ -128,15 +128,19 @@ export function* singupRequest({ data }) {
       credentials: 'same-origin',
       body: data,
     };
-    const response = yield call(request, `${BASE_URL}${API_VERSION}users`, options);
-    yield put(LoginActions.signupSuccess(response));
-    const { user, errors } = response;
-    if (user) {
-      yield put(NavigationActions.navigate({ routeName: 'Home' }, { user }))
-      yield put(LoginActions.resetStateOnNavigation());
-    }
-    if (errors) {
-      yield put(ToastActionsCreators.displayInfo('Errors In form'))
+    const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users`, options);
+    const { user, message, errors } = body;
+    if((status >= 200 && status < 300)) {
+      if(user && user.access_token) {
+        yield put(LoginActions.signupSuccess(user));
+        yield put(NavigationActions.navigate({ routeName: 'Home' }))
+        yield put(LoginActions.resetStateOnNavigation());
+      } else {
+        yield put(LoginActions.signupFailure(errors))
+      }
+    } else {
+      yield put(LoginActions.resetPasswordFailure({}))
+      yield put(ToastActionsCreators.displayWarning(message))
     }
   } catch (e) {
     yield put(LoginActions.signupFailure({}))

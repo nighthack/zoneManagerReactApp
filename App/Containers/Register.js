@@ -19,6 +19,7 @@ class Register extends Component {
       formObj: {
         'user[phone]': phone,
       },
+      errorsObj: {},
     }
   }
 
@@ -30,19 +31,12 @@ class Register extends Component {
   }
   handleNextClick = () => {
     this.dismissKeyboard();
-    const { otpStatus } = this.props;
-    const { formObj } = this.state;
-    if (otpStatus !== 1) {
-      const regex = /^[6-9]\d{9}$/; //eslint-disable-line
-      if (!regex.test(formObj['user[phone]'])) {
-        this.props.errorToast("Enter Valid Phone Number'");
-      } else {
-        this.OTPFetched = false;
-        const phone = formObj['user[phone]'];
-        this.props.getOTPForNumber(phone)
-      }
+    const isFormValid = this.validateForm();
+    if(isFormValid) {
+      const { formObj } = this.state;
+      this.props.getOTPForNumber(formObj['user[phone]']);
     } else {
-      this.onFormSubmit();
+      this.props.errorToast('Please Fill all the mandatory fields');
     }
   }
 
@@ -52,42 +46,174 @@ class Register extends Component {
     this.props.onNavigationResetState();
     this.setState({
       formObj: {},
-      errorObj: {},
+      errorsObj: {},
       showPassword: false,
+      showPasswordConfirmation: false,
     });
+  }
+  togglePasswordShow = () => {
+    const { showPassword } = this.state;
+    this.setState({
+      showPassword: !showPassword,
+    });
+
+  }
+  toggleConfirmationPasswordShow = () => {
+    const { showPasswordConfirmation } = this.state;
+    this.setState({
+      showPasswordConfirmation: !showPasswordConfirmation,
+    });
+
   }
   dismissKeyboard = () => {
     Keyboard.dismiss();
   };
 
-  onFormSubmit = () => {
+  validateForm = () => {
     const { formObj } = this.state;
-    let data = new FormData();
-    for (let property in formObj) {
-      if(property === 'user[dob]') {
-        const date = ("0" + formObj[property].getDate()).slice(-2);
-        const month = ("0" + (formObj[property].getMonth()+1)).slice(-2);
-        const year = formObj[property].getFullYear();
-        data.append(property, `${year}-${month}-${date}`);
+    const errorsObj = {};
+    let errors = 0;
+    const requiredFields = ['user[name]','user[email]','user[phone]', 'user[password]', 'user[password_confirmation]', 'user[dob]', 'user[gender]' ];
+    requiredFields.map((key) => {
+      if (formObj[key]) {
+        if (key === 'user[name]') {
+          const regex = /^[a-zA-Z ]*$/;
+          if (!regex.test(formObj[key])) {
+            errors += 1;
+            errorsObj[key] = "Name can't have numbers and special characters";
+          } else {
+            errorsObj[key] = null;
+          }
+        } else if (key === 'user[email]') {
+          const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; //eslint-disable-line
+          if (!regex.test(formObj[key])) {
+            errors += 1;
+            errorsObj[key] = "Email ID isn't Valid";
+          } else {
+            errorsObj[key] = null;
+          }
+        } else if (key === 'user[phone]') {
+          const regex = /^[6-9]\d{9}$/; //eslint-disable-line
+          if (!regex.test(formObj[key])) {
+            errors += 1;
+            errorsObj[key] = "Phone Number isn't Valid";
+          } else {
+            errorsObj[key] = null;
+          }
+        } else if (key === 'user[password_confirmation]') {
+          if (formObj[key] !== formObj['user[password]']) {
+            errors += 1;
+            errorsObj[key] = "Confirmation Password Doesn't match";
+          } else {
+            errorsObj[key] = null;
+          }
+        } else {
+          errorsObj[key] = null;
+        }
       } else {
-        data.append(property, formObj[property]);
+        errors += 1;
+        errorsObj[key] = `Please Fill ${key.replace("user[", "").slice(0, -1)}`;
+      }
+      return key;
+    });
+    this.setState({
+      errorsObj,
+    });
+    if (errors) {
+      return false;
+    }
+    return true;
+  }
+
+  onFormSubmit = () => {
+    const isFormValid = this.validateForm();
+    if(isFormValid) {
+      const { formObj } = this.state;
+      if (formObj.otp && formObj.otp.length === 4) {
+        let data = new FormData();
+        for (let property in formObj) {
+          if(property === 'user[dob]') {
+            const date = ("0" + formObj[property].getDate()).slice(-2);
+            const month = ("0" + (formObj[property].getMonth()+1)).slice(-2);
+            const year = formObj[property].getFullYear();
+            data.append(property, `${year}-${month}-${date}`);
+          } else {
+            data.append(property, formObj[property]);
+          }
+        }  
+        this.props.attempSingUp(data);
+      } else {
+        this.props.errorToast("OTP Can't be blank");
+      }
+      
+    }
+  };
+
+  renderFormSubmitButton() {
+    const { otpStatus, fetching } = this.props;
+    switch(otpStatus) {
+      case 0:  {
+        return(
+          <TouchableOpacity
+            style={Styles.fBtn}
+            onPress={this.handleNextClick}
+            disabled={fetching}
+          >
+            <Text style={Styles.fBtnText}>Next</Text>
+            <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
+          </TouchableOpacity>
+        )
+      }
+      case 1:  {
+        return(
+          <TouchableOpacity
+            style={Styles.fBtn}
+            onPress={this.onFormSubmit}
+            disabled={fetching}
+          >
+            <Text style={Styles.fBtnText}>Register</Text>
+            <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
+          </TouchableOpacity>
+        )
+      }
+      case 2:  {
+        return(
+          <TouchableOpacity
+            style={Styles.fBtn}
+            onPress={this.handleNextClick}
+            disabled={fetching}
+          >
+            <Text style={Styles.fBtnText}>Resend OTP</Text>
+            <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
+          </TouchableOpacity>
+        )
+      }
+      default: {
+        return(
+          <TouchableOpacity
+            style={Styles.fBtn}
+            onPress={this.handleNextClick}
+            disabled={fetching}
+          >
+            <Text style={Styles.fBtnText}>Next</Text>
+            <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
+          </TouchableOpacity>
+        )
       }
     }
-    this.props.attempSingUp(data);
-  };
+  }
+
   render() {
     const { navigate } = this.props.navigation;
-    const { otpStatus, fetching } = this.props;
-    const { formObj } = this.state;
+    const { otpStatus, fetching, error } = this.props;
+    const { formObj, errorsObj, showPassword, showPasswordConfirmation } = this.state;
     return (
       <Container>
         <Header style={Styles.navigation}>
           <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
           <View style={Styles.nav}>
             <View style={Styles.navLeft}>
-              <TouchableOpacity style={Styles.navLeft} onPress={() => {
-                navigate("Login")
-              }}>
+              <TouchableOpacity style={Styles.navLeft} onPress={() => this.goToPage('Login')}>
                 <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
               </TouchableOpacity>
             </View>
@@ -108,7 +234,7 @@ class Register extends Component {
             </View>
             <View style={Styles.regForm}>
               <View style={Styles.infoBox}>
-                <View style={Styles.fRow}>
+                <View style={(errorsObj && errorsObj['user[name]']) || error ? Styles.fRowError : Styles.fRow }>
                   <Icon name='account' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
@@ -118,8 +244,9 @@ class Register extends Component {
                     keyboardType={'default'}
                     disabled={fetching}
                   />
+                  <Text style={Styles.fErrorLabel}>{errorsObj['user[name]']}</Text>
                 </View>
-                <View style={Styles.fRow}>
+                <View style={(errorsObj && errorsObj['user[email]']) || error ? Styles.fRowError : Styles.fRow }>
                   <Icon name='email' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
@@ -129,8 +256,9 @@ class Register extends Component {
                     onChangeText={(text) => this.onFormChange(text, 'user[email]')}
                     disabled={fetching}
                   />
+                  <Text style={Styles.fErrorLabel}>{errorsObj['user[email]']}</Text>
                 </View>
-                <View style={Styles.fRow}>
+                <View style={(errorsObj && errorsObj['user[phone]']) || error ? Styles.fRowError : Styles.fRow }>
                   <Icon name='mobile' type="FontAwesome" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
@@ -140,8 +268,9 @@ class Register extends Component {
                     onChangeText={(text) => this.onFormChange(text, 'user[phone]')}
                     disabled={fetching}
                   />
+                  <Text style={Styles.fErrorLabel}>{errorsObj['user[phone]']}</Text>
                 </View>
-                <View style={Styles.fRow}>
+                <View style={(errorsObj && errorsObj['user[dob]']) || error ? Styles.fRowError : Styles.fRow }>
                   <Icon name='calendar-today' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <DatePicker
                     defaultDate={new Date()}
@@ -158,8 +287,9 @@ class Register extends Component {
                     onDateChange={(date) => this.onFormChange(date, 'user[dob]')}
                     disabled={fetching}
                   />
+                  <Text style={Styles.fErrorLabel}>{errorsObj['user[dob]']}</Text>
                 </View>
-                <View style={Styles.fSelect}>
+                <View style={[Styles.fSelect, ((errorsObj && errorsObj['user[dob]']) || error) ? Styles.errorField : {} ]}>
                   <Icon name='account-card-details' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <View style={Styles.fPicker}>
                     <Picker
@@ -176,33 +306,48 @@ class Register extends Component {
                       <Picker.Item label="Others" value="others" />
                     </Picker>
                   </View>
+                  <Text style={Styles.fErrorLabel}>{errorsObj['user[gender]']}</Text>
                 </View>
-                <View style={Styles.fRow}>
+                <View style={(errorsObj && errorsObj['user[password]']) || error ? Styles.fRowError : Styles.fRow }>
                   <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
                     placeholder='Password'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     keyboardType={'default'}
-                    secureTextEntry
+                    secureTextEntry={!showPassword}
                     onChangeText={(text) => this.onFormChange(text, 'user[password]')}
                     disabled={fetching}
                   />
+                  <Icon
+                    name={showPassword ? 'eye-off' :'eye'}
+                    type="MaterialCommunityIcons"
+                    style={Styles.fIcon}
+                    onPress={this.togglePasswordShow}
+                  />
+                  <Text style={Styles.fErrorLabel}>{errorsObj['user[password]']}</Text>
                 </View>
-                <View style={Styles.fRow}>
+                <View style={(errorsObj && errorsObj['user[password_confirmation]']) || error ? Styles.fRowError : Styles.fRow }>
                   <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
                     placeholder='Confirm Password'
                     placeholderTextColor='rgba(36,42,56,0.4)'
-                    secureTextEntry
+                    secureTextEntry={!showPasswordConfirmation}
                     onChangeText={(text) => this.onFormChange(text, 'user[password_confirmation]')}
                     disabled={fetching}
                   />
+                  <Icon
+                    name={showPasswordConfirmation ? 'eye-off' :'eye'}
+                    type="MaterialCommunityIcons"
+                    style={Styles.fIcon}
+                    onPress={this.toggleConfirmationPasswordShow}
+                  />
+                  <Text style={Styles.fErrorLabel}>{errorsObj['user[password_confirmation]']}</Text>
                 </View>
                 {
                   otpStatus > 0 ?
-                    <View style={Styles.fRow}>
+                    <View style={(errorsObj && errorsObj['user[otp]']) || error ? Styles.fRowError : Styles.fRow }>
                       <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
                       <TextInput
                         style={Styles.fInput}
@@ -211,16 +356,19 @@ class Register extends Component {
                         onChangeText={(text) => this.onFormChange(text, 'otp')}
                         disabled={fetching}
                       />
+                      <Text style={Styles.fErrorLabel}>{errorsObj['otp']}</Text>
                     </View> : null
                 }
-                <TouchableOpacity
-                  style={Styles.fBtn}
-                  onPress={this.handleNextClick}
-                  disabled={fetching}
-                >
-                  <Text style={Styles.fBtnText}>{otpStatus !== 1 ? 'Next' : 'Register'}</Text>
-                  <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
-                </TouchableOpacity>
+                {
+                  otpStatus ?
+                  <View style={Styles.account}>
+                    <TouchableOpacity style={Styles.accountBtn} onPress={this.handleNextClick}>
+                      <Text style={Styles.accountBtnText}>Resend OTP</Text>
+                    </TouchableOpacity>
+                  </View> : null
+                }
+
+                {this.renderFormSubmitButton()}
               </View>
             </View>
             <View style={Styles.account}>
@@ -251,6 +399,7 @@ const mapStateToProps = (state) => {
   return {
     otpStatus: state.login.getOtpStatus,
     fetching: state.login.fetching,
+    error: state.login.signUpErrors,
   }
 }
 

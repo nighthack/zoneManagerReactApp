@@ -77,6 +77,7 @@ export default StyleSheet.create({
     padding: 15
   },
   fSelect: {
+    position: 'relative',
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
@@ -84,6 +85,20 @@ export default StyleSheet.create({
     paddingLeft: 5,
     borderBottomWidth: 1,
     borderColor: 'rgba(36,42,56,0.05)'
+  },
+  fSelectError: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingLeft: 5,
+    borderBottomWidth: 1,
+    borderColor: '#bb0000',
+    backgroundColor: '#fff6f6',
+  },
+  errorField: {
+     borderColor: '#bb0000',
+    backgroundColor: '#fff6f6',
   },
   fRow: {
     flex: 1,
@@ -127,7 +142,8 @@ export default StyleSheet.create({
     backgroundColor: '#f5821f',
     paddingVertical: 15,
     paddingHorizontal: 15,
-    borderRadius: 3
+    borderRadius: 3,
+    marginVertical: 15,
   },
   fBtnText: {
     // 
@@ -160,4 +176,33 @@ export default StyleSheet.create({
     fontSize: 12,
     color: 'rgba(36,42,56,0.99)'
   },
+    errorText: {  
+    fontSize: 12,
+    color: Colors.fire,
+    marginBottom: Metrics.baseMargin,
+  },
+    fRowError: {
+    position: 'relative',
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    ...Platform.select({
+      ios: {
+        paddingVertical: 10,
+      },
+    }),
+    paddingHorizontal: 5,
+    marginBottom: 18,
+    borderBottomWidth: 1,
+    borderColor: '#bb0000',
+    backgroundColor: '#fff6f6',
+  },
+  fErrorLabel:{
+    color: '#bb0000',
+    fontSize: 10,
+    position: 'absolute',
+    bottom: -15,
+  },
+
 })

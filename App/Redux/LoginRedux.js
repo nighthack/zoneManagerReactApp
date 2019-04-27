@@ -25,7 +25,7 @@ const { Types, Creators } = createActions({
   // SignUp Actions
   signupRequest: ['data'],
   signupSuccess: ['response'],
-  signupFailure: ['response'],
+  signupFailure: ['errors'],
 
   // Reset Password Actions
   resetPasswordRequest: ['data'],
@@ -107,8 +107,8 @@ export const onSignUpsuccess = (state, { response }) => {
   return state.merge({ fetching: false, error: null, user: response, signupApiStatus: 1 })
 }
 // Something went wrong somewhere.
-export const onSignUpfailure = state =>
-  state.merge({ fetching: false, error: true, signupApiStatus: 2 })
+export const onSignUpfailure = (state, { errors }) =>
+  state.merge({ fetching: false, signupApiStatus: 2, signUpErrors: errors })
 
 export const onResetPassword = (state) => state.merge({ fetching: true, resetPasswordApiStatus: 0 })
 
