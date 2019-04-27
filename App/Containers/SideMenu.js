@@ -76,7 +76,7 @@ class SideMenu extends Component {
 
   }
   onLogout = () => {
-    const { access_token } = this.props.token.user;
+    const { access_token } = this.props.user;
     const accessToken = access_token;
     this.props.deleteToken(accessToken);
     const { navigate } = this.props.navigation;

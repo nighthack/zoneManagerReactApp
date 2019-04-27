@@ -12,7 +12,15 @@ import { DevelopmentWorkTypes } from '../Redux/DevelopmentWorkRedux'
 /* ------------- Sagas ------------- */
 
 // import { startup } from './StartupSagas'
-import { login, getOTP, verifyOTP, singupRequest, onLogout, onResetPasswordAction } from './LoginSaga'
+import { 
+    login, 
+    getOTP, 
+    verifyOTP, 
+    singupRequest, 
+    onLogout, 
+    onResetPasswordAction, 
+    onVerifyUser,
+} from './LoginSaga'
 import { getBeneficiary, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevelopmentList, getDevelopmentDetails } from './DevelopmentWorkSagas'
 // import { getAllPositions,  } from './VerifiedSignUpSagas'
@@ -26,16 +34,16 @@ const api = DebugConfig.useFixtures ? FixtureAPI : API.create()
 
 /* ------------- Connect Types To Sagas ------------- */
 export default function* root() {
-    console.log(LoginTypes)
+
   yield all([
     // some sagas only receive an action
     takeLatest(LoginTypes.LOGIN_REQUEST, login),
     takeLatest(LoginTypes.OTP_REQUEST, getOTP),
-    takeLatest(LoginTypes.VERIFY_OTP, verifyOTP),
-    takeLatest(LoginTypes.VERIFY_OTP, verifyOTP),
+    // takeLatest(LoginTypes.VERIFY_OTP, verifyOTP),
     takeLatest(LoginTypes.SIGNUP_REQUEST, singupRequest),
     takeLatest(LoginTypes.LOGOUT_REQUEST, onLogout),
     takeLatest(LoginTypes.RESET_PASSWORD_REQUEST, onResetPasswordAction),
+    takeLatest(LoginTypes.VERIFY_USER, onVerifyUser),
     // Beneficiary Module
     takeLatest(BeneficiaryTypes.BENEFICIARY_REQUEST, getBeneficiary),
     takeLatest(BeneficiaryTypes.BENEFICIARY_DETAILS_REQUEST, getBeneficiaryDetails),

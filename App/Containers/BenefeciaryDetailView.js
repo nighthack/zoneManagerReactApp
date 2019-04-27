@@ -14,7 +14,7 @@ class BenefeciaryDetailView extends Component {
   componentDidMount() {
     const { navigation, user } = this.props;
     const selectedScheme = navigation.getParam('selectedScheme', null);
-    if (token && token.user && selectedScheme && selectedScheme.id) {
+    if (user && selectedScheme && selectedScheme.id) {
       this.props.getDetailsForSelection(selectedScheme.id, user.access_token);
     }
   }

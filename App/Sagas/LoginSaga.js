@@ -25,16 +25,18 @@ export function* login({ phone, password }) {
       credentials: 'same-origin'
 
     };
-    const { user, message } = yield call(request, `${BASE_URL}${API_VERSION}users/sign_in`, options);
+    const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users/sign_in`, options);
+    const { user, message } = body;
     yield put(LoginActions.loginSuccess(user, message))
-    if (user && user.access_token) {
+    if (status >= 200 && status < 300) {
       yield put(NavigationActions.navigate({ routeName: 'Home' }))
+      yield put(LoginActions.resetStateOnNavigation());
     } else {
+      yield put(LoginActions.loginFailure())
       yield put(ToastActionsCreators.displayWarning(message))
     }
-
   } catch (e) {
-    yield put(ToastActionsCreators.displayWarning('Invalid User Phone / password!'))
+    console.log(e);
     yield put(LoginActions.loginFailure('WRONG'))
   }
 }
@@ -42,7 +44,6 @@ export function* login({ phone, password }) {
 export function* getOTP({ phone }) {
   try {
     const headers = new Headers({
-      // "Content-Type": "application/x-www-form-urlencoded",
       'Content-Type': 'multipart/form-data',
       "cache-control": "no-cache",
     });
@@ -57,48 +58,59 @@ export function* getOTP({ phone }) {
       contentType: false,
       credentials: 'same-origin'
     };
-    const response = yield call(request, `${BASE_URL}${API_VERSION}users/otp`, options);
-    yield put(ToastActionsCreators.displayInfo(response.message))
-    yield put(LoginActions.otpSuccess(response));
-    
+    const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users/otp`, options);
+    if (status >= 200 && status < 300) {
+      const { message } = body;
+      yield put(ToastActionsCreators.displayInfo(message))
+      yield put(LoginActions.otpSuccess(body));
+    } else {
+      yield put(ToastActionsCreators.displayInfo(message))
+      yield put(LoginActions.otpFailure(body))
+    }
 
   } catch (e) {
     const response = { message: "Oops Please try again" };
     yield put(ToastActionsCreators.displayInfo(response.message))
     yield put(LoginActions.otpFailure(response))
+    yield put(NavigationActions.navigate({ routeName: 'NetworkError' }))
+    yield put(LoginActions.resetStateOnNavigation());
   }
 }
 
-export function* verifyOTP({ phone, otp }) {
-  try {
-    const headers = new Headers({
-      // "Content-Type": "application/x-www-form-urlencoded",
-      'Content-Type': 'multipart/form-data',
-      "cache-control": "no-cache",
-    });
-    var form = new FormData();
-    form.append("phone", phone);
-    form.append("otp", otp);
-    form.append("app_token", APP_TOKEN);
-    const options = {
-      method: 'POST',
-      body: form,
-      headers,
-      processData: false,
-      contentType: false,
-      credentials: 'same-origin'
-    };
-    const response = yield call(request, `${BASE_URL}${API_VERSION}users/otp_verify`, options);
-    yield put(LoginActions.verifyOtpSuccess(response))
-    const { user } = response;
-    if(user) {
-      yield put(NavigationActions.navigate({ routeName: 'Home'}, { user } ))
-    }
-  } catch (e) {
-    const response = { message: "Oops Please try" };
-    yield put(LoginActions.verifyOtpFailure(response))
-  }
-}
+// export function* verifyOTP({ phone, otp }) {
+//   try {
+//     const headers = new Headers({
+//       'Content-Type': 'multipart/form-data',
+//       "cache-control": "no-cache",
+//     });
+//     var form = new FormData();
+//     form.append("phone", phone);
+//     form.append("otp", otp);
+//     form.append("app_token", APP_TOKEN);
+//     const options = {
+//       method: 'POST',
+//       body: form,
+//       headers,
+//       processData: false,
+//       contentType: false,
+//       credentials: 'same-origin'
+//     };
+//     const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users/otp_verify`, options);
+
+//     if (status >= 200 && status < 300) {
+//       const { message, user } = body;
+//       yield put(ToastActionsCreators.displayInfo(message))
+//       yield put(LoginActions.verifyOtpSuccess(response))
+//       yield put(NavigationActions.navigate({ routeName: 'Home' }, { user }))
+//     } else {
+//       yield put(ToastActionsCreators.displayInfo(message))
+//       yield put(LoginActions.verifyOtpFailure(body))
+//     }
+//   } catch (e) {
+//     const response = { message: "Oops Please try" };
+//     yield put(LoginActions.verifyOtpFailure(response))
+//   }
+// }
 
 
 export function* singupRequest({ data }) {
@@ -119,10 +131,11 @@ export function* singupRequest({ data }) {
     const response = yield call(request, `${BASE_URL}${API_VERSION}users`, options);
     yield put(LoginActions.signupSuccess(response));
     const { user, errors } = response;
-    if(user) {
-      yield put(NavigationActions.navigate({ routeName: 'Home'}, { user } ))
+    if (user) {
+      yield put(NavigationActions.navigate({ routeName: 'Home' }, { user }))
+      yield put(LoginActions.resetStateOnNavigation());
     }
-    if(errors) {
+    if (errors) {
       yield put(ToastActionsCreators.displayInfo('Errors In form'))
     }
   } catch (e) {
@@ -163,11 +176,51 @@ export function* onResetPasswordAction({ data }) {
       credentials: 'same-origin',
       body: data,
     };
-    const response = yield call(request, `${BASE_URL}${API_VERSION}users/reset_password`, options);
-    yield put(LoginActions.resetPasswordSuccess(response));
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}users/reset_password`, options);
+    const { user, message, errors } = body;
+    if((status >= 200 && status < 300)) {
+      if(user && user.access_token) {
+        yield put(LoginActions.resetPasswordSuccess(user));
+        yield put(NavigationActions.navigate({ routeName: 'Home' }))
+        yield put(LoginActions.resetStateOnNavigation());
+      } else {
+        yield put(LoginActions.resetPasswordFailure(errors))
+        yield put(ToastActionsCreators.displayWarning(message))
+      }
+
+    } else {
+      yield put(LoginActions.resetPasswordFailure({}))
+      yield put(ToastActionsCreators.displayWarning(message))
+    }
+    
   } catch (e) {
+    yield put(NavigationActions.navigate({ routeName: 'NetworkError' }))
     yield put(LoginActions.resetPasswordFailure({}))
+    yield put(LoginActions.resetStateOnNavigation());
     yield put(ToastActionsCreators.displayInfo('Please try again'))
   }
 }
 
+export function* onVerifyUser({ phone }) {
+  try {
+    const options = {
+      method: 'GET',
+    };
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}users/exists?app_token=${APP_TOKEN}&phone=${phone}`, options);
+    yield put(LoginActions.otpRequest(phone))
+    if(!(status >= 200 && status < 300)) {
+      yield put(NavigationActions.navigate(
+        { routeName: 'RegisterScreen' },
+        { phone }
+        )
+      )
+      yield put(ToastActionsCreators.displayInfo('Oops Looks like you are new, Please Register first'))
+    }
+  } catch (e) {
+    yield put(LoginActions.verifyUserFail())
+    yield put(
+        NavigationActions.navigate({ routeName: 'NetworkError' })
+      )
+    yield put(ToastActionsCreators.displayInfo('Oops Looks like you are new, Please Register first'))
+  }
+}

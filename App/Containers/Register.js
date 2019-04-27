@@ -4,6 +4,7 @@ import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body
 import { connect } from 'react-redux'
 import { Images } from '../Themes/'
 import { ToastActionsCreators } from 'react-native-redux-toast';
+import LoadingOverlay from '../Components/LoadingOverlay';
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 // import YourActions from '../Redux/YourRedux'
 import LoginActions from '../Redux/LoginRedux'
@@ -12,9 +13,12 @@ import Styles from './Styles/RegisterStyle'
 
 class Register extends Component {
   constructor(props) {
-    super(props)
+    super(props);
+    const phone = props.navigation.getParam('phone', null);
     this.state = {
-      formObj: {},
+      formObj: {
+        'user[phone]': phone,
+      },
     }
   }
 
@@ -40,7 +44,17 @@ class Register extends Component {
     } else {
       this.onFormSubmit();
     }
+  }
 
+  goToPage = (route) => {
+    const { navigation } = this.props;
+    navigation.navigate(route);
+    this.props.onNavigationResetState();
+    this.setState({
+      formObj: {},
+      errorObj: {},
+      showPassword: false,
+    });
   }
   dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -220,7 +234,13 @@ class Register extends Component {
 
           </View>
         </Content>
-
+        <LoadingOverlay
+          visible={fetching}
+        >
+          <View>
+            <Image source={Images.bjpGif} />
+          </View>
+        </LoadingOverlay>
       </Container>
 
     )
@@ -238,7 +258,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getOTPForNumber: (phone) => dispatch(LoginActions.otpRequest(phone)),
     errorToast: (msg) => dispatch(ToastActionsCreators.displayError(msg)),
-    attempSingUp: (data) => dispatch(LoginActions.signupRequest(data))
+    attempSingUp: (data) => dispatch(LoginActions.signupRequest(data)),
+    onNavigationResetState: () => dispatch(LoginActions.resetStateOnNavigation()),
   }
 }
 

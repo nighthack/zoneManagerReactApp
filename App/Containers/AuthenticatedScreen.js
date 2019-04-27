@@ -63,7 +63,7 @@ class AuthenticatedScreen extends Component {
     const { beneficiaryList } = this.props;
     return (
       <View style={Styles.layoutDefault}>
-        <HeaderComponent title={'Development Works'} {...this.props} />
+        <HeaderComponent title={'Beneficiary List'} {...this.props} />
         <FlatList
           contentContainerStyle={Styles.listContent}
           data={beneficiaryList}

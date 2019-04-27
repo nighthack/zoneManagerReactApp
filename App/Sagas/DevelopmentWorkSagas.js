@@ -20,8 +20,8 @@ export function * getDevelopmentList ({ accessToken }) {
     const options = {
       method: 'GET',
     };
-    const response = yield call(request, `${BASE_URL}${API_VERSION}development_works?access_token=${accessToken}`, options);
-    yield put(DevelopmentWorkActions.developmentWorkSuccess(response))
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}development_works?access_token=${accessToken}`, options);
+    yield put(DevelopmentWorkActions.developmentWorkSuccess(body))
   } catch (e) {
     yield put(DevelopmentWorkActions.developmentWorkFailure())
   }
@@ -32,8 +32,8 @@ export function * getDevelopmentDetails ({ accessToken, id }) {
     const options = {
       method: 'GET',
     };
-    const response = yield call(request, `${BASE_URL}${API_VERSION}development_works/${id}?access_token=${accessToken}`, options);
-    yield put(DevelopmentWorkActions.developmentWorkDetailsSuccess(response))
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}development_works/${id}?access_token=${accessToken}`, options);
+    yield put(DevelopmentWorkActions.developmentWorkDetailsSuccess(body))
   } catch (e) {
     yield put(DevelopmentWorkActions.developmentWorkDetailsFailure())
   }

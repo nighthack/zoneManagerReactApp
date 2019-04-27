@@ -19,8 +19,8 @@ export function * getBeneficiary ({ accessToken }) {
     const options = {
       method: 'GET',
     };
-    const response = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes?access_token=${accessToken}`, options);
-    yield put(BeneficiaryActions.beneficiarySuccess(response))
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes?access_token=${accessToken}`, options);
+    yield put(BeneficiaryActions.beneficiarySuccess(body))
   } catch (e) {
     yield put(BeneficiaryActions.beneficiaryFailure())
   }
@@ -31,8 +31,8 @@ export function * getBeneficiaryDetails ({ accessToken, id }) {
     const options = {
       method: 'GET',
     };
-    const response = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes/${id}?access_token=${accessToken}`, options);
-    yield put(BeneficiaryActions.beneficiaryDetailsSuccess(response))
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes/${id}?access_token=${accessToken}`, options);
+    yield put(BeneficiaryActions.beneficiaryDetailsSuccess(body))
   } catch (e) {
     yield put(BeneficiaryActions.beneficiaryDetailsFailure())
   }

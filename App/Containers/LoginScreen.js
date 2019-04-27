@@ -140,9 +140,9 @@ class LoginScreen extends Component {
                     <Text style={Styles.forgotPassword}>Forgot your password?</Text>
                   </TouchableOpacity>
                 </View>
-                             {
-                error ? <Text style={Styles.errorText}>Invalid Credentials</Text> : null
-              }
+                {
+                  error ? <Text style={Styles.errorText}>Invalid Credentials</Text> : null
+                }
                 <TouchableOpacity
                   style={Styles.fBtn}
                   onPress={this.onFormSubmit}

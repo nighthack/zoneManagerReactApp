@@ -7,6 +7,7 @@ import LaunchScreen from '../Containers/LaunchScreen'
 import LoginScreen from '../Containers/LoginScreen'
 import SplashScreen from '../Components/SplashScreen';
 import ForgotPasswordScreen from '../Containers/ForgotPassword'
+import NetworkError from '../Components/NetworkErrorScreen'
 
 
 // These Are the post authencation Screens
@@ -60,7 +61,10 @@ const AuthStack = createStackNavigator(
     },
     ForgotPassword: {
       screen: ForgotPasswordScreen,
-    }
+    },
+    NetworkError: {
+      screen: NetworkError,
+    },
   },
   {
     headerMode: 'none',
