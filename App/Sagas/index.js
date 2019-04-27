@@ -9,6 +9,8 @@ import { LoginTypes } from '../Redux/LoginRedux'
 import { VerifiedSignUpTypes } from '../Redux/VerifiedSignUpRedux'
 import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
 import { DevelopmentWorkTypes } from '../Redux/DevelopmentWorkRedux'
+import { EventTypes } from '../Redux/EventRedux'
+import { FeedbackTypes } from '../Redux/FeedbackRedux'
 /* ------------- Sagas ------------- */
 
 // import { startup } from './StartupSagas'
@@ -23,6 +25,8 @@ import {
 } from './LoginSaga'
 import { getBeneficiary, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevelopmentList, getDevelopmentDetails } from './DevelopmentWorkSagas'
+import { getEventsList, getEventDetails } from './EventSagas';
+import { getPlacesList, getDepartmentsList, getFeedbackList } from './FeedbackSagas';
 // import { getAllPositions,  } from './VerifiedSignUpSagas'
 
 
@@ -34,6 +38,7 @@ const api = DebugConfig.useFixtures ? FixtureAPI : API.create()
 
 /* ------------- Connect Types To Sagas ------------- */
 export default function* root() {
+    console.log()
 
   yield all([
     // some sagas only receive an action
@@ -50,5 +55,12 @@ export default function* root() {
     // Development Module
     takeLatest(DevelopmentWorkTypes.DEVELOPMENT_WORK_REQUEST, getDevelopmentList),
     takeLatest(DevelopmentWorkTypes.DEVELOPMENT_WORK_DETAILS_REQUEST, getDevelopmentDetails),
+    // Feedback Module
+    takeLatest(FeedbackTypes.GET_PLACES_LIST, getPlacesList),
+    takeLatest(FeedbackTypes.GET_DEPARTMENTS_LIST, getDepartmentsList),
+    takeLatest(FeedbackTypes.FEEDBACK_REQUEST,getFeedbackList),
+    // Events
+    takeLatest(EventTypes.EVENT_REQUEST, getEventsList),
+    takeLatest(EventTypes.EVENT_DETAILS_REQUEST,getEventDetails),
   ])
 }

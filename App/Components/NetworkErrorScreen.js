@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
-import { Container, Header, Title, Content, Footer, FooterTab, Button, Left, Right, Body, Icon, Text } from 'native-base';
+import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
+import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
+import { Images } from '../Themes/'
 import Styles from './Styles/NetworkErrorScreenStyle'
 
 export default class NetworkErrorScreen extends Component {
@@ -16,12 +18,38 @@ export default class NetworkErrorScreen extends Component {
   // }
 
   render() {
+    const { navigation } = this.props;
     return (
       <Container>
-        <Content style={Styles.container}>
-          <Text>
-            Network Error
-          </Text>
+        <Header style={Styles.navigation} />
+        <Content contentContainerStyle={Styles.layoutDefault}>
+            <Image source={Images.background} style={Styles.bgImg} />
+            <View style={Styles.bgLayout}>
+                <View style={Styles.hTop}>
+                    <Icon name='signal-wifi-off' type="MaterialIcons" style={Styles.hImg} />
+                    <View style={Styles.hContent}>
+                        <Text style={Styles.hTopText}>Network Error</Text>
+                        <Text style={Styles.hTopDesc}>Oops!! there is some trouble</Text>
+                    </View>
+                </View>
+
+                <View style={Styles.tripItem}>
+                    <View style={Styles.truckInfo}>
+                      <View>
+                        <Text style={Styles.truckTrip}>Sorry</Text>
+                        <Text style={Styles.truckData}>Looks Like the internet is too slow please try back in some time or click below to retry</Text>
+                      </View>
+                    </View>
+                    <View style={Styles.decisionBox}>
+                        <TouchableOpacity style={Styles.acceptBtn} onPress={() => {
+                           navigation.navigate("Login")
+                        }}>
+                            <Text style={Styles.btnText}>Retry</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+            </View>
         </Content>
       </Container>
     )

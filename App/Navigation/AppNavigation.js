@@ -15,15 +15,21 @@ import BeneficiaryListingScreen from '../Containers/AuthenticatedScreen'
 import BeneficiaryDetailScreen from '../Containers/BenefeciaryDetailView'
 
 // These Are the post authencation Screens
+import EventsListScreen from '../Containers/EventsList';
+import EventDetailScreen from '../Containers/EventDetail';
+
+// FeedBack Screen
+import FeedbackScreen from '../Containers/FeedbackScreen';
+import FeedbackList from '../Containers/FeedbackList';
+import FeedbackDetailScreen from '../Containers/FeedbackDetail';
+
+import UserSettings from '../Containers/UserSettings';
+
+// These Are the post authencation Screens
 import DevelopmentWorksList from '../Containers/DevelopmentWorksList'
 import DevelopmentWorkDetail from '../Containers/DevelopmentWorkDetail'
 
 import DrawerComponent from '../Containers/SideMenu';
-import { View, Text, Image, Button } from 'react-native'
-import React, { Component } from 'react'
-import { Images, Metrics } from '../Themes/'
-
-import styles from './Styles/NavigationStyles'
 
 const MyDrawerNavigator = createDrawerNavigator({
   Home: {
@@ -37,6 +43,24 @@ const MyDrawerNavigator = createDrawerNavigator({
   },
   DevelopmentWorkDetail: {
     screen : DevelopmentWorkDetail
+  },
+  EventsListScreen: {
+    screen: EventsListScreen,
+  },
+  EventDetailScreen: {
+    screen: EventDetailScreen,
+  },
+  FeedbackScreen: {
+    screen: FeedbackScreen,
+  },
+  FeedbackList: {
+    screen: FeedbackList,
+  },
+  FeedbackDetailScreen: {
+    screen: FeedbackDetailScreen,
+  },
+  UserSettings: {
+    screen: UserSettings,
   },
   Notifications: {
     screen: LaunchScreen,

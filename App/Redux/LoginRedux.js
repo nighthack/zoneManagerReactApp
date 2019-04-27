@@ -25,7 +25,7 @@ const { Types, Creators } = createActions({
   // SignUp Actions
   signupRequest: ['data'],
   signupSuccess: ['response'],
-  signupFailure: ['response'],
+  signupFailure: ['errors'],
 
   // Reset Password Actions
   resetPasswordRequest: ['data'],
@@ -88,18 +88,6 @@ export const getOTPsuccess = (state, { response }) => state.merge({ fetching: fa
 export const getOTPfailure = (state, { response }) => state.merge({ fetching: false, getOtpStatus: 2 })
 
 
-// // Something went wrong somewhere.
-// export const verifyOTPRequest = (state, { otp, phone }) =>
-//   state.merge({ fetching: true, verifyOTPapiStatus: 0, otpOptions: { otp, phone } })
-
-// export const verifyOTPsuccess = (state, { response }) => {
-//   return state.merge({ fetching: false, error: null, verifyOtpResponse: response, verifyOTPapiStatus: 1 })
-// };
-
-// export const verifyOTPfailure = (state, { response }) => {
-//   return state.merge({ fetching: false, error: true, verifyOtpResponse: response, verifyOTPapiStatus: 2 })
-// }
-
 export const onSignUp = (state) => state.merge({ fetching: true, signupApiStatus: 0 })
 
 // successful api lookup
@@ -107,8 +95,8 @@ export const onSignUpsuccess = (state, { response }) => {
   return state.merge({ fetching: false, error: null, user: response, signupApiStatus: 1 })
 }
 // Something went wrong somewhere.
-export const onSignUpfailure = state =>
-  state.merge({ fetching: false, error: true, signupApiStatus: 2 })
+export const onSignUpfailure = (state, { errors }) =>
+  state.merge({ fetching: false, signupApiStatus: 2, signUpErrors: errors })
 
 export const onResetPassword = (state) => state.merge({ fetching: true, resetPasswordApiStatus: 0 })
 

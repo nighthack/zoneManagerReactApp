@@ -40,10 +40,10 @@ export default StyleSheet.create({
     alignItems: 'center'
   },
   navName: {
-    fontSize: 14,
+    fontSize: 20,
     // 
     color: '#F5821F',
-    marginTop: 10
+    marginTop: 15
   },
 
   profileItem: {
@@ -83,6 +83,10 @@ export default StyleSheet.create({
     fontSize: 12,
     // 
     color: 'rgba(0,0,0,0.5)'
-  }
+  },
+     hUserIcon: {
+    fontSize: 64,
+    color: '#FFD328'
+  },
 
 })

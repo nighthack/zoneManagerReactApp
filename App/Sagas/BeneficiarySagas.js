@@ -20,7 +20,12 @@ export function * getBeneficiary ({ accessToken }) {
       method: 'GET',
     };
     const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes?access_token=${accessToken}`, options);
-    yield put(BeneficiaryActions.beneficiarySuccess(body))
+    if (status >= 200 && status < 300) {
+      yield put(BeneficiaryActions.beneficiarySuccess(body))
+    } else {
+      yield put(BeneficiaryActions.beneficiaryFailure())
+    }
+   
   } catch (e) {
     yield put(BeneficiaryActions.beneficiaryFailure())
   }
@@ -32,7 +37,12 @@ export function * getBeneficiaryDetails ({ accessToken, id }) {
       method: 'GET',
     };
     const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes/${id}?access_token=${accessToken}`, options);
-    yield put(BeneficiaryActions.beneficiaryDetailsSuccess(body))
+      if (status >= 200 && status < 300) { 
+        yield put(BeneficiaryActions.beneficiaryDetailsSuccess(body))  
+      } else {
+        yield put(BeneficiaryActions.beneficiaryDetailsFailure())
+      }
+
   } catch (e) {
     yield put(BeneficiaryActions.beneficiaryDetailsFailure())
   }

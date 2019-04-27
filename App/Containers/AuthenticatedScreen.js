@@ -3,9 +3,9 @@ import { connect } from 'react-redux'
 import { TouchableOpacity, FlatList, Image } from 'react-native'
 import { Icon, Text, View, Badge } from 'native-base'
 import HeaderComponent from '../Components/HeaderComponent'
-
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
-
+import LoadingOverlay from '../Components/LoadingOverlay';
+import { Images } from '../Themes/'
 import Styles from './Styles/BenefeciaryDetailViewStyle'
 
 class AuthenticatedScreen extends Component {
@@ -60,7 +60,7 @@ class AuthenticatedScreen extends Component {
   }
 
   render() {
-    const { beneficiaryList } = this.props;
+    const { beneficiaryList, fetching } = this.props;
     return (
       <View style={Styles.layoutDefault}>
         <HeaderComponent title={'Beneficiary List'} {...this.props} />
@@ -72,6 +72,15 @@ class AuthenticatedScreen extends Component {
           initialNumToRender={this.oneScreensWorth}
           ListEmptyComponent={this.renderEmpty}
         />
+        <LoadingOverlay
+          visible={fetching}
+        >
+        <View>
+            <Image
+              source={Images.bjpGif}
+              />
+          </View>
+        </LoadingOverlay>
       </View>
 
     )
@@ -81,7 +90,8 @@ class AuthenticatedScreen extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.login.user,
-    beneficiaryList: state.beneficiary.beneficiaryList
+    beneficiaryList: state.beneficiary.beneficiaryList,
+    fetching: state.beneficiary.fetching,
   }
 }
 

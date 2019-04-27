@@ -2,53 +2,76 @@ import { StyleSheet, Platform } from 'react-native'
 import { Colors, Metrics, ApplicationStyles } from '../../Themes/'
 
 export default StyleSheet.create({
-  ...ApplicationStyles.screen,
-  bgLayout: {},
+...ApplicationStyles.screen,
+  bgLayout: {
+  },
   bgImg: {
     position: 'absolute',
     width: '100%',
-    height: 230
+    height: 220
   },
-    hContent: {
+
+  /** Header **/
+  hTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 30,
+    marginHorizontal: 20
+  },
+  hImg: {
+    width: 64,
+    height: 64,
+    borderRadius: 32
+  },
+  hContent: {
     justifyContent: 'center',
     marginLeft: 10
   },
   hTopText: {
     fontSize: 20,
-    // 
+    // fontFamily: 'Montserrat-Regular',
     color: '#FFF',
-    marginBottom: 5
-  },
-  hImg: {
-    fontSize: 64,
-    color: '#FFD328'
-  },
-  hTop: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 15,
     marginBottom: 5
   },
   hTopDesc: {
     fontSize: 11,
-    // 
+    // fontFamily: 'Montserrat-Regular',
     color: 'rgba(255,255,255,0.6)',
     marginBottom: 10
   },
-  /** Form **/
-  regForm: {
+  hIcon: {
+    fontSize: 16,
+    color: '#FFF',
+    backgroundColor: '#e64d00',
+    borderRadius: 25,
+    textAlign: 'center',
+    padding: 2
+  },
+  imgEdit: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 24,
+    height: 24,
+    position: 'absolute',
+    borderRadius: 12,
+    backgroundColor: '#FF8901',
+    left: 0,
+    bottom: 0
+  },
+  imgEditIcon: {
+    color: '#FFF',
+    fontSize: 16
+  },
+
+/** Form **/
+regForm: {
     width: '100%',
     marginBottom: 15
   },
-  infoHeader: {
-    backgroundColor: '#242A38',
-    borderRadius: 3,
-    paddingHorizontal: 15,
-    paddingVertical: 15
-  },
-  infoHeaderText: {
+  regText: {
+    fontSize: 12,
     // fontFamily: 'Montserrat-Regular',
-    fontSize: 14,
     color: '#FFF'
   },
   infoBox: {
@@ -64,6 +87,17 @@ export default StyleSheet.create({
     marginHorizontal: 20,
     marginBottom: 20,
     borderRadius: 3
+  },
+  infoHeader: {
+    backgroundColor: '#242A38',
+    borderRadius: 3,
+    paddingHorizontal: 15,
+    paddingVertical: 15
+  },
+  infoHeaderText: {
+    // fontFamily: 'Montserrat-Regular',
+    fontSize: 14,
+    color: '#FFF'
   },
   fSelect: {
     flex: 1,
@@ -103,7 +137,8 @@ export default StyleSheet.create({
   fInput: {
     flex: 1,
     // fontFamily: 'Montserrat-Regular',
-    fontSize: 12
+    fontSize: 12,
+    paddingVertical: 8
   },
 
   fBtn: {
@@ -111,11 +146,11 @@ export default StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: '#FF8901',
-    marginHorizontal: 15,
     paddingVertical: 15,
     paddingHorizontal: 15,
-    marginBottom: 15,
-    borderRadius: 3
+    borderRadius: 3,
+    marginHorizontal: 15,
+    marginBottom: 15
   },
   fBtnText: {
     // fontFamily: 'Montserrat-SemiBold',
@@ -127,33 +162,8 @@ export default StyleSheet.create({
     fontSize: 12,
     color: '#FFF'
   },
-
-  photos: {
-    flex: 1,
-    flexDirection: 'row',
-    padding: 15
+   hUserIcon: {
+    fontSize: 64,
+    color: '#FFD328'
   },
-  truckImg: {
-    width: 90,
-    height: 64,
-    marginVertical: 5,
-    marginHorizontal: 5,
-    borderRadius: 3
-  },
-  photoDelete: {
-    position: 'absolute',
-    right: 5,
-    top: 1,
-    padding: 3,
-    borderRadius: 3,
-    backgroundColor: '#FF0000'
-  },
-  photoDeleteIcon: {
-    fontSize: 14,
-    color: '#FFF'
-  },
-  marginTopSmall: {
-    marginTop: Metrics.baseMargin,
-    marginBottom: Metrics.doubleBaseMargin,
-  }
 })

@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
+import { StatusBar, TouchableOpacity, Image, } from 'react-native'
+import { Container, Header, Content, Icon, Text, View } from 'native-base'
 import { Images } from '../Themes/'
+import LoadingOverlay from '../Components/LoadingOverlay';
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 
 // Styles
@@ -20,58 +21,69 @@ class BenefeciaryDetailView extends Component {
   }
 
   render() {
-    const { selectedScheme, navigation, user } = this.props;
-     const parentProps = navigation.getParam('selectedScheme', null);
-     if(parentProps.id !== selectedScheme.id) {
+    const { selectedScheme, navigation, user, fetching } = this.props;
+    const parentProps = navigation.getParam('selectedScheme', null);
+    if (parentProps.id !== selectedScheme.id) {
       this.props.getDetailsForSelection(parentProps.id, user.access_token);
-     }
+    }
     return (
       <Container>
-            <Header style={Styles.navigation}>
-                <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
-                <View style={Styles.nav}>
-                    <View style={Styles.navLeft}>
-                        <TouchableOpacity style={Styles.navLeft} onPress={() => {
-                            navigation.navigate("Home")
-                        }}>
-                            <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={Styles.navMiddle}>
-                      <Text style={Styles.logo}>Beneficiary Details</Text>
-                    </View>
-                    <View style={Styles.navRight} />
+        <Header style={Styles.navigation}>
+          <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
+          <View style={Styles.nav}>
+            <View style={Styles.navLeft}>
+              <TouchableOpacity style={Styles.navLeft} onPress={() => {
+                navigation.navigate("Home")
+              }}>
+                <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
+              </TouchableOpacity>
+            </View>
+            <View style={Styles.navMiddle}>
+              <Text style={Styles.logo}>Beneficiary Details</Text>
+            </View>
+            <View style={Styles.navRight} />
+          </View>
+        </Header>
+        <Content contentContainerStyle={Styles.layoutDefault}>
+          <Image source={Images.background} style={Styles.bgImg} />
+          <View style={[Styles.bgLayout, Styles.marginTopSmall]}>
+            <View style={Styles.hTop}>
+              <Icon name='user-o' type='FontAwesome' style={Styles.hImg} />
+              <View style={Styles.hContent}>
+                <Text style={Styles.hTopText}>{selectedScheme.beneficiary_name}</Text>
+                <Text style={Styles.hTopDesc}>Applied on: {selectedScheme.application_date}</Text>
+              </View>
+            </View>
+            <View style={[Styles.tripItem, Styles.marginTopSmall]}>
+              <View style={Styles.truckInfo}>
+                <View>
+                  <Text style={Styles.truckTrip}>Status</Text>
+                  <Text style={Styles.truckData}>{selectedScheme.status}</Text>
                 </View>
-            </Header>
-            <Content contentContainerStyle={Styles.layoutDefault}>
-                <Image source={Images.background} style={Styles.bgImg} />
-                <View style={Styles.bgLayout}>
-                    <View style={Styles.hTop}>
-                        <View style={Styles.hContent}>
-                            <Text style={Styles.hTopText}>{selectedScheme.beneficiary_name}</Text>
-                            <Text style={Styles.hTopDesc}>Applied on: {selectedScheme.application_date}</Text>
-                        </View>
-                    </View>
-                    <View style={Styles.tripItem}>
-                        <View style={Styles.truckInfo}>
-                            <View>
-                                <Text style={Styles.truckTrip}>Status</Text>
-                                <Text style={Styles.truckData}>{selectedScheme.status}</Text>
-                            </View>
-                        </View>
-                        <View  style={Styles.truckInfo}>
-                                                      <View>
-                                <Text style={Styles.truckTrip}>Granted Relief</Text>
-                                <Text style={Styles.truckData}>{selectedScheme.granted_relief}</Text>
-                            </View>
-                        </View>
-                        <View style={Styles.msgBox}>
-                            <Text style={Styles.msgText}>{selectedScheme.remarks || 'No Remarks'}</Text>
-                        </View>
-                    </View>
+              </View>
+              <View style={Styles.truckInfo}>
+                <View>
+                  <Text style={Styles.truckTrip}>Granted Relief</Text>
+                  <Text style={Styles.truckData}>{selectedScheme.granted_relief}</Text>
                 </View>
-            </Content>
-        </Container>
+              </View>
+              <View style={Styles.msgBox}>
+                <Text style={Styles.msgText}>{selectedScheme.remarks || 'No Remarks'}</Text>
+              </View>
+            </View>
+
+          </View>
+        </Content>
+        <LoadingOverlay
+          visible={fetching}
+        >
+          <View>
+            <Image
+              source={Images.bjpGif}
+            />
+          </View>
+        </LoadingOverlay>
+      </Container>
     )
   }
 }
@@ -79,7 +91,8 @@ class BenefeciaryDetailView extends Component {
 const mapStateToProps = (state) => {
   return {
     user: state.login.user,
-    selectedScheme: state.beneficiary.beneficiaryDetails
+    selectedScheme: state.beneficiary.beneficiaryDetails,
+    fetching: state.beneficiary.detailFetching,
   }
 }
 
@@ -90,3 +103,25 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BenefeciaryDetailView)
+
+
+
+// {/* <View style={Styles.regForm}>
+// <View style={Styles.infoBox}>
+//   <View style={Styles.infoHeader}>
+//     <Text style={Styles.infoHeaderText}>Documents</Text>
+//   </View>
+//   <View style={Styles.fRow}>
+//     <TextInput style={Styles.fInput} placeholder='RC Book' placeholderTextColor='rgba(36,42,56,0.4)' />
+//     <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
+//   </View>
+//   <View style={Styles.fRow}>
+//     <TextInput style={Styles.fInput} placeholder='Insurance Document' placeholderTextColor='rgba(36,42,56,0.4)' />
+//     <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
+//   </View>
+//   <View style={Styles.fRow}>
+//     <TextInput style={Styles.fInput} placeholder='Pollution Document' placeholderTextColor='rgba(36,42,56,0.4)' />
+//     <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
+//   </View>
+// </View>
+// </View> */}
