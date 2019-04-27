@@ -16,7 +16,7 @@ class AuthenticatedScreen extends Component {
     this.renderRow = this.renderRow.bind(this);
   }
   static navigationOptions = {
-    headerTitle: 'Beneficiary Schemes',
+    headerTitle: 'Development Works',
   };
 
   goToBeneficiaryDetailView(selectedScheme) {
@@ -63,7 +63,7 @@ class AuthenticatedScreen extends Component {
     const { beneficiaryList } = this.props;
     return (
       <View style={Styles.layoutDefault}>
-        <HeaderComponent title={'Beneficiary Schemes'} {...this.props} />
+        <HeaderComponent title={'Development Works'} {...this.props} />
         <FlatList
           contentContainerStyle={Styles.listContent}
           data={beneficiaryList}
