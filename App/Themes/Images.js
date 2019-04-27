@@ -23,7 +23,7 @@ const images = {
   closeButton: require('../Images/Icons/close-button.png'),
   navImage: require('../Images/nav-img.png'),
   menuIcon: require('../Images/menu.png'),
-  splashBackground: require('../Images/splashbg.jpg'),
+  splashBackground: require('../Images/splash_bg_mla_hd.png'),
 }
 
 export default images

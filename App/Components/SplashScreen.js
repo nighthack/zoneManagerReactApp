@@ -33,13 +33,7 @@ class SplashScreen extends React.Component {
           alignItems: 'center',
           justifyContent: 'center'
         }}
-      >
-        <TouchableHighlight
-          style={[styles.profileImgContainer, { borderColor: 'green', borderWidth: 1 }]}
-        >
-          <Image source={Images.sunil} style={styles.profileImg} />
-        </TouchableHighlight>
-      </ImageBackground>
+      />
     );
   }
 }
@@ -57,15 +51,15 @@ const styles = {
     fontWeight: 'bold'
   },
   profileImgContainer: {
-    marginLeft: 8,
-    height: 160,
-    width: 160,
-    borderRadius: 80,
+    marginLeft: 10,
+    height: 200,
+    width: 200,
+    borderRadius: 100,
   },
   profileImg: {
-    height: 160,
-    width: 160,
-    borderRadius: 80,
+    height: 200,
+    width: 200,
+    borderRadius: 100,
   },
 }
 
