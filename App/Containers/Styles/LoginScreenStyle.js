@@ -87,6 +87,29 @@ export default StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: 'rgba(36,42,56,0.07)'
   },
+  fRowError: {
+    position: 'relative',
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    ...Platform.select({
+      ios: {
+        paddingVertical: 10,
+      },
+    }),
+    paddingHorizontal: 5,
+    marginBottom: 18,
+    borderBottomWidth: 1,
+    borderColor: '#bb0000',
+    backgroundColor: '#fff6f6',
+  },
+  fErrorLabel:{
+    color: '#bb0000',
+    fontSize: 10,
+    position: 'absolute',
+    bottom: -15,
+  },
   fPicker: {
     flex: 1
   },
@@ -104,7 +127,6 @@ export default StyleSheet.create({
   },
   fInput: {
     flex: 1,
-     
     fontSize: 12
   },
 

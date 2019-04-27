@@ -26,7 +26,7 @@ const api = DebugConfig.useFixtures ? FixtureAPI : API.create()
 
 /* ------------- Connect Types To Sagas ------------- */
 export default function* root() {
-    console.log(DevelopmentWorkTypes.DEVELOPMENT_WORK_DETAILS_REQUEST)
+    console.log(LoginTypes)
   yield all([
     // some sagas only receive an action
     takeLatest(LoginTypes.LOGIN_REQUEST, login),

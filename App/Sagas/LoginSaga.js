@@ -25,12 +25,15 @@ export function* login({ phone, password }) {
       credentials: 'same-origin'
 
     };
-    const token = yield call(request, `${BASE_URL}${API_VERSION}users/sign_in`, options);
-    yield put(LoginActions.loginSuccess(token))
-    yield put(NavigationActions.navigate({ routeName: 'Home' }))
+    const { user, message } = yield call(request, `${BASE_URL}${API_VERSION}users/sign_in`, options);
+    yield put(LoginActions.loginSuccess(user, message))
+    if (user && user.access_token) {
+      yield put(NavigationActions.navigate({ routeName: 'Home' }))
+    } else {
+      yield put(ToastActionsCreators.displayWarning(message))
+    }
 
   } catch (e) {
-    console.log(e);
     yield put(ToastActionsCreators.displayWarning('Invalid User Phone / password!'))
     yield put(LoginActions.loginFailure('WRONG'))
   }

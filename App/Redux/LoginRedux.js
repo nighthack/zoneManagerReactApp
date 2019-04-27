@@ -6,8 +6,9 @@ import Immutable from 'seamless-immutable'
 const { Types, Creators } = createActions({
   // Login Actions
   loginRequest: ['phone', 'password'],
-  loginSuccess: ['token'],
+  loginSuccess: ['user', 'message'],
   loginFailure: ['response'],
+  resetStateOnNavigation: ['payload'],
   // GET OTP Actions
   otpRequest: ['phone'],
   otpSuccess: ['response'],
@@ -37,7 +38,7 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   data: null,
   fetching: null,
-  token: null,
+  user: null,
   error: null,
   verifyOtpResponse: {},
 })
@@ -55,13 +56,21 @@ export const request = (state, { data }) =>
   state.merge({ fetching: true, data, payload: null })
 
 // successful api lookup
-export const success = (state, { token }) => state.merge({ fetching: false, error: null, user: token })
+export const success = (state, { user, message }) => { 
+  if(user) {
+    return state.merge({ fetching: false, error: null, user: user })    
+  } else {
+    return state.merge({ fetching: false, error: true, user: null })  
+  }
+}
 
 
 // Something went wrong somewhere.
 export const failure = state =>
   state.merge({ fetching: false, error: true, payload: null })
 
+export const changeStateOnNavigation = state =>
+  state.merge({ fetching: null, error: null })
 
 // request the data from an api
 export const getOTPrequest = (state, { otp, phone }) => state.merge({ fetching: true, getOtpStatus: 0 })
@@ -71,6 +80,7 @@ export const getOTPrequest = (state, { otp, phone }) => state.merge({ fetching: 
 export const getOTPsuccess = (state, { response }) => state.merge({ fetching: false, getOtpStatus: 1 })
 
 export const getOTPfailure = (state, { response }) => state.merge({ fetching: false, getOtpStatus: 2 })
+
 
 // Something went wrong somewhere.
 export const verifyOTPRequest = (state, { otp, phone }) =>
@@ -111,6 +121,7 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.LOGIN_REQUEST]: request,
   [Types.LOGIN_SUCCESS]: success,
   [Types.LOGIN_FAILURE]: failure,
+  [Types.RESET_STATE_ON_NAVIGATION]: changeStateOnNavigation,
   [Types.OTP_REQUEST]: getOTPrequest,
   [Types.OTP_SUCCESS]: getOTPsuccess,
   [Types.OTP_FAILURE]: getOTPfailure,

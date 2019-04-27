@@ -24,6 +24,7 @@ const images = {
   navImage: require('../Images/nav-img.png'),
   menuIcon: require('../Images/menu.png'),
   splashBackground: require('../Images/splashbg.jpg'),
+  bjpGif: require('../Images/bjp.gif'),
 }
 
 export default images
