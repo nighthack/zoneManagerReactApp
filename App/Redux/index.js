@@ -9,6 +9,7 @@ export const reducers = combineReducers({
   login: require('./LoginRedux').reducer,
   beneficiary: require('./BeneficiaryRedux').reducer,
   development: require('./DevelopmentWorkRedux').reducer,
+  event: require('./EventRedux').reducer,
   toast,
 })
 

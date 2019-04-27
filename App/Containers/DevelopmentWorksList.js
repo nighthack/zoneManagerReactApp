@@ -5,7 +5,8 @@ import { connect } from "react-redux";
 import { format } from 'date-fns';
 import HeaderComponent from "../Components/HeaderComponent";
 import DevelopmentWorksActions from "../Redux/DevelopmentWorkRedux";
-
+import LoadingOverlay from '../Components/LoadingOverlay';
+import { Images } from '../Themes/'
 // Styles
 import Styles from "./Styles/DevelopmentWorksListStyle";
 
@@ -21,7 +22,6 @@ class DevelopmentWorksList extends Component {
     navigate("DevelopmentWorkDetail", { selectedData });
   }
   renderRow({ item, index }) {
-    // console.log({ ?  : 'NA'})c
     return (
       <TouchableOpacity onPress={() => this.goToDetailView(item)}>
         <View style={Styles.tripItem}>
@@ -121,7 +121,7 @@ class DevelopmentWorksList extends Component {
   }
 
   render() {
-    const { data } = this.props;
+    const { data, fetching } = this.props;
     return (
       <View style={Styles.layoutDefault}>
         <HeaderComponent title={"Development Works"} {...this.props} />
@@ -133,6 +133,13 @@ class DevelopmentWorksList extends Component {
           initialNumToRender={this.oneScreensWorth}
           ListEmptyComponent={this.renderEmpty}
         />
+        <LoadingOverlay
+          visible={fetching}
+        >
+          <View>
+            <Image source={Images.bjpGif} />
+          </View>
+        </LoadingOverlay>
       </View>
     );
   }
@@ -141,7 +148,8 @@ class DevelopmentWorksList extends Component {
 const mapStateToProps = state => {
   return {
     user: state.login.user,
-    data: state.development.listData
+    data: state.development.listData,
+    fetching: state.development.fetching,
   };
 };
 

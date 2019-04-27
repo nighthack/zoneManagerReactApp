@@ -9,6 +9,7 @@ import { LoginTypes } from '../Redux/LoginRedux'
 import { VerifiedSignUpTypes } from '../Redux/VerifiedSignUpRedux'
 import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
 import { DevelopmentWorkTypes } from '../Redux/DevelopmentWorkRedux'
+import { EventTypes } from '../Redux/EventRedux'
 /* ------------- Sagas ------------- */
 
 // import { startup } from './StartupSagas'
@@ -23,6 +24,7 @@ import {
 } from './LoginSaga'
 import { getBeneficiary, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevelopmentList, getDevelopmentDetails } from './DevelopmentWorkSagas'
+import { getEventsList, getEventDetails } from './EventSagas';
 // import { getAllPositions,  } from './VerifiedSignUpSagas'
 
 
@@ -34,6 +36,7 @@ const api = DebugConfig.useFixtures ? FixtureAPI : API.create()
 
 /* ------------- Connect Types To Sagas ------------- */
 export default function* root() {
+    console.log()
 
   yield all([
     // some sagas only receive an action
@@ -50,5 +53,8 @@ export default function* root() {
     // Development Module
     takeLatest(DevelopmentWorkTypes.DEVELOPMENT_WORK_REQUEST, getDevelopmentList),
     takeLatest(DevelopmentWorkTypes.DEVELOPMENT_WORK_DETAILS_REQUEST, getDevelopmentDetails),
+    // Events Module
+    takeLatest(EventTypes.EVENT_REQUEST, getEventsList),
+    takeLatest(EventTypes.EVENT_DETAILS_REQUEST,getEventDetails),
   ])
 }

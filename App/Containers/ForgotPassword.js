@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { Keyboard, StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox, Picker } from 'native-base'
+import { Keyboard, StatusBar, TouchableOpacity, TextInput, Image } from 'react-native'
+import { Container, Header, Content, Button, Icon, Text,  View } from 'native-base'
 import { connect } from 'react-redux'
 import { Images } from '../Themes/'
 import LoginActions from '../Redux/LoginRedux'

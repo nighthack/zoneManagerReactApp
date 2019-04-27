@@ -30,12 +30,12 @@ export const Menulist = [
     type: 'Feather',
     route: 'DevelopmentWorksList'
   },
-  // {
-  //   name: 'Truck',
-  //   icon: 'truck',
-  //   type: 'FontAwesome',
-  //   route: 'TransporterTruck'
-  // },
+  {
+    name: 'Events',
+    icon: 'truck',
+    type: 'FontAwesome',
+    route: 'EventsListScreen'
+  },
   // {
   //   name: 'Messages',
   //   icon: 'envelope',
