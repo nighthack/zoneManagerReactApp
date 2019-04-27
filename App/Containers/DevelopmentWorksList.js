@@ -12,7 +12,7 @@ import Styles from "./Styles/DevelopmentWorksListStyle";
 class DevelopmentWorksList extends Component {
 
   componentDidMount() {
-    const { user } = this.props.token;
+    const { user } = this.props;
     this.props.getDevelopmentWorkslist(user.access_token);
     this.renderRow = this.renderRow.bind(this);
   }
@@ -140,7 +140,7 @@ class DevelopmentWorksList extends Component {
 
 const mapStateToProps = state => {
   return {
-    token: state.login.user,
+    user: state.login.user,
     data: state.development.listData
   };
 };

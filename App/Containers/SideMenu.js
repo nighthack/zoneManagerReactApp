@@ -19,7 +19,7 @@ import { Images } from '../Themes'
 export const Menulist = [
   /** Transporter **/
   {
-    name: 'Development Works',
+    name: 'Beneficiary Schemes',
     icon: 'dashboard',
     type: 'Octicons',
     route: 'Home'
@@ -109,7 +109,7 @@ class SideMenu extends Component {
     })
   }
   render() {
-    const { user } = this.props.token;
+    const { user } = this.props;
     return (
       <Container>
         <Content
@@ -144,7 +144,7 @@ class SideMenu extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    token: state.login.user,
+    user: state.login.user,
   }
 }
 

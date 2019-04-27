@@ -12,18 +12,18 @@ import Styles from './Styles/BenefeciaryDetailViewStyle'
 class BenefeciaryDetailView extends Component {
 
   componentDidMount() {
-    const { navigation, token } = this.props;
+    const { navigation, user } = this.props;
     const selectedScheme = navigation.getParam('selectedScheme', null);
     if (token && token.user && selectedScheme && selectedScheme.id) {
-      this.props.getDetailsForSelection(selectedScheme.id, token.user.access_token);
+      this.props.getDetailsForSelection(selectedScheme.id, user.access_token);
     }
   }
 
   render() {
-    const { selectedScheme, navigation, token } = this.props;
+    const { selectedScheme, navigation, user } = this.props;
      const parentProps = navigation.getParam('selectedScheme', null);
      if(parentProps.id !== selectedScheme.id) {
-      this.props.getDetailsForSelection(parentProps.id, token.user.access_token);
+      this.props.getDetailsForSelection(parentProps.id, user.access_token);
      }
     return (
       <Container>
@@ -78,7 +78,7 @@ class BenefeciaryDetailView extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    token: state.login.user,
+    user: state.login.user,
     selectedScheme: state.beneficiary.beneficiaryDetails
   }
 }

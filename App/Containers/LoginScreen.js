@@ -37,6 +37,7 @@ class LoginScreen extends Component {
     this.setState({
       formObj: {},
       errorObj: {},
+      showPassword: false,
     });
   }
   togglePasswordShow = () => {

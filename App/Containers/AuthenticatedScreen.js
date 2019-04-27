@@ -11,12 +11,12 @@ import Styles from './Styles/BenefeciaryDetailViewStyle'
 class AuthenticatedScreen extends Component {
 
   componentDidMount() {
-    const { user } = this.props.token;
-    this.props.getBeneficiarySchemesList(user.access_token);
+    const { access_token } = this.props.user;
+    this.props.getBeneficiarySchemesList(access_token);
     this.renderRow = this.renderRow.bind(this);
   }
   static navigationOptions = {
-    headerTitle: 'Development Works',
+    headerTitle: 'Beneficiary Schemes',
   };
 
   goToBeneficiaryDetailView(selectedScheme) {
@@ -80,7 +80,7 @@ class AuthenticatedScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    token: state.login.user,
+    user: state.login.user,
     beneficiaryList: state.beneficiary.beneficiaryList
   }
 }

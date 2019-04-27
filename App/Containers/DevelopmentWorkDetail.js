@@ -17,10 +17,10 @@ class DevelopmentWorkDetail extends Component {
   //   this.state = {}
   // }
   componentDidMount() {
-    const { navigation, token } = this.props;
+    const { navigation, user } = this.props;
     const selectedData = navigation.getParam('selectedData', null);
-    if (token && token.user && selectedData && selectedData.id) {
-      this.props.getDetailsForSelection(selectedData.id, token.user.access_token);
+    if (user && selectedData && selectedData.id) {
+      this.props.getDetailsForSelection(selectedData.id, user.access_token);
     }
   }
   renderDetailedView() {
@@ -129,10 +129,10 @@ class DevelopmentWorkDetail extends Component {
     return null;
   }
   render() {
-    const { data, selectedData, navigation, token } = this.props;
+    const { data, selectedData, navigation, user } = this.props;
     const parentProps = navigation.getParam('selectedData', null);
     if (parentProps && selectedData && (parentProps.id !== selectedData.id)) {
-      this.props.getDetailsForSelection(parentProps.id, token.user.access_token);
+      this.props.getDetailsForSelection(parentProps.id, user.access_token);
     }
     return this.renderDetailedView();
   }
@@ -140,7 +140,7 @@ class DevelopmentWorkDetail extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    token: state.login.user,
+    user: state.login.user,
     data: state.development.dataDetails
   }
 }
