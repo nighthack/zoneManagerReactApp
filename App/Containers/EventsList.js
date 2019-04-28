@@ -60,7 +60,6 @@ componentWillReceiveProps(nextProps) {
     navigate("EventDetailScreen", { selectedData });
   }
   renderRow = ({ item, index }) => {
-    console.log(item);
     return (
       <TouchableOpacity onPress={() => this.goToDetailView(item)}>
         <View style={Styles.bookingItem}>

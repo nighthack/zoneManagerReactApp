@@ -26,7 +26,6 @@ class DevelopmentWorkDetail extends Component {
   }
   renderDetailedView() {
     const { data } = this.props;
-    console.log(data);
     if (data) {
       return (
         <Content contentContainerStyle={Styles.layoutDefault}>

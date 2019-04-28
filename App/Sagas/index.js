@@ -38,7 +38,6 @@ const api = DebugConfig.useFixtures ? FixtureAPI : API.create()
 
 /* ------------- Connect Types To Sagas ------------- */
 export default function* root() {
-    console.log()
 
   yield all([
     // some sagas only receive an action

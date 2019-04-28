@@ -41,7 +41,6 @@ export function* login({ phone, password }) {
        yield put(ToastActionsCreators.displayWarning("Please Check your Internet Connection"))
     }
   } catch (e) {
-    console.log(e);
     yield put(LoginActions.loginFailure('WRONG'))
   }
 }
