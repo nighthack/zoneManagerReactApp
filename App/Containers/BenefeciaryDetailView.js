@@ -51,23 +51,33 @@ class BenefeciaryDetailView extends Component {
               <Icon name='user-o' type='FontAwesome' style={Styles.hImg} />
               <View style={Styles.hContent}>
                 <Text style={Styles.hTopText}>{selectedScheme.beneficiary_name}</Text>
+
+                <View style={Styles.hContent}>
+                  <Text style={[Styles.infoLabel, { color: '#FFD328' }]}>{selectedScheme.place}</Text>
+                </View>
                 <Text style={Styles.hTopDesc}>Applied on: {selectedScheme.application_date}</Text>
               </View>
+
             </View>
             <View style={[Styles.tripItem, Styles.marginTopSmall]}>
-              <View style={Styles.truckInfo}>
+              <View style={[Styles.truckInfo, { flexDirection: 'column'}]}>
+              <View>
+                  <Text style={Styles.infoLabel}>ಯೋಜನೆ/Scheme</Text>
+                  <Text style={Styles.truckData}>{selectedScheme.scheme_type}</Text>
+                </View>
                 <View>
-                  <Text style={Styles.truckTrip}>Status</Text>
+                  <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ/Status</Text>
                   <Text style={Styles.truckData}>{selectedScheme.status}</Text>
                 </View>
               </View>
               <View style={Styles.truckInfo}>
                 <View>
-                  <Text style={Styles.truckTrip}>Granted Relief</Text>
+                  <Text style={Styles.infoLabel}>ಮಂಜುರಿ ವಿವರ/Granted Relief</Text>
                   <Text style={Styles.truckData}>{selectedScheme.granted_relief}</Text>
                 </View>
               </View>
               <View style={Styles.msgBox}>
+                <Text style={Styles.infoLabel}>ಷರಾ/Remarks</Text>
                 <Text style={Styles.msgText}>{selectedScheme.remarks || 'No Remarks'}</Text>
               </View>
             </View>

@@ -17,12 +17,12 @@ import { NavigationActions } from 'react-navigation'
 import { ToastActionsCreators } from 'react-native-redux-toast';
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
 
-export function * getEventsList ({ accessToken }) {
+export function * getEventsList ({ accessToken, pageNo }) {
   try {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}events?access_token=${accessToken}`, options);
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}events?page=${pageNo}&access_token=${accessToken}`, options);
     if(status >= 200 && status < 300) {
       yield put(EventActions.eventSuccess(body))
     } else if( status === 401) {

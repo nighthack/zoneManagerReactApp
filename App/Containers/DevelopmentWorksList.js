@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { TouchableOpacity, FlatList, Image } from "react-native";
-import { Icon, Text, View, Badge } from "native-base";
+import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
+import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import { connect } from "react-redux";
 import { format } from 'date-fns';
 import HeaderComponent from "../Components/HeaderComponent";
@@ -8,60 +8,61 @@ import DevelopmentWorksActions from "../Redux/DevelopmentWorkRedux";
 import LoadingOverlay from '../Components/LoadingOverlay';
 import { Images } from '../Themes/'
 // Styles
-import Styles from "./Styles/DevelopmentWorksListStyle";
+import Styles from './Styles/BenefeciaryDetailViewStyle'
 
 class DevelopmentWorksList extends Component {
 
+  constructor(props) {
+    super(props);
+    this.renderRow = this.renderRow.bind(this);
+    this.pageNo = 1;
+  }
+
   componentDidMount() {
+    this.onTableFetchRequest(1);
+  }
+
+  onTableFetchRequest = (pageNo) => {
     const { user } = this.props;
-    this.props.getDevelopmentWorkslist(user.access_token);
+    this.props.getDevelopmentWorkslist(user.access_token, pageNo);
     this.renderRow = this.renderRow.bind(this);
   }
+
   goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
     navigate("DevelopmentWorkDetail", { selectedData });
   }
+
+  getMoreItems = () => {
+    this.pageNo += 1;
+    this.onTableFetchRequest(this.pageNo);
+  }
   renderRow({ item, index }) {
+    console.log(item);
     return (
       <TouchableOpacity onPress={() => this.goToDetailView(item)}>
         <View style={Styles.tripItem}>
           <View style={Styles.truckInfo}>
             <View>
+              <Text style={Styles.infoLabel}>ಕೆಲಸ/Work</Text>
               <Text style={Styles.truckTrip}>{item.name}</Text>
-              <Text style={Styles.truckData}>{item.desc}</Text>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Text style={Styles.truckData}>Department: {item.department_id}</Text>
-              </View>
+              <Text style={Styles.infoLabel}>ವಿವರಗಳು/Details</Text>
+              <Text style={Styles.truckTrip}>{item.desc}</Text>
             </View>
           </View>
           <View style={Styles.tripInfo}>
-            <View style={Styles.rowSpaceAlignment}>
+                          <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+                <Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
+                <Text style={Styles.truckData}>{item.department}</Text>
+              </View>
+            <View style={[Styles.rowSpaceAlignment, { marginTop: 10}]}>
               <View style={Styles.tripPlaces}>
                 <Icon
                   name="circle-o"
                   type="FontAwesome"
                   style={Styles.tripIcon}
                 />
-                <Text style={Styles.placeText}>Estimated Amount</Text>
-              </View>
-              <View style={Styles.tripPlaces}>
-                <Icon
-                  name="cash-multiple"
-                  type="MaterialCommunityIcons"
-                  style={Styles.checkIcon}
-                />
-                <Text style={Styles.placeText}>₹ {item.estimated_amount}</Text>
-              </View>
-            </View>
-            <Text style={Styles.lineTracker}>|</Text>
-            <View style={Styles.rowSpaceAlignment}>
-              <View style={Styles.tripPlaces}>
-                <Icon
-                  name="circle-o"
-                  type="FontAwesome"
-                  style={Styles.tripIcon}
-                />
-                <Text style={Styles.placeText}>Sanctioned</Text>
+                <Text style={Styles.placeText}>ಮಂಜುರಾದ ಮೊತ್ / Sanctioned</Text>
               </View>
               <View style={Styles.tripPlaces}>
                 <Icon
@@ -81,9 +82,9 @@ class DevelopmentWorksList extends Component {
                   type="FontAwesome"
                   style={Styles.tripIcon}
                 />
-                <Text style={Styles.placeText}>Foundation date</Text>
+                <Text style={Styles.placeText}>ಅಡಿಗಲ್ಲು ದಿನಾಂಕ / Foundation date</Text>
               </View>
-              <View style={Styles.tripPlaces}>
+              <View style={[Styles.tripPlaces, { flex: 2 }]}>
                 <Icon
                   name="calendar-clock"
                   type="MaterialCommunityIcons"
@@ -100,9 +101,9 @@ class DevelopmentWorksList extends Component {
                   type="FontAwesome"
                   style={Styles.tripIcon}
                 />
-                <Text style={Styles.placeText}>Inauguration Date</Text>
+                <Text style={Styles.placeText}>ಉದ್ಘಾಟನೆ ದಿನಾಂಕ/Inauguration Date</Text>
               </View>
-              <View style={Styles.tripPlaces}>
+              <View style={[Styles.tripPlaces, { flex: 2 }]}>
                 <Icon
                   name="calendar-clock"
                   type="MaterialCommunityIcons"
@@ -123,24 +124,40 @@ class DevelopmentWorksList extends Component {
   render() {
     const { data, fetching } = this.props;
     return (
-      <View style={Styles.layoutDefault}>
-        <HeaderComponent title={"Development Works"} {...this.props} />
-        <FlatList
-          contentContainerStyle={Styles.listContent}
-          data={data}
-          renderItem={this.renderRow}
-          keyExtractor={this.keyExtractor}
-          initialNumToRender={this.oneScreensWorth}
-          ListEmptyComponent={this.renderEmpty}
-        />
+        <Container>
+        <HeaderComponent title={''} {...this.props} />
+        <Content contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}>
+          <Image source={Images.background} style={Styles.bgImg} />
+          <View style={Styles.bgLayout}>
+            <View style={Styles.hTop}>
+              <Icon name='package' type="MaterialCommunityIcons" style={Styles.hImg} />
+              <View style={Styles.hContent}>
+                <Text style={Styles.hTopText}>Development Works</Text>
+
+                <Text style={Styles.hTopDesc}>View all the development works</Text>
+              </View>
+            </View>
+            <FlatList
+              contentContainerStyle={Styles.listContent}
+              keyExtractor={item => item.id.toString()}
+              data={data}
+              renderItem={this.renderRow}
+              onEndReached={this.getMoreItems}
+              onEndReachedThreshold={0.5}
+            />
+
+          </View>
+        </Content>
         <LoadingOverlay
           visible={fetching}
         >
           <View>
-            <Image source={Images.bjpGif} />
+            <Image
+              source={Images.bjpGif}
+            />
           </View>
         </LoadingOverlay>
-      </View>
+      </Container>
     );
   }
 }
@@ -155,8 +172,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    getDevelopmentWorkslist: accessToken =>
-      dispatch(DevelopmentWorksActions.developmentWorkRequest(accessToken))
+    getDevelopmentWorkslist: (accessToken, pageNo) =>
+      dispatch(DevelopmentWorksActions.developmentWorkRequest(accessToken, pageNo))
   };
 };
 

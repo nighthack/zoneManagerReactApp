@@ -63,11 +63,11 @@ class EventDetail extends Component {
                 </View>
 
                 <View style={Styles.msgBox}>
-                  <Text style={[Styles.placeText, { marginBottom: 10 }]}>Details</Text>
+                  <Text style={[Styles.placeText, { marginBottom: 10 }]}>ವಿವರಗಳು/Details</Text>
                   <Text style={Styles.msgText}>{data.details}</Text>
                 </View>
                 <View style={Styles.msgBox}>
-                  <Text style={[Styles.placeText, { marginBottom: 10 }]}>Remarks</Text>
+                  <Text style={[Styles.placeText, { marginBottom: 10 }]}>ಷರಾ/Remarks</Text>
                   <Text style={Styles.msgText}>{data.remarks}</Text>
                 </View>
                 <View style={Styles.orderDetails}>

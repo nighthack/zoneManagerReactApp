@@ -3,55 +3,86 @@ import { Colors, Metrics, ApplicationStyles } from '../../Themes/'
 
 export default StyleSheet.create({
   ...ApplicationStyles.screen,
-  bgLayout: {},
+  bgLayout: {    
+  },
   bgImg: {
     position: 'absolute',
     width: '100%',
     height: 230
   },
-    hContent: {
-    justifyContent: 'center',
-    marginLeft: 10
-  },
-  hTopText: {
-    fontSize: 20,
-    // 
-    color: '#FFF',
-    marginBottom: 5
-  },
-  hImg: {
-    fontSize: 64,
-    color: '#FFD328'
-  },
+
+  /** Header **/
   hTop: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 15,
     marginBottom: 5
   },
+  hImg: {
+    fontSize: 64,
+    color: '#FFD328'
+  },
+  hRow: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  hContent: {
+    justifyContent: 'center',
+    marginLeft: 10
+  },
+  hTopText: {
+    fontSize: 20,
+    // fontFamily: 'Montserrat-Regular',
+    color: '#FFF',
+    marginBottom: 5
+  },
   hTopDesc: {
     fontSize: 11,
-    // 
+    // fontFamily: 'Montserrat-Regular',
     color: 'rgba(255,255,255,0.6)',
     marginBottom: 10
   },
-  /** Form **/
-  regForm: {
-    width: '100%',
-    marginBottom: 15
-  },
-  infoHeader: {
-    backgroundColor: '#242A38',
+
+  addBtn: {
+    backgroundColor: '#FF8901',
     borderRadius: 3,
-    paddingHorizontal: 15,
-    paddingVertical: 15
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderWidth: 0
   },
-  infoHeaderText: {
+  addText: {
     // fontFamily: 'Montserrat-Regular',
-    fontSize: 14,
+    fontSize: 11,
     color: '#FFF'
   },
-  infoBox: {
+
+  /** Search **/
+  search: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    paddingHorizontal: 15,
+    marginHorizontal: 20,
+    backgroundColor: '#FFF',
+    borderRadius: 3,
+    marginBottom: 15
+  },
+  searchInput: {
+    flex: 1,
+    // fontFamily: 'Montserrat-Regular',
+    fontSize: 12,
+    paddingVertical: 12
+  },
+  searchIcon: {
+    fontSize: 16,
+    paddingVertical: 12,
+    color: 'rgba(36,42,56,0.5)'
+  },
+
+  /** Trip List **/
+  tripItem: {
+    flex: 1,
     backgroundColor: '#FFF',
     elevation: 10,
     shadowOffset: {
@@ -65,95 +96,148 @@ export default StyleSheet.create({
     marginBottom: 20,
     borderRadius: 3
   },
-  fSelect: {
-    flex: 1,
+  truckInfo: {
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 15,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(36,42,56,0.05)'
+    paddingVertical: 15,
+    borderColor: 'rgba(36,42,56,0.07)',
+    borderBottomWidth: 1
   },
-  fRow: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 5,
-    ...Platform.select({
-      ios: {
-        paddingVertical: 10,
-      },
-    }),
-    paddingHorizontal: 15,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(36,42,56,0.05)'
+  truckTrip: {
+    fontSize: 14,
+    // fontFamily: 'Montserrat-SemiBold',
+    color: 'rgba(36,42,56,1)'
   },
-  fPicker: {
-    flex: 1
-  },
-  fPickerItem: {
-    flex: 1,
-    width: '100%',
-    paddingTop: 0,
-    paddingBottom: 0
-  },
-  fIcon: {
-    color: 'rgba(36,42,56,0.4)',
-    fontSize: 24
-  },
-  fInput: {
-    flex: 1,
+  truckData: {
+    fontSize: 12,
+    marginVertical: 2,
     // fontFamily: 'Montserrat-Regular',
-    fontSize: 12
+    color: 'rgba(36,42,56,0.7)'
+  },
+  checkIcon: {
+    fontSize: 20,
+    color: 'rgba(36,42,56,0.4)'
+  },
+  truckImg: {
+    width: 100,
+    height: 75,
+    borderRadius: 3
+  },
+  tripInfo: {
+    borderColor: 'rgba(36,42,56,0.07)',
+    borderBottomWidth: 1,
+    padding: 10
+  },
+  rowSpaceAlignment: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center'
+  },
+  tripPlaces: {
+    flex: 5,
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  tripIcon: {
+    fontSize: 12,
+    paddingHorizontal: 5,
+    color: '#ffcc00'
+  },
+  placeText: {
+    fontSize: 11,
+    // fontFamily: 'Montserrat-Regular',
+    marginLeft: 5,
+    color: 'rgba(36,42,56,0.9)'
+  },
+  
+  lineTracker: {
+    fontSize: 18,
+    color: '#ffcc00',
+    marginLeft: 17,
+    top: 20,
+    position: 'absolute'
   },
 
-  fBtn: {
+  more: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FF8901',
-    marginHorizontal: 15,
-    paddingVertical: 15,
     paddingHorizontal: 15,
-    marginBottom: 15,
-    borderRadius: 3
+    paddingVertical: 10
   },
-  fBtnText: {
+  price: {
+    fontSize: 20,
     // fontFamily: 'Montserrat-SemiBold',
-    fontSize: 14,
-    color: '#FFF'
+    color: 'rgba(36,42,56,0.99)'
   },
-  fBtnIcon: {
+  postedOn: {
+    fontSize: 11,
     // fontFamily: 'Montserrat-Regular',
-    fontSize: 12,
-    color: '#FFF'
+    color: 'rgba(36,42,56,0.5)'
+  },
+  editBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F1F2F6',
+    borderRadius: 5,
+    padding: 5
+  },
+  editIcon: {
+    fontSize: 14,
+    paddingLeft: 5,
+    color: 'rgba(36,42,56,0.9)'
+  },
+  editText: {
+    fontSize: 10,
+    // fontFamily: 'Montserrat-Regular',
+    paddingHorizontal: 5,
+    color: 'rgba(36,42,56,0.9)'
   },
 
-  photos: {
-    flex: 1,
-    flexDirection: 'row',
+  msgBox: {
+    backgroundColor: '#FFF',
+    borderBottomWidth: 1,
+    borderColor: 'rgba(36,42,56,0.07)',
     padding: 15
   },
-  truckImg: {
-    width: 90,
-    height: 64,
-    marginVertical: 5,
-    marginHorizontal: 5,
-    borderRadius: 3
+  msgText: {
+    fontSize: 11,
+    // fontFamily: 'Montserrat-Regular',
+    color: 'rgba(36,42,56,0.7)',
+    lineHeight: 16
   },
-  photoDelete: {
-    position: 'absolute',
-    right: 5,
-    top: 1,
-    padding: 3,
+
+  decisionBox: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    margin: 15
+  },
+  acceptBtn: {
+    backgroundColor: '#1aaa55',
     borderRadius: 3,
-    backgroundColor: '#FF0000'
+    paddingHorizontal: 30,
+    paddingVertical: 10
   },
-  photoDeleteIcon: {
-    fontSize: 14,
-    color: '#FFF'
+  rejectBtn: {
+    backgroundColor: '#db3b21',
+    borderRadius: 3,
+    paddingHorizontal: 30,
+    paddingVertical: 10
   },
-  marginTopSmall: {
-    marginTop: Metrics.baseMargin,
-    marginBottom: Metrics.doubleBaseMargin,
-  }
+  btnText: {
+    fontSize: 11,
+    // fontFamily: 'Montserrat-SemiBold',
+    color: '#FFF',
+    alignSelf: 'center'
+  },
+  infoLabel: {
+    fontWeight: 'bold',
+    textAlign: 'left',
+    fontSize: 10,
+    marginBottom: 4,
+  },
+    listContent: {
+    // marginTop: Metrics.baseMargin
+  },
 })
