@@ -26,14 +26,14 @@ export const Menulist = [
   },
   {
     name: 'Development Works',
-    icon: 'map-pin',
-    type: 'Feather',
+    icon: 'toolbox',
+    type: 'FontAwesome5',
     route: 'DevelopmentWorksList'
   },
   {
     name: 'Events',
     icon: 'truck',
-    type: 'FontAwesome',
+    type: 'FontAwesome5',
     route: 'EventsListScreen'
   },
   {
@@ -45,7 +45,7 @@ export const Menulist = [
   {
     name: 'Profile',
     icon: 'user',
-    type: 'Feather',
+    type: 'FontAwesome',
     route: 'UserSettings'
   },
   // {

@@ -14,14 +14,26 @@ import { call, put } from 'redux-saga/effects'
 import DevelopmentWorkActions from '../Redux/DevelopmentWorkRedux'
 import request from '../Services/request'
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
+import { NavigationActions } from 'react-navigation'
+import { ToastActionsCreators } from 'react-native-redux-toast';
 
-export function * getDevelopmentList ({ accessToken }) {
+export function * getDevelopmentList ({ accessToken, pageNo }) {
   try {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}development_works?access_token=${accessToken}`, options);
-    yield put(DevelopmentWorkActions.developmentWorkSuccess(body))
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}development_works?page=${pageNo}&access_token=${accessToken}`, options);
+    if(status) {
+      if (status >= 200 && status < 300) {
+        yield put(DevelopmentWorkActions.developmentWorkSuccess(body))
+      } else if(status === 401 ) {
+        yield put(DevelopmentWorkActions.developmentWorkFailure())
+        yield put(ToastActionsCreators.displayWarning('Invalid Session'))
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+      } else {
+        yield put(DevelopmentWorkActions.developmentWorkFailure())
+      }
+    }
   } catch (e) {
     yield put(DevelopmentWorkActions.developmentWorkFailure())
   }
@@ -33,7 +45,18 @@ export function * getDevelopmentDetails ({ accessToken, id }) {
       method: 'GET',
     };
     const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}development_works/${id}?access_token=${accessToken}`, options);
-    yield put(DevelopmentWorkActions.developmentWorkDetailsSuccess(body))
+    
+    if(status) {
+      if (status >= 200 && status < 300) {
+        yield put(DevelopmentWorkActions.developmentWorkDetailsSuccess(body))
+      } else if(status === 401 ) {
+        yield put(DevelopmentWorkActions.developmentWorkDetailsFailure())
+        yield put(ToastActionsCreators.displayWarning('Invalid Session'))
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+      } else {
+        yield put(DevelopmentWorkActions.developmentWorkDetailsFailure())
+      }
+    }
   } catch (e) {
     yield put(DevelopmentWorkActions.developmentWorkDetailsFailure())
   }

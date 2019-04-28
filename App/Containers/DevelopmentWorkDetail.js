@@ -10,8 +10,7 @@ import { Images } from '../Themes/'
 import DevelopmentWorksActions from "../Redux/DevelopmentWorkRedux";
 // Styles
 
-import Styles from "./Styles/DevelopmentWorksListStyle";
-import { ScrollView } from 'react-native-gesture-handler';
+import Styles from './Styles/BenefeciaryDetailViewStyle'
 
 class DevelopmentWorkDetail extends Component {
   // constructor (props) {
@@ -27,88 +26,84 @@ class DevelopmentWorkDetail extends Component {
   }
   renderDetailedView() {
     const { data } = this.props;
+    console.log(data);
     if (data) {
       return (
         <Content contentContainerStyle={Styles.layoutDefault}>
           <Image source={Images.background} style={Styles.bgImg} />
-
-          <View style={Styles.bgLayout}>
+          <View style={[Styles.bgLayout, Styles.marginTopSmall, { marginBottom: 10}]}>
             <View style={Styles.hTop}>
-              <Icon name='toolbox' type="FontAwesome5" style={Styles.hImg} />
+              <Icon name='toolbox' type='FontAwesome5' style={Styles.hImg} />
               <View style={Styles.hContent}>
                 <Text style={Styles.hTopText}>{data.name}</Text>
-                <Text style={Styles.hTopDesc}>Place: {data.place_id}</Text>
+                <View style={Styles.hContent}>
+                  <Text style={[Styles.infoLabel, { color: '#FFD328', fontSize: 11 }]}>{data.place}</Text>
+                </View>
               </View>
             </View>
-
-            <View style={Styles.tripItem}>
-              <Text style={Styles.cardItemLabel}>Description</Text>
-              <View style={Styles.truckInfo}>
-                <Text style={Styles.truckData}>{data.desc}</Text>
-              </View>
-              <Text style={Styles.cardItemLabel}>Status</Text>
-              <View style={Styles.truckInfo}>
-                <Text style={Styles.truckData}>{data.status}</Text>
-              </View>
-              <View style={Styles.tripInfo}>
-                <View style={Styles.rowSpaceAlignment}>
-                  <View style={Styles.tripPlaces}>
-                    <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
-                    <Text style={Styles.placeText}>Estimated</Text>
-                  </View>
-                  <View style={Styles.tripPlaces}>
-                    <Icon name='cash-multiple' type="MaterialCommunityIcons" style={Styles.checkIcon} />
-                    <Text style={Styles.placeText}>{data.estimated_amount}</Text>
-                  </View>
+            <View style={[Styles.tripItem, Styles.marginTopSmall]}>
+              <View style={[Styles.truckInfo, { flexDirection: 'column'}]}>
+              <View>
+                  <Text style={Styles.infoLabel}>ವಿವರಗಳು/Details</Text>
+                  <Text style={Styles.truckData}>{data.desc}</Text>
                 </View>
-                <Text style={Styles.lineTracker}>|</Text>
-                <View style={Styles.rowSpaceAlignment}>
-                  <View style={Styles.tripPlaces}>
-                    <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
-                    <Text style={Styles.placeText}>Sanctioned</Text>
-                  </View>
-                  <View style={Styles.tripPlaces}>
-                    <Icon name='cash-multiple' type="MaterialCommunityIcons" style={Styles.checkIcon} />
-                    <Text style={Styles.placeText}>{data.sanctioned_amount}</Text>
-                  </View>
+                <View>
+                  <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ/Status</Text>
+                  <Text style={Styles.truckData}>{data.status}</Text>
                 </View>
               </View>
-              <View style={Styles.tripInfo}>
-                <View style={Styles.rowSpaceAlignment}>
-                  <View style={Styles.tripPlaces}>
-                    <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
-                    <Text style={Styles.placeText}>Foundation Date</Text>
-                  </View>
-                  <View style={Styles.tripPlaces}>
-                    <Icon name='calendar-clock' type="MaterialCommunityIcons" style={Styles.checkIcon} />
-                    <Text style={Styles.placeText}>{data.foundation_date || 'NA'}</Text>
-                  </View>
-                </View>
-                <Text style={Styles.lineTracker}>|</Text>
-                <View style={Styles.rowSpaceAlignment}>
-                  <View style={Styles.tripPlaces}>
-                    <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
-                    <Text style={Styles.placeText}>Inauguration Date</Text>
-                  </View>
-                  <View style={Styles.tripPlaces}>
-                    <Icon name='calendar-clock' type="MaterialCommunityIcons" style={Styles.checkIcon} />
-                    <Text style={Styles.placeText}>{data.inaugration_date || 'NA'}</Text>
-                  </View>
-                </View>
+                        <View style={Styles.tripInfo}>
+            <View style={Styles.rowSpaceAlignment}>
+              <View style={Styles.tripPlaces}>
+                <Icon
+                  name="circle-o"
+                  type="FontAwesome"
+                  style={Styles.tripIcon}
+                />
+                <Text style={Styles.placeText}>ಅಡಿಗಲ್ಲು ದಿನಾಂಕ / Foundation date</Text>
               </View>
-              {
-                data.remarks ?
-                  <View style={Styles.msgBox}>
-                    <Text style={Styles.msgText}>{data.remarks || 'No Remarks'}</Text>
-                  </View> : null
-              }
-
-              <View style={Styles.more}>
-                <Text style={Styles.postedOn}>Last Updated at: {data.updated_at ? format(new Date(data.updated_at), 'DD MMM YYYY') : 'NA'}</Text>
+              <View style={[Styles.tripPlaces, { flex: 2 }]}>
+                <Icon
+                  name="calendar-clock"
+                  type="MaterialCommunityIcons"
+                  style={Styles.checkIcon}
+                />
+                <Text style={Styles.placeText}>{data.foundation_date || 'NA'}</Text>
               </View>
             </View>
-
+            <Text style={Styles.lineTracker}>|</Text>
+            <View style={Styles.rowSpaceAlignment}>
+              <View style={Styles.tripPlaces}>
+                <Icon
+                  name="circle-o"
+                  type="FontAwesome"
+                  style={Styles.tripIcon}
+                />
+                <Text style={Styles.placeText}>ಉದ್ಘಾಟನೆ ದಿನಾಂಕ/Inauguration Date</Text>
+              </View>
+              <View style={[Styles.tripPlaces, { flex: 2 }]}>
+                <Icon
+                  name="calendar-clock"
+                  type="MaterialCommunityIcons"
+                  style={Styles.checkIcon}
+                />
+                <Text style={Styles.placeText}>{data.inaugration_date || 'NA'}</Text>
+              </View>
+            </View>
           </View>
+              <View style={Styles.truckInfo}>
+                <View>
+                  <Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
+                  <Text style={Styles.truckData}>{data.department}</Text>
+                </View>
+              </View>
+              <View style={Styles.msgBox}>
+                <Text style={Styles.infoLabel}>ಷರಾ/Remarks</Text>
+                <Text style={Styles.msgText}>{data.remarks || 'No Remarks'}</Text>
+              </View>
+            </View>
+          </View>
+
         </Content>
       )
     }
@@ -137,9 +132,7 @@ class DevelopmentWorkDetail extends Component {
           </View>
         </Header>
         {this.renderDetailedView()}
-        <LoadingOverlay
-          visible={fetching}
-        >
+        <LoadingOverlay visible={fetching}>
           <View>
             <Image source={Images.bjpGif} />
           </View>
@@ -164,3 +157,83 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(DevelopmentWorkDetail)
+
+
+
+          // <View style={Styles.bgLayout}>
+          //   <View style={Styles.hTop}>
+          //     <Icon name='toolbox' type="FontAwesome5" style={Styles.hImg} />
+          //     <View style={Styles.hContent}>
+          //       <Text style={Styles.hTopText}>{data.name}</Text>
+          //       <Text style={Styles.hTopDesc}>Place: {data.place_id}</Text>
+          //     </View>
+          //   </View>
+
+          //   <View style={Styles.tripItem}>
+          //     <Text style={Styles.cardItemLabel}>Description</Text>
+          //     <View style={Styles.truckInfo}>
+          //       <Text style={Styles.truckData}>{data.desc}</Text>
+          //     </View>
+          //     <Text style={Styles.cardItemLabel}>Status</Text>
+          //     <View style={Styles.truckInfo}>
+          //       <Text style={Styles.truckData}>{data.status}</Text>
+          //     </View>
+          //     <View style={Styles.tripInfo}>
+          //       <View style={Styles.rowSpaceAlignment}>
+          //         <View style={Styles.tripPlaces}>
+          //           <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
+          //           <Text style={Styles.placeText}>Estimated</Text>
+          //         </View>
+          //         <View style={Styles.tripPlaces}>
+          //           <Icon name='cash-multiple' type="MaterialCommunityIcons" style={Styles.checkIcon} />
+          //           <Text style={Styles.placeText}>{data.estimated_amount}</Text>
+          //         </View>
+          //       </View>
+          //       <Text style={Styles.lineTracker}>|</Text>
+          //       <View style={Styles.rowSpaceAlignment}>
+          //         <View style={Styles.tripPlaces}>
+          //           <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
+          //           <Text style={Styles.placeText}>Sanctioned</Text>
+          //         </View>
+          //         <View style={Styles.tripPlaces}>
+          //           <Icon name='cash-multiple' type="MaterialCommunityIcons" style={Styles.checkIcon} />
+          //           <Text style={Styles.placeText}>{data.sanctioned_amount}</Text>
+          //         </View>
+          //       </View>
+          //     </View>
+          //     <View style={Styles.tripInfo}>
+          //       <View style={Styles.rowSpaceAlignment}>
+          //         <View style={Styles.tripPlaces}>
+          //           <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
+          //           <Text style={Styles.placeText}>Foundation Date</Text>
+          //         </View>
+          //         <View style={Styles.tripPlaces}>
+          //           <Icon name='calendar-clock' type="MaterialCommunityIcons" style={Styles.checkIcon} />
+          //           <Text style={Styles.placeText}>{data.foundation_date || 'NA'}</Text>
+          //         </View>
+          //       </View>
+          //       <Text style={Styles.lineTracker}>|</Text>
+          //       <View style={Styles.rowSpaceAlignment}>
+          //         <View style={Styles.tripPlaces}>
+          //           <Icon name='circle-o' type="FontAwesome" style={Styles.tripIcon} />
+          //           <Text style={Styles.placeText}>Inauguration Date</Text>
+          //         </View>
+          //         <View style={Styles.tripPlaces}>
+          //           <Icon name='calendar-clock' type="MaterialCommunityIcons" style={Styles.checkIcon} />
+          //           <Text style={Styles.placeText}>{data.inaugration_date || 'NA'}</Text>
+          //         </View>
+          //       </View>
+          //     </View>
+          //     {
+          //       data.remarks ?
+          //         <View style={Styles.msgBox}>
+          //           <Text style={Styles.msgText}>{data.remarks || 'No Remarks'}</Text>
+          //         </View> : null
+          //     }
+
+          //     <View style={Styles.more}>
+          //       <Text style={Styles.postedOn}>Last Updated at: {data.updated_at ? format(new Date(data.updated_at), 'DD MMM YYYY') : 'NA'}</Text>
+          //     </View>
+          //   </View>
+
+          // </View>
