@@ -14,20 +14,32 @@ import Styles from './Styles/EventsListStyle'
 
 
 class EventsList extends Component {
-  // constructor (props) {
-  //   super(props)
-  //   this.state = {}
-  // }
-  componentDidMount() {
-    const { user } = this.props;
-    this.props.getEventsList(user.access_token);
+
+   constructor(props) {
+    super(props);
     this.renderRow = this.renderRow.bind(this);
+    this.pageNo = 1;
   }
+
+  componentDidMount() {
+    this.onTableFetchRequest(1);
+  }
+
+  getMoreItems = () => {
+    this.pageNo += 1;
+    this.onTableFetchRequest(this.pageNo);
+  }
+ onTableFetchRequest = (pageNo) => {
+    const { user } = this.props;
+    this.props.getEventsList(user.access_token, pageNo);
+  }
+
   goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
     navigate("EventDetailScreen", { selectedData });
   }
   renderRow = ({ item, index }) => {
+    console.log(item);
     return (
       <TouchableOpacity onPress={() => this.goToDetailView(item)}>
         <View style={Styles.bookingItem}>
@@ -37,14 +49,7 @@ class EventsList extends Component {
           <View style={Styles.truckInfo}>
             <View style={{ flexDirection: 'row' }}>
               <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-              <Text style={Styles.truckText}>{item.start_time ? format(new Date(item.start_time), 'DD-MMM-YY  hh:mm A') : 'NA'}</Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={Styles.truckText}>To</Text>
-            </View>
-            <View style={{ flexDirection: 'row' }}>
-              <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-              <Text style={Styles.truckText}>{item.end_time ? format(new Date(item.end_time), 'DD-MMM-YY  hh:mm A') : 'NA'}</Text>
+              <Text style={Styles.truckText}>{item.date}</Text>
             </View>
           </View>
           <View style={Styles.tripDest}>
@@ -71,23 +76,23 @@ class EventsList extends Component {
     return (
       <Container>
         <HeaderComponent title={'Events'} {...this.props} />
-        <Content contentContainerStyle={Styles.layoutDefault}>
+        <Content contentContainerStyle={[Styles.layoutDefault,  { flex: 1 } ]}>
           <Image source={Images.background} style={Styles.bgImg} />
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
               <Icon name='calendar-check-o' type="FontAwesome" style={Styles.hImg} />
               <View style={Styles.hContent}>
                 <Text style={Styles.hTopText}>Events</Text>
-                <Text style={Styles.hTopDesc}>List of All Public Meetings and Events of our beloved MLA</Text>
+                <Text style={Styles.hTopDesc}>List of All Public Meetings and Events of our MLA</Text>
               </View>
             </View>
-            <View style={Styles.infoBox}>
-              <FlatList
+             <FlatList
                 data={data}
                 showsHorizontalScrollIndicator={false}
                 renderItem={this.renderRow}
+                onEndReached={this.getMoreItems}
+                onEndReachedThreshold={0.5}
               />
-            </View>
             <LoadingOverlay
               visible={fetching}
             >
@@ -112,8 +117,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getEventsList: accessToken =>
-      dispatch(EventActions.eventRequest(accessToken))
+    getEventsList: (accessToken, pageNo) =>
+      dispatch(EventActions.eventRequest(accessToken, pageNo))
   }
 }
 
