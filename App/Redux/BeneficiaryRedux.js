@@ -41,7 +41,7 @@ export const request = (state) =>
 // successful api lookup
 export const success = (state, action) => {
   const { response } = action;
-  return state.merge({ fetching: false, error: null, beneficiaryList: [...state.beneficiaryList, ...response] })
+  return state.merge({ fetching: false, error: null, beneficiaryList: state.beneficiaryList.concat(response) })
 }
 
 // Something went wrong somewhere.

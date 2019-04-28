@@ -19,7 +19,23 @@ class EventsList extends Component {
     super(props);
     this.renderRow = this.renderRow.bind(this);
     this.pageNo = 1;
+    this.state = {
+
+    };
   }
+
+
+
+componentWillReceiveProps(nextProps) {
+  const { data } = nextProps;
+  const { canModifyPageNo } = this.state;
+  if (data && this.props.data && data.legnth === this.props.data.legnth && canModifyPageNo) {
+    this.pageNo -= 1;
+    this.setState({
+      canModifyPageNo: false,
+    });
+  }
+}
 
   componentDidMount() {
     this.onTableFetchRequest(1);
@@ -28,6 +44,9 @@ class EventsList extends Component {
   getMoreItems = () => {
     this.pageNo += 1;
     this.onTableFetchRequest(this.pageNo);
+    this.setState({
+      canModifyPageNo: true,
+    });
   }
  onTableFetchRequest = (pageNo) => {
     const { user } = this.props;
@@ -39,7 +58,6 @@ class EventsList extends Component {
     navigate("EventDetailScreen", { selectedData });
   }
   renderRow = ({ item, index }) => {
-    console.log(item);
     return (
       <TouchableOpacity onPress={() => this.goToDetailView(item)}>
         <View style={Styles.bookingItem}>
@@ -91,7 +109,7 @@ class EventsList extends Component {
                 showsHorizontalScrollIndicator={false}
                 renderItem={this.renderRow}
                 onEndReached={this.getMoreItems}
-                onEndReachedThreshold={0.5}
+                removeClippedSubview
               />
             <LoadingOverlay
               visible={fetching}

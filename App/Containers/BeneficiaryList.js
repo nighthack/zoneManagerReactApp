@@ -17,8 +17,20 @@ class BeneficiaryList extends Component {
     super(props);
     this.renderRow = this.renderRow.bind(this);
     this.pageNo = 1;
-  }
+    this.state= {
 
+    }
+  }
+  componentWillReceiveProps(nextProps) {
+		const { data } = nextProps;
+		const { canModifyPageNo } = this.state;
+		if (data && this.props.data && data.legnth === this.props.data.legnth && canModifyPageNo) {
+			this.pageNo -= 1;
+			this.setState({
+				canModifyPageNo: false,
+			});
+		}
+	}
   componentDidMount() {
     this.onTableFetchRequest(1);
   }
@@ -30,8 +42,13 @@ class BeneficiaryList extends Component {
   }
 
   getMoreItems = () => {
-    this.pageNo += 1;
-    this.onTableFetchRequest(this.pageNo);
+    if(!this.props.fetching) {
+			this.pageNo += 1;
+			this.onTableFetchRequest(this.pageNo);
+			this.setState({
+				canModifyPageNo: true,
+			});
+		}
   }
 
   goToBeneficiaryDetailView(selectedScheme) {
@@ -45,11 +62,12 @@ class BeneficiaryList extends Component {
         <View style={Styles.tripItem}>
           <View style={Styles.truckInfo}>
             <View>
-              <Text style={Styles.infoLabel}>Name</Text>
+              <Text style={Styles.infoLabel}>
+ಹೆಸರು/Name</Text>
               <Text style={Styles.truckData}>{item.beneficiary_name}</Text>
               <View>
                 <View>
-                  <Text style={Styles.infoLabel}>Place</Text>
+                  <Text style={Styles.infoLabel}>ಸ್ಥಳ/Place</Text>
                 </View>
                 <View style={Styles.tripPlaces}>
                   <Icon name='map-marker' type="FontAwesome" style={Styles.tripIcon} />
@@ -102,7 +120,7 @@ class BeneficiaryList extends Component {
               data={beneficiaryList}
               renderItem={this.renderRow}
               onEndReached={this.getMoreItems}
-              onEndReachedThreshold={0.5}
+              removeClippedSubview
             />
 
           </View>

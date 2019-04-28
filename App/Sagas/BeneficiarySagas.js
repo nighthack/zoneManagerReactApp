@@ -24,6 +24,9 @@ export function * getBeneficiary ({ accessToken, pageNo }) {
     const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes?page=${pageNo}&access_token=${accessToken}`, options);
     if(status) {
       if (status >= 200 && status < 300) {
+        if (!(body && body.length)) {
+          yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
+        }
         yield put(BeneficiaryActions.beneficiarySuccess(body))
       } else if(status === 401 ) {
         yield put(BeneficiaryActions.beneficiaryFailure())

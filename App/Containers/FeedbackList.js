@@ -13,16 +13,49 @@ import Styles from './Styles/FeedbackListStyle'
 
 class FeedbackList extends Component {
 
-	componentDidMount() {
-		const { user } = this.props;
-		this.props.getFeedbackList(user.access_token);
+	constructor(props) {
+    super(props);
+		this.pageNo = 1;
+		this.state = {
+		}
+  }
+
+	componentWillReceiveProps(nextProps) {
+		const { data } = nextProps;
+		const { canModifyPageNo } = this.state;
+		if (data && this.props.data && data.legnth === this.props.data.legnth && canModifyPageNo) {
+			this.pageNo -= 1;
+			this.setState({
+				canModifyPageNo: false,
+			});
+		}
 	}
+  componentDidMount() {
+    this.onTableFetchRequest(1);
+  }
+
+  onTableFetchRequest = (pageNo) => {
+		const { access_token } = this.props.user;
+		this.props.getFeedbackList(access_token, pageNo);
+
+  }
+
+  getMoreItems = () => {
+		if(!this.props.fetching) {
+			this.pageNo += 1;
+			this.onTableFetchRequest(this.pageNo);
+			this.setState({
+				canModifyPageNo: true,
+			});
+		}
+	}
+	
 	render() {
 		const { data, navigation, fetching } = this.props;
 		return (
 			<Container>
 				<HeaderComponent title={"Feedback"} {...this.props} />
-				<Content contentContainerStyle={Styles.layoutDefault}>
+				<View contentContainerStyle={[Styles.layoutDefault]}>
 					<Image source={Images.background} style={Styles.bgImg} />
 					<View style={Styles.bgLayout}>
 						<View style={Styles.hTop}>
@@ -41,28 +74,30 @@ class FeedbackList extends Component {
 							</TouchableOpacity>
 						</View>
 
-						<View style={Styles.msg}>
-							<FlatList
+						<FlatList
 								data={data}
+								refreshing={fetching}
 								showsHorizontalScrollIndicator={false}
+								removeClippedSubview
+								onEndReached={this.getMoreItems}
 								renderItem={({ item, separators }) => (
 									<View>
 										<TouchableOpacity style={Styles.msgItem}>
 											<View>
 												<View>
-													<Text style={Styles.msgName}>Title</Text>
+													<Text style={Styles.msgName}>ವಿಷಯ/Title</Text>
 													<Text style={Styles.msgContent}>{item.name}</Text>
 												</View>
 												<View>
-													<Text style={Styles.msgName}>Department</Text>
+													<Text style={Styles.msgName}>ಇಲಾಖೆ/Department</Text>
 													<Text style={Styles.msgContent}>{item.department}</Text>
 												</View>
 												<View>
-													<Text style={Styles.msgName}>Status</Text>
+													<Text style={Styles.msgName}>ಹಾಲಿ ಸ್ಥಿತಿ/Status</Text>
 													<Text style={Styles.msgContent}>{item.status}</Text>
 												</View>
 												<View>
-													<Text style={Styles.msgName}>Action</Text>
+													<Text style={Styles.msgName}>ಕ್ರಿಯೆ/Action</Text>
 													<Text style={Styles.msgContent}>{item.action_taken}</Text>
 												</View>
 											</View>
@@ -70,16 +105,9 @@ class FeedbackList extends Component {
 									</View>
 								)}
 							/>
-						</View>
 					</View>
-				</Content>
-				        <LoadingOverlay
-          visible={fetching}
-        >
-          <View>
-            <Image source={Images.bjpGif} />
-          </View>
-        </LoadingOverlay>
+				</View>
+
 			</Container>
 		)
 	}
@@ -95,8 +123,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		getFeedbackList: accessToken =>
-			dispatch(FeedbackActions.feedbackRequest(accessToken))
+		getFeedbackList: (accessToken, pageNo) =>
+			dispatch(FeedbackActions.feedbackRequest(accessToken, pageNo))
 	}
 }
 
@@ -106,3 +134,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(FeedbackList)
 // onPress={() => {
 // 											navigation.navigate("FeedbackDetailScreen", { selectedItem: item })
 // 										}}
+
+
+// <LoadingOverlay
+// visible={fetching}
+// >
+// <View>
+// 	<Image source={Images.bjpGif} />
+// </View>
+// </LoadingOverlay>

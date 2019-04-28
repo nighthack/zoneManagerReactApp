@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Picker, Footer, View, FooterTab, Badge, CheckBox, Textarea } from 'native-base'
+import { StatusBar, TouchableOpacity, TextInput, Image } from 'react-native'
+import { Container, Header, Content, Icon, Text, Picker, View, Textarea } from 'native-base'
 import { connect } from 'react-redux'
 import { Images } from '../Themes/'
 import LoadingOverlay from '../Components/LoadingOverlay';
@@ -23,6 +23,15 @@ class FeedbackScreen extends Component {
   componentWillUnmount() {
     if (this.timeout) {
       clearTimeout(this.timeout);
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if(nextProps.createFeedbackResponse) {
+      this.setState({
+        formObj: {},
+       errorsObj: {},
+      });
     }
   }
 
@@ -51,14 +60,17 @@ class FeedbackScreen extends Component {
   onFormSubmit = () => {
     const isFormValid = this.validateForm();
     const { formObj } = this.state;
-    if(isFormValid) {
-    	const { user } = this.props;
-    	let data = new FormData();
-        for (let property in formObj) {
+    if (isFormValid) {
+      const { user } = this.props;
+      let data = new FormData();
+      for (let property in formObj) {
+        if (property === 'feedback[place_id]') {
+          data.append(property, formObj[property].id);
+        } else {
           data.append(property, formObj[property]);
         }
-        // data.append(.'')
-    	this.props.createFeedback(user.access_token, data);
+      }
+      this.props.createFeedback(user.access_token, data);
     }
   }
   componentDidMount() {
@@ -81,19 +93,19 @@ class FeedbackScreen extends Component {
     this.timeout = setTimeout(() => {
       this.timeout = null;
       this.props.getPlantsForSearchParam(user.access_token, text);
-    }, 300);
+    }, 100);
   }
   goToPage = () => {
-  	const { navigation } = this.props;
-  	navigation.navigate("FeedbackList");
+    const { navigation } = this.props;
     this.props.resetStateOnNavigation();
     this.setState({
-    	formObj: {},
-    	errorsObj: {},
+      formObj: {},
+      errorsObj: {},
     });
+    navigation.navigate("FeedbackList");
   }
   render() {
-    const { fetching, navigation, departments, statuses, plantsList } = this.props;
+    const { fetching, departments, statuses, plantsList } = this.props;
     const { formObj, errorsObj } = this.state;
     return (
       <Container>
@@ -129,7 +141,7 @@ class FeedbackScreen extends Component {
                 <View style={Styles.fRow}>
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Title'
+                    placeholder='Title/ವಿಷಯ'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     onChangeText={(text) => this.onFormChange(text, 'feedback[name]')}
                   />
@@ -145,11 +157,11 @@ class FeedbackScreen extends Component {
                     itemTextStyle={Styles.fSearchInput}
                     items={plantsList}
                     defaultIndex={0}
-                    placeholder="Select Place"
+                    placeholder="Select Place/ಸ್ಥಳ ಆರಿಸಿ"
                     resetValue={false}
                     underlineColorAndroid="transparent"
                   />
-                  
+
                 </View>
                 <View><Text style={Styles.fErrorLabel}>{errorsObj['feedback[place_id]']}</Text></View>
                 <View style={Styles.fSelect}>
@@ -157,7 +169,7 @@ class FeedbackScreen extends Component {
                     <Picker
                       style={Styles.fPickerItem}
                       textStyle={Styles.fInput}
-                      placeholder="Select Department"
+                      placeholder="Select Department/ಇಲಾಖೆ ಆರಿಸಿ"
                       placeholderStyle={Styles.placeholderStyle}
                       selectedValue={formObj['feedback[department_id]']}
                       iosIcon={<Icon name='chevron-down' type="MaterialCommunityIcons" style={Styles.fIcon} />}
@@ -171,7 +183,7 @@ class FeedbackScreen extends Component {
                       }
                     </Picker>
                   </View>
-                  
+
                 </View>
                 <View><Text style={Styles.fErrorLabel}>{errorsObj['feedback[department_id]']}</Text></View>
                 <View style={Styles.fSelect}>
@@ -179,7 +191,7 @@ class FeedbackScreen extends Component {
                     <Picker
                       style={Styles.fPickerItem}
                       textStyle={Styles.fInput}
-                      placeholder="Select type"
+                      placeholder="Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ"
                       placeholderStyle={Styles.placeholderStyle}
                       selectedValue={formObj['feedback[feedback_type]']}
                       onValueChange={(itemValue, itemIndex) =>
@@ -192,22 +204,22 @@ class FeedbackScreen extends Component {
                           <Picker.Item key={`${status}`} label={status} value={status} />
                         )}
                     </Picker>
-                    
+
                   </View>
                 </View>
-                 <View><Text style={Styles.fErrorLabel}>{errorsObj['feedback[feedback_type]']}</Text></View>
-                
+                <View><Text style={Styles.fErrorLabel}>{errorsObj['feedback[feedback_type]']}</Text></View>
+
                 <View style={Styles.fRow}>
                   <Textarea
                     style={Styles.fInput}
-                    placeholder='Details'
+                    placeholder='Details/ವಿವರ'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     multiline={true}
                     numberOfLines={10}
                     iosIcon={<Icon name='chevron-down' type="MaterialCommunityIcons" style={Styles.fIcon} />}
                     onChangeText={(text) => this.onFormChange(text, 'feedback[details]')}
                   />
-                  
+
                 </View>
                 <View><Text style={Styles.fErrorLabel}>{errorsObj['feedback[details]']}</Text></View>
               </View>
@@ -246,9 +258,9 @@ const mapDispatchToProps = (dispatch) => {
     getDepartmentsStatus: (accessToken) =>
       dispatch(FeedbackActions.getDepartmentsList(accessToken)),
     createFeedback: (accessToken, data) =>
-    	dispatch(FeedbackActions.createFeedback(accessToken, data)),
+      dispatch(FeedbackActions.createFeedback(accessToken, data)),
     resetStateOnNavigation: () =>
-    	dispatch(FeedbackActions.resetStateOnNavigation())	
+      dispatch(FeedbackActions.resetStateOnNavigation())
   }
 }
 

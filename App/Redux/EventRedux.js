@@ -6,7 +6,7 @@ import Immutable from 'seamless-immutable'
 const { Types, Creators } = createActions({
   eventRequest: ['accessToken', 'pageNo'],
   eventSuccess: ['payload'],
-  eventFailure: null,
+  eventFailure: ['data'],
   eventDetailsRequest: ['id','accessToken'],
   eventDetailsSuccess: ['payload'],
   eventDetailsFailure: ['error']
@@ -40,7 +40,7 @@ export const request = (state, { data }) =>
 // successful api lookup
 export const success = (state, action) => {
   const { payload } = action
-  return state.merge({ fetching: false, error: null, eventsList:[...state.eventsList, ...payload] })
+  return state.merge({ fetching: false, error: null, eventsList: state.eventsList.concat(payload)})
 }
 
 // Something went wrong somewhere.

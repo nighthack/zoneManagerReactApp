@@ -16,7 +16,21 @@ class DevelopmentWorksList extends Component {
     super(props);
     this.renderRow = this.renderRow.bind(this);
     this.pageNo = 1;
+    this.state = {
+
+    };
   }
+
+  componentWillReceiveProps(nextProps) {
+		const { data } = nextProps;
+		const { canModifyPageNo } = this.state;
+		if (data && this.props.data && data.legnth === this.props.data.legnth && canModifyPageNo) {
+			this.pageNo -= 1;
+			this.setState({
+				canModifyPageNo: false,
+			});
+		}
+	}
 
   componentDidMount() {
     this.onTableFetchRequest(1);
@@ -34,11 +48,15 @@ class DevelopmentWorksList extends Component {
   }
 
   getMoreItems = () => {
-    this.pageNo += 1;
-    this.onTableFetchRequest(this.pageNo);
+    if(!this.props.fetching) {
+			this.pageNo += 1;
+			this.onTableFetchRequest(this.pageNo);
+			this.setState({
+				canModifyPageNo: true,
+			});
+		}
   }
   renderRow({ item, index }) {
-    console.log(item);
     return (
       <TouchableOpacity onPress={() => this.goToDetailView(item)}>
         <View style={Styles.tripItem}>
@@ -62,7 +80,7 @@ class DevelopmentWorksList extends Component {
                   type="FontAwesome"
                   style={Styles.tripIcon}
                 />
-                <Text style={Styles.placeText}>ಮಂಜುರಾದ ಮೊತ್ / Sanctioned</Text>
+                <Text style={Styles.placeText}>ಮಂಜೂರಾದ ಮೊತ್ತ / Sanctioned</Text>
               </View>
               <View style={Styles.tripPlaces}>
                 <Icon
@@ -141,9 +159,9 @@ class DevelopmentWorksList extends Component {
               contentContainerStyle={Styles.listContent}
               keyExtractor={item => item.id.toString()}
               data={data}
+              removeClippedSubview
               renderItem={this.renderRow}
               onEndReached={this.getMoreItems}
-              onEndReachedThreshold={0.5}
             />
 
           </View>
