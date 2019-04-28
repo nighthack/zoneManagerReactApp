@@ -18,7 +18,6 @@ export default class HeaderComponent extends Component {
   // }
   toggleDrawer = () => {
     const { navigation } = this.props;
-    console.log(navigation);
     navigation.toggleDrawer();
   }
 

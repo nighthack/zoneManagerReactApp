@@ -4,6 +4,7 @@ import { Images } from '../Themes/'
 import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import HeaderComponent from "../Components/HeaderComponent";
+import LoadingOverlay from '../Components/LoadingOverlay';
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 import FeedbackActions from '../Redux/FeedbackRedux';
 
@@ -11,17 +12,13 @@ import FeedbackActions from '../Redux/FeedbackRedux';
 import Styles from './Styles/FeedbackListStyle'
 
 class FeedbackList extends Component {
-	// constructor (props) {
-	//   super(props)
-	//   this.state = {}
-	// }
+
 	componentDidMount() {
 		const { user } = this.props;
 		this.props.getFeedbackList(user.access_token);
 	}
 	render() {
-		const { data, navigation } = this.props;
-		console.log(data);
+		const { data, navigation, fetching } = this.props;
 		return (
 			<Container>
 				<HeaderComponent title={"Feedback"} {...this.props} />
@@ -50,9 +47,7 @@ class FeedbackList extends Component {
 								showsHorizontalScrollIndicator={false}
 								renderItem={({ item, separators }) => (
 									<View>
-										<TouchableOpacity style={Styles.msgItem} onPress={() => {
-											navigation.navigate("FeedbackDetailScreen", { selectedItem: item })
-										}}>
+										<TouchableOpacity style={Styles.msgItem}>
 											<View>
 												<View>
 													<Text style={Styles.msgName}>Title</Text>
@@ -78,6 +73,13 @@ class FeedbackList extends Component {
 						</View>
 					</View>
 				</Content>
+				        <LoadingOverlay
+          visible={fetching}
+        >
+          <View>
+            <Image source={Images.bjpGif} />
+          </View>
+        </LoadingOverlay>
 			</Container>
 		)
 	}
@@ -99,3 +101,8 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(FeedbackList)
+
+
+// onPress={() => {
+// 											navigation.navigate("FeedbackDetailScreen", { selectedItem: item })
+// 										}}
