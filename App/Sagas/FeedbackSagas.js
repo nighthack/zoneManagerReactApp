@@ -18,22 +18,27 @@ import { NavigationActions } from 'react-navigation'
 import { ToastActionsCreators } from 'react-native-redux-toast';
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
 
-export function * getFeedbackList ({ accessToken }) {
+export function * getFeedbackList ({ accessToken, pageNo }) {
   try {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}feedbacks?access_token=${accessToken}`, options);
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}feedbacks?access_token=${accessToken}&page=${pageNo}`, options);
     if(status >= 200 && status < 300) {
-      yield put(FeedbackActions.feedbackSuccess(body))
+      yield put(FeedbackActions.feedbackSuccess(body))  
+      if (!(body && body.length)) {
+        yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
+      }
     } else if( status === 401) {
       yield put(NavigationActions.navigate({ routeName: 'Login' }))
       yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
     } else {
+      debugger;
       yield put(FeedbackActions.feedbackFailure())
     }
 
   } catch (e) {
+    debugger;
     yield put(FeedbackActions.feedbackFailure())
   }
 }
@@ -99,7 +104,6 @@ export function * getDepartmentsList ({ accessToken }) {
       yield put(FeedbackActions.getDepartmentsListFail())
     }
   } catch (e) {
-    debugger;
     yield put(FeedbackActions.getDepartmentsListFail())
   }
 }
@@ -120,23 +124,29 @@ export function * createFeedback({ accessToken, data}) {
       body: data,
     };
     const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}feedbacks?access_token=${accessToken}`, options);
-    const { data, message, errors } = body;
-    if((status >= 200 && status < 300)) {
-      if(body && body.id) {
-        yield put(FeedbackActions.createFeedbackSuccess(user));
-        yield put(NavigationActions.navigate({ routeName: 'Home' }))
-        yield put(ToastActionsCreators.displayInfo('Thanks for sharing your feedback'))
-        // yield put(FeedbackActions.resetStateOnNavigation());
-      } else if( status === 401) {
-      yield put(NavigationActions.navigate({ routeName: 'Login' }))
-      yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
-    } else {
-        yield put(FeedbackActions.createFeedbackSuccess(errors))
+    if(status) {
+      const { data, message, errors } = body;
+      if((status >= 200 && status < 300)) {
+        if(body && body.id) {
+          yield put(FeedbackActions.createFeedbackSuccess(data));
+          yield put(NavigationActions.navigate({ routeName: 'Home' }))
+          yield put(ToastActionsCreators.displayInfo('Thanks for sharing your feedback'))
+          yield put(FeedbackActions.resetStateOnNavigation());
+        } else if( status === 401) {
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+        yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
+      } else {
+          yield put(FeedbackActions.createFeedbackSuccess(errors))
+        }
+      } else {
+        yield put(FeedbackActions.createFeedbackFail({}))
+        yield put(ToastActionsCreators.displayWarning(message))
       }
     } else {
-      yield put(FeedbackActions.createFeedbackFail({}))
-      yield put(ToastActionsCreators.displayWarning(message))
+       yield put(FeedbackActions.createFeedbackFail({}))
+       yield put(ToastActionsCreators.displayWarning('Network Error'))
     }
+    
   } catch (e) {
     console.log(e);
     yield put(FeedbackActions.createFeedbackFail({}))

@@ -25,6 +25,9 @@ export function * getDevelopmentList ({ accessToken, pageNo }) {
     const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}development_works?page=${pageNo}&access_token=${accessToken}`, options);
     if(status) {
       if (status >= 200 && status < 300) {
+        if (!(body && body.length)) {
+          yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
+        }
         yield put(DevelopmentWorkActions.developmentWorkSuccess(body))
       } else if(status === 401 ) {
         yield put(DevelopmentWorkActions.developmentWorkFailure())

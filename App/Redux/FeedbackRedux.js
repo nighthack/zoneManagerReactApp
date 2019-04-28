@@ -4,7 +4,7 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  feedbackRequest: ['accessToken'],
+  feedbackRequest: ['accessToken', 'pageNo'],
   feedbackSuccess: ['payload'],
   feedbackFailure: null,
   getPlacesList: ['accessToken','searchParam'],
@@ -32,6 +32,7 @@ export const INITIAL_STATE = Immutable({
   departments:[],
   statuses: [],
   plantsList: [],
+  listData: [],
 })
 
 /* ------------- Selectors ------------- */
@@ -43,24 +44,17 @@ export const FeedbackSelectors = {
 /* ------------- Reducers ------------- */
 
 export const request = (state, { data }) =>
-  state.merge({ fetching: true, data, listData: [] })
+  state.merge({ fetching: true, fetchListAPIStatus: 0 })
 
 // successful api lookup
 export const success = (state, action) => {
   const { payload } = action
-  return state.merge({ fetching: false, error: null, listData:payload })
+  return state.merge({ fetching: false, error: null, listData: state.listData.concat(payload) })
 }
 
 // Something went wrong somewhere.
 export const failure = state =>
-  state.merge({ fetching: false, error: true, listData: [] })
-
-
-export const onPlantLists = (state, action) => state;
-export const onPlantListsSuccess = (state, { data }) => {
-  return state.merge({ plantsList: data });
-}
-export const onPlantListsFail = state => state.merge({ plantsList: [] })
+  state.merge({ fetching: false, error: true, listData: [], fetchListAPIStatus: 2 })
 
 export const onRequestDeptsLists = (state, action) => state.merge(({ fetching: true }));
 export const onRequestDeptsSuccess = (state, { data }) => {
@@ -72,21 +66,18 @@ export const onRequestDeptsFail = state => {
 
 export const onCreateFeedback = (state, action) => state.merge(({ fetching: true }));
 export const onCreateFeedbackSuccess = (state, { data }) => {
-  return state.merge({ fetching: false, ...data })
+  return state.merge({ fetching: false, createFeedbackResponse: data })
 }
 export const onCreateFeedbackFail = state => {
   return state.merge({ fetching: false, })
 }
-export const resetState = state => state.merge({ fetching: null })
+export const resetState = state => state.merge({ fetching: null, createFeedbackResponse: null })
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.FEEDBACK_REQUEST]: request,
   [Types.FEEDBACK_SUCCESS]: success,
   [Types.FEEDBACK_FAILURE]: failure,
-  [Types.GET_PLACES_LIST]: onPlantLists,
-  [Types.GET_PLACES_LIST_SUCCESS]: onPlantListsSuccess,
-  [Types.GET_PLACES_LIST_FAIL]: onPlantListsFail,
   [Types.GET_DEPARTMENTS_LIST]:onRequestDeptsLists,
   [Types.GET_DEPARTMENTS_LIST_SUCCESS]:onRequestDeptsSuccess,
   [Types.GET_DEPARTMENTS_LIST_FAIL]:onRequestDeptsFail,
