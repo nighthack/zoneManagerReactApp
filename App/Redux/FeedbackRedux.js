@@ -7,12 +7,16 @@ const { Types, Creators } = createActions({
   feedbackRequest: ['accessToken'],
   feedbackSuccess: ['payload'],
   feedbackFailure: null,
-  getPlacesList: ['accessToken','searchparam'],
+  getPlacesList: ['accessToken','searchParam'],
   getPlacesListSuccess: ['data'],
   getPlacesListFail:['data'],
   getDepartmentsList: ['accessToken'],
   getDepartmentsListSuccess: ['data'],
   getDepartmentsListFail:['data'],
+  createFeedback: ['accessToken', 'data'],
+  createFeedbackSuccess: ['data'],
+  createFeedbackFail:['data'],
+  resetStateOnNavigation: ['data'],
 })
 
 export const FeedbackTypes = Types
@@ -24,7 +28,10 @@ export const INITIAL_STATE = Immutable({
   data: null,
   fetching: null,
   payload: null,
-  error: null
+  error: null,
+  departments:[],
+  statuses: [],
+  plantsList: [],
 })
 
 /* ------------- Selectors ------------- */
@@ -50,18 +57,27 @@ export const failure = state =>
 
 
 export const onPlantLists = (state, action) => state;
-export const onPlantListsSuccess = (state, action) => {
-  debugger;
-  return state;
+export const onPlantListsSuccess = (state, { data }) => {
+  return state.merge({ plantsList: data });
 }
-export const onPlantListsFail = state => state
+export const onPlantListsFail = state => state.merge({ plantsList: [] })
 
-export const onRequestDeptsLists = (state, action) => {
-  debugger;
-  return state;
-}  
-export const onRequestDeptsSuccess = state => state
-export const onRequestDeptsFail = state => state
+export const onRequestDeptsLists = (state, action) => state.merge(({ fetching: true }));
+export const onRequestDeptsSuccess = (state, { data }) => {
+  return state.merge({ fetching: false, ...data })
+}
+export const onRequestDeptsFail = state => {
+  return state.merge({ fetching: false, })
+}
+
+export const onCreateFeedback = (state, action) => state.merge(({ fetching: true }));
+export const onCreateFeedbackSuccess = (state, { data }) => {
+  return state.merge({ fetching: false, ...data })
+}
+export const onCreateFeedbackFail = state => {
+  return state.merge({ fetching: false, })
+}
+export const resetState = state => state.merge({ fetching: null })
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
@@ -74,5 +90,8 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_DEPARTMENTS_LIST]:onRequestDeptsLists,
   [Types.GET_DEPARTMENTS_LIST_SUCCESS]:onRequestDeptsSuccess,
   [Types.GET_DEPARTMENTS_LIST_FAIL]:onRequestDeptsFail,
-
+  [Types.CREATE_FEEDBACK]:onCreateFeedback,
+  [Types.CREATE_FEEDBACK_SUCCESS]:onCreateFeedbackSuccess,
+  [Types.CREATE_FEEDBACK_FAIL]:onCreateFeedbackFail,
+  [Types.RESET_STATE_ON_NAVIGATION]: resetState,
 })
