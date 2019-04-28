@@ -43,7 +43,7 @@ class EventDetail extends Component {
                 <View style={Styles.truckInfo}>
                   <View style={{ flexDirection: 'row' }}>
                     <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-                    <Text style={Styles.truckText}>{data.date} {data.start_time ? format(new Date(data.start_time), 'hh:mm A'): ''}</Text>
+                    <Text style={Styles.truckText}>{data.date} {data.start_time ? format(new Date(data.start_time), 'hh:mm A'): ''} - {data.end_time ? format(new Date(data.end_time), 'hh:mm A'): ''}</Text>
                   </View>
 
                 </View>
