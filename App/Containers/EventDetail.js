@@ -43,15 +43,9 @@ class EventDetail extends Component {
                 <View style={Styles.truckInfo}>
                   <View style={{ flexDirection: 'row' }}>
                     <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-                    <Text style={Styles.truckText}>{data.start_time ? format(new Date(data.start_time), 'DD-MMM-YY  hh:mm A') : 'NA'}</Text>
+                    <Text style={Styles.truckText}>{data.date} {data.start_time ? format(new Date(data.start_time), 'hh:mm A'): ''}</Text>
                   </View>
-                  <View style={{ flexDirection: 'row' }}>
-                    <Text style={Styles.truckText}>To</Text>
-                  </View>
-                  <View style={{ flexDirection: 'row' }}>
-                    <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-                    <Text style={Styles.truckText}>{data.end_time ? format(new Date(data.end_time), 'DD-MMM-YY  hh:mm A') : 'NA'}</Text>
-                  </View>
+
                 </View>
                 <View style={Styles.tripDest}>
                   <View style={Styles.locations}>

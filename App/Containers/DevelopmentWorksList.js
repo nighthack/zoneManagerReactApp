@@ -62,7 +62,7 @@ class DevelopmentWorksList extends Component {
         <View style={Styles.tripItem}>
           <View style={Styles.truckInfo}>
             <View>
-              <Text style={Styles.infoLabel}>ಕೆಲಸ/Work</Text>
+              <Text style={Styles.infoLabel}>ಕಾಮಗಾರಿ/Work</Text>
               <Text style={Styles.truckTrip}>{item.name}</Text>
               <Text style={Styles.infoLabel}>ವಿವರಗಳು/Details</Text>
               <Text style={Styles.truckTrip}>{item.desc}</Text>
