@@ -12,18 +12,26 @@
 import { put, call } from 'redux-saga/effects'
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 import request from '../Services/request'
+import { NavigationActions } from 'react-navigation'
+import { ToastActionsCreators } from 'react-native-redux-toast';
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
 
-export function * getBeneficiary ({ accessToken }) {
+export function * getBeneficiary ({ accessToken, pageNo }) {
   try {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes?access_token=${accessToken}`, options);
-    if (status >= 200 && status < 300) {
-      yield put(BeneficiaryActions.beneficiarySuccess(body))
-    } else {
-      yield put(BeneficiaryActions.beneficiaryFailure())
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes?page=${pageNo}&access_token=${accessToken}`, options);
+    if(status) {
+      if (status >= 200 && status < 300) {
+        yield put(BeneficiaryActions.beneficiarySuccess(body))
+      } else if(status === 401 ) {
+        yield put(BeneficiaryActions.beneficiaryFailure())
+        yield put(ToastActionsCreators.displayWarning('message'))
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+      } else {
+        yield put(BeneficiaryActions.beneficiaryFailure())
+      }
     }
    
   } catch (e) {

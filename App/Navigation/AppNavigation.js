@@ -11,7 +11,7 @@ import NetworkError from '../Components/NetworkErrorScreen'
 
 
 // These Are the post authencation Screens
-import BeneficiaryListingScreen from '../Containers/AuthenticatedScreen'
+import BeneficiaryListingScreen from '../Containers/BeneficiaryList'
 import BeneficiaryDetailScreen from '../Containers/BenefeciaryDetailView'
 
 // These Are the post authencation Screens
@@ -70,12 +70,12 @@ const MyDrawerNavigator = createDrawerNavigator({
     contentComponent: DrawerComponent
   });
 
-const AppStack = createStackNavigator({
-  DrawerStack: { screen: MyDrawerNavigator }
-},
-  {
-    headerMode: 'none',
-  });
+// const AppStack = createStackNavigator({
+//   DrawerStack: { screen: MyDrawerNavigator }
+// },
+//   {
+//     headerMode: 'none',
+//   });
 
 const AuthStack = createStackNavigator(
   {
@@ -100,7 +100,7 @@ const AuthStack = createStackNavigator(
 const AppNavigator = createSwitchNavigator(
   {
     // AuthLoading: AuthLoadingScreen,
-    App: AppStack,
+    App: MyDrawerNavigator,
     Auth: AuthStack,
   },
   {

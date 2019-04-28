@@ -26,14 +26,19 @@ export function* login({ phone, password }) {
 
     };
     const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users/sign_in`, options);
-    const { user, message } = body;
-    yield put(LoginActions.loginSuccess(user, message))
-    if (status >= 200 && status < 300) {
-      yield put(NavigationActions.navigate({ routeName: 'Home' }))
-      yield put(LoginActions.resetStateOnNavigation());
+    if(status) {
+      const { user, message } = body;
+      if (status >= 200 && status < 300) {
+        yield put(LoginActions.loginSuccess(user, message))
+        yield put(NavigationActions.navigate({ routeName: 'Home' }))
+        yield put(LoginActions.resetStateOnNavigation());
+      } else {
+        yield put(LoginActions.loginFailure())
+        yield put(ToastActionsCreators.displayWarning(message))
+      }
     } else {
-      yield put(LoginActions.loginFailure())
-      yield put(ToastActionsCreators.displayWarning(message))
+       yield put(LoginActions.loginFailure())
+       yield put(ToastActionsCreators.displayWarning("Please Check your Internet Connection"))
     }
   } catch (e) {
     console.log(e);
