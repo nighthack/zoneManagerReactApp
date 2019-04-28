@@ -148,7 +148,6 @@ export function * createFeedback({ accessToken, data}) {
     }
     
   } catch (e) {
-    console.log(e);
     yield put(FeedbackActions.createFeedbackFail({}))
     yield put(ToastActionsCreators.displayInfo('Please Make sure you have filled all the fields'))
   }

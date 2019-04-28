@@ -42,11 +42,13 @@ componentWillReceiveProps(nextProps) {
   }
 
   getMoreItems = () => {
-    this.pageNo += 1;
-    this.onTableFetchRequest(this.pageNo);
-    this.setState({
-      canModifyPageNo: true,
-    });
+    if(!this.props.fetching) {
+			this.pageNo += 1;
+			this.onTableFetchRequest(this.pageNo);
+			this.setState({
+				canModifyPageNo: true,
+			});
+		}
   }
  onTableFetchRequest = (pageNo) => {
     const { user } = this.props;
@@ -67,7 +69,7 @@ componentWillReceiveProps(nextProps) {
           <View style={Styles.truckInfo}>
             <View style={{ flexDirection: 'row' }}>
               <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-              <Text style={Styles.truckText}>{item.date}</Text>
+              <Text style={Styles.truckText}>{item.date} {item.start_time ? format(new Date(item.start_time), 'hh:mm A'): ''}</Text>
             </View>
           </View>
           <View style={Styles.tripDest}>
