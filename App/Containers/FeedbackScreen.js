@@ -20,11 +20,11 @@ class FeedbackScreen extends Component {
     }
   }
 
-  componentWillUnmount() {
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-    }
-  }
+  // componentWillUnmount() {
+  //   if (this.timeout) {
+  //     clearTimeout(this.timeout);
+  //   }
+  // }
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.createFeedbackResponse) {
@@ -86,14 +86,7 @@ class FeedbackScreen extends Component {
   }
   onPlantSearch = text => {
     const { user } = this.props;
-    if (this.timeout) {
-      clearTimeout(this.timeout);
-      this.timeout = null;
-    }
-    this.timeout = setTimeout(() => {
-      this.timeout = null;
-      this.props.getPlantsForSearchParam(user.access_token, text);
-    }, 100);
+    this.props.getPlantsForSearchParam(user.access_token, text);
   }
   goToPage = () => {
     const { navigation } = this.props;

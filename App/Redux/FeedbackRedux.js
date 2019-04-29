@@ -63,7 +63,11 @@ export const onRequestDeptsSuccess = (state, { data }) => {
 export const onRequestDeptsFail = state => {
   return state.merge({ fetching: false, })
 }
-
+export const onPlantLists = (state, action) => state;
+export const onPlantListsSuccess = (state, { data }) => {
+  return state.merge({ plantsList: data });
+}
+export const onPlantListsFail = state => state.merge({ plantsList: [] })
 export const onCreateFeedback = (state, action) => state.merge(({ fetching: true }));
 export const onCreateFeedbackSuccess = (state, { data }) => {
   return state.merge({ fetching: false, createFeedbackResponse: data })
@@ -81,6 +85,9 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_DEPARTMENTS_LIST]:onRequestDeptsLists,
   [Types.GET_DEPARTMENTS_LIST_SUCCESS]:onRequestDeptsSuccess,
   [Types.GET_DEPARTMENTS_LIST_FAIL]:onRequestDeptsFail,
+  [Types.GET_PLACES_LIST]: onPlantLists,
+  [Types.GET_PLACES_LIST_SUCCESS]: onPlantListsSuccess,
+  [Types.GET_PLACES_LIST_FAIL]: onPlantListsFail,
   [Types.CREATE_FEEDBACK]:onCreateFeedback,
   [Types.CREATE_FEEDBACK_SUCCESS]:onCreateFeedbackSuccess,
   [Types.CREATE_FEEDBACK_FAIL]:onCreateFeedbackFail,
