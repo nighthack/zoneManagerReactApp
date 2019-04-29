@@ -170,6 +170,7 @@ class FeedbackScreen extends Component {
                         this.onFormChange(itemValue, 'feedback[department_id]')
                       }
                     >
+                      <Picker.Item key="no_data_key" label="Department/ಇಲಾಖೆ" value={null} />
                       {
                         departments.map(({ id, name }) => <Picker.Item key={`${name}_${id}`} label={name} value={id} />
                         )
@@ -192,6 +193,7 @@ class FeedbackScreen extends Component {
                       }
                       iosIcon={<Icon name='chevron-down' type="MaterialCommunityIcons" style={Styles.fIcon} />}
                     >
+                      <Picker.Item key="no_data_key" label="Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ" value={null} />
                       {
                         statuses.map((status) =>
                           <Picker.Item key={`${status}`} label={status} value={status} />
@@ -225,11 +227,11 @@ class FeedbackScreen extends Component {
         </Content>
         <LoadingOverlay
           visible={fetching}
-        >
-          <View>
-            <Image source={Images.bjpGif} />
-          </View>
-        </LoadingOverlay>
+          color="white"
+          indicatorSize="large"
+          messageFontSize={24}
+          message="Loading..."
+        />
       </Container>
     )
   }

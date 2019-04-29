@@ -154,7 +154,7 @@ class ForgotPassword extends Component {
                     </View> : null
                 }
                 {
-                  resetPasswordError ? <Text style={Styles.errorText}>{resetPasswordError}</Text> : null
+                  typeof resetPasswordError === 'string' ? <Text style={Styles.errorText}>{resetPasswordError}</Text> : null
                 }
                 {
                   otpStatus ?
@@ -213,11 +213,11 @@ class ForgotPassword extends Component {
         </Content>
         <LoadingOverlay
           visible={fetching}
-        >
-          <View>
-            <Image source={Images.bjpGif} />
-          </View>
-        </LoadingOverlay>
+          color="white"
+          indicatorSize="large"
+          messageFontSize={24}
+          message="Loading..."
+        />
       </Container>
 
     )

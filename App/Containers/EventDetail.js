@@ -105,11 +105,13 @@ class EventDetail extends Component {
       <Container>
         {this.renderHeader()}
         {this.renderContent()}
-        <LoadingOverlay visible={fetching}>
-          <View>
-            <Image source={Images.bjpGif} />
-          </View>
-        </LoadingOverlay>
+        <LoadingOverlay
+          visible={fetching}
+          color="white"
+          indicatorSize="large"
+          messageFontSize={24}
+          message="Loading..."
+        />
       </Container>
     )
   }

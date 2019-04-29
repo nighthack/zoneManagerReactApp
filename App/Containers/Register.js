@@ -73,7 +73,7 @@ class Register extends Component {
     const { formObj } = this.state;
     const errorsObj = {};
     let errors = 0;
-    const requiredFields = ['user[name]','user[email]','user[phone]', 'user[password]', 'user[password_confirmation]', 'user[dob]', 'user[gender]' ];
+    const requiredFields = ['user[name]','user[phone]', 'user[password]', 'user[password_confirmation]', 'user[dob]', 'user[gender]' ];
     requiredFields.map((key) => {
       if (formObj[key]) {
         if (key === 'user[name]') {
@@ -289,7 +289,7 @@ class Register extends Component {
                   />
                   <Text style={Styles.fErrorLabel}>{errorsObj['user[dob]']}</Text>
                 </View>
-                <View style={[Styles.fSelect, ((errorsObj && errorsObj['user[dob]']) || error) ? Styles.errorField : {} ]}>
+                <View style={[Styles.fSelect, ((errorsObj && errorsObj['user[gender]']) || error) ? Styles.errorField : {} ]}>
                   <Icon name='account-card-details' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <View style={Styles.fPicker}>
                     <Picker
@@ -301,6 +301,7 @@ class Register extends Component {
                         this.onFormChange(itemValue, 'user[gender]')
                       }
                     >
+                      <Picker.Item label='ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ/ Select Gender' value={null} />
                       <Picker.Item label="Male" value="male" />
                       <Picker.Item label="Female" value="female" />
                       <Picker.Item label="Others" value="others" />
@@ -384,11 +385,11 @@ class Register extends Component {
         </Content>
         <LoadingOverlay
           visible={fetching}
-        >
-          <View>
-            <Image source={Images.bjpGif} />
-          </View>
-        </LoadingOverlay>
+          color="white"
+          indicatorSize="large"
+          messageFontSize={24}
+          message="Loading..."
+        />
       </Container>
 
     )
