@@ -205,7 +205,7 @@ class ForgotPassword extends Component {
 
             <View style={Styles.account}>
               <Text style={Styles.accountText}>Don't have an account?</Text>
-              <TouchableOpacity style={Styles.accountBtn} onPress={() => () => this.goToPage('RegisterScreen')}>
+              <TouchableOpacity style={Styles.accountBtn} onPress={() => this.goToPage('RegisterScreen')}>
                 <Text style={Styles.accountBtnText}>Sign up now!</Text>
               </TouchableOpacity>
             </View>
