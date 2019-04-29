@@ -84,13 +84,13 @@ class DevelopmentWorksList extends Component {
                 />
                 <Text style={Styles.placeText}>ಮಂಜೂರಾದ ಮೊತ್ತ / Sanctioned</Text>
               </View>
-              <View style={Styles.tripPlaces}>
+              <View style={[Styles.tripPlaces, { flex: 2 }]}>
                 <Icon
                   name="cash-multiple"
                   type="MaterialCommunityIcons"
                   style={Styles.checkIcon}
                 />
-                <Text style={Styles.placeText}>₹ {item.sanctioned_amount}</Text>
+                <Text style={[Styles.placeText]}>₹ {item.sanctioned_amount}</Text>
               </View>
             </View>
           </View>
@@ -170,13 +170,11 @@ class DevelopmentWorksList extends Component {
         </Content>
         <LoadingOverlay
           visible={fetching}
-        >
-          <View>
-            <Image
-              source={Images.bjpGif}
-            />
-          </View>
-        </LoadingOverlay>
+          color="white"
+          indicatorSize="large"
+          messageFontSize={24}
+          message="Loading..."
+        />
       </Container>
     );
   }

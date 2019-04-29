@@ -163,13 +163,11 @@ class LoginScreen extends Component {
         </Content>
         <LoadingOverlay
           visible={fetching}
-        >
-        <View>
-            <Image
-              source={Images.bjpGif}
-              />
-          </View>
-        </LoadingOverlay>
+          color="white"
+          indicatorSize="large"
+          messageFontSize={24}
+          message="Loading..."
+        />
       </Container>
 
     )

@@ -131,11 +131,12 @@ class DevelopmentWorkDetail extends Component {
           </View>
         </Header>
         {this.renderDetailedView()}
-        <LoadingOverlay visible={fetching}>
-          <View>
-            <Image source={Images.bjpGif} />
-          </View>
-        </LoadingOverlay>
+        <LoadingOverlay  visible={fetching}
+          color="white"
+          indicatorSize="large"
+          messageFontSize={24}
+          message="Loading..."
+        />
       </Container>
     );
   }
