@@ -69,7 +69,7 @@ componentWillReceiveProps(nextProps) {
           <View style={Styles.truckInfo}>
             <View style={{ flexDirection: 'row' }}>
               <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-              <Text style={Styles.truckText}>{item.date} {item.start_time ? format(new Date(item.start_time), 'hh:mm A'): ''}</Text>
+              <Text style={Styles.truckText}>{item.date} {item.start_time ? format(new Date(item.start_time), 'hh:mm A'): ''} - {item.end_time ? format(new Date(item.end_time), 'hh:mm A'): ''}</Text>
             </View>
           </View>
           <View style={Styles.tripDest}>

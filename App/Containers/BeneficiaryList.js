@@ -74,16 +74,16 @@ class BeneficiaryList extends Component {
                   <Text style={Styles.placeText}>{item.place}</Text>
                 </View>
                 <View>
-                  <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ/Status </Text>
-                  <Text style={Styles.truckData}>{item.status}</Text>
+                  <Text style={Styles.infoLabel}>ಯೋಜನೆ/Scheme</Text>
+                  <Text style={Styles.truckData}>{item.scheme_type}</Text>
                 </View>
               </View>
             </View>
           </View>
           <View style={Styles.tripInfo}>
             <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginVertical: 5 }}>
-              <Text style={Styles.infoLabel}>ಯೋಜನೆ/Scheme</Text>
-              <Text style={Styles.truckData}>{item.scheme_type}</Text>
+              <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ/Status </Text>
+              <Text style={Styles.truckData}>{item.status}</Text>
             </View>
             <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginVertical: 5 }}>
               <Text style={Styles.infoLabel}>ಮಂಜುರಿ ವಿವರ/Granted Relief</Text>
