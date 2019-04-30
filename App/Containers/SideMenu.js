@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Image, TouchableOpacity, ScrollView } from 'react-native';
+import { Image, TouchableOpacity, ScrollView, AsyncStorage } from 'react-native';
 import LoginActions from '../Redux/LoginRedux'
 import {
   Content,
@@ -75,12 +75,20 @@ class SideMenu extends Component {
     navigate(route)
 
   }
+  async deleteToken() {
+    try {
+      await AsyncStorage.removeItem('user')
+    } catch (err) {
+      console.log(`The error is: ${err}`)
+    }
+    this.props.navigation.navigate('Login')
+  }
   onLogout = () => {
     const { access_token } = this.props.user;
     const accessToken = access_token;
     this.props.deleteToken(accessToken);
     const { navigate } = this.props.navigation;
-    navigate('Login')
+    this.deleteToken();
   }
   renderMenuList(menus) {
     return menus.map((menu) => {

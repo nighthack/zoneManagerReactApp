@@ -27,8 +27,11 @@ export function * getBeneficiary ({ accessToken, pageNo, lastCalledPage }) {
       if (status >= 200 && status < 300) {
         if (!(body && body.length)) {
           yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
+          yield put(BeneficiaryActions.beneficiarySuccess([], lastCalledPage))
+        } else {
+          yield put(BeneficiaryActions.beneficiarySuccess(body, pageNo))
         }
-        yield put(BeneficiaryActions.beneficiarySuccess(body, pageNo))
+        
       } else if(status === 401 ) {
         yield put(BeneficiaryActions.beneficiaryFailure())
         yield put(ToastActionsCreators.displayWarning('Invalid Session'))

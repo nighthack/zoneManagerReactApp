@@ -1,6 +1,6 @@
-import { put, call } from 'redux-saga/effects'
-import LoginActions from '../Redux/LoginRedux'
-
+import { put, call } from 'redux-saga/effects';
+import LoginActions from '../Redux/LoginRedux';
+import { AsyncStorage } from 'react-native';
 import BeneficiaryActions from '../Redux/BeneficiaryRedux';
 import DevelopmentWorkActions from '../Redux/DevelopmentWorkRedux';
 import EventActions from '../Redux/EventRedux';
@@ -36,7 +36,8 @@ export function* login({ phone, password }) {
     if (status) {
       const { user, message } = body;
       if (status >= 200 && status < 300) {
-        yield put(LoginActions.loginSuccess(user, message))
+        AsyncStorage.setItem('user', JSON.stringify(user));
+        yield put(LoginActions.loginSuccess(user, message));
         yield put(NavigationActions.navigate({ routeName: 'Home' }))
         yield put(LoginActions.resetStateOnNavigation());
       } else {

@@ -1,5 +1,6 @@
 import { createReducer, createActions } from 'reduxsauce'
-import Immutable from 'seamless-immutable'
+import Immutable from 'seamless-immutable';
+import AsyncStorage from '@react-native-community/async-storage';
 
 /* ------------- Types and Action Creators ------------- */
 
@@ -48,7 +49,7 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   data: null,
   fetching: null,
-  user: null,
+  user: {},
   error: null,
   verifyOtpResponse: {},
   placesList: [],
@@ -67,7 +68,9 @@ export const request = (state, { data }) =>
   state.merge({ fetching: true, data })
 
 // successful api lookup
-export const success = (state, { user }) => state.merge({ fetching: false, error: null, user })
+export const success = (state, { user }) => {
+  return state.merge({ fetching: false, error: null, user })
+}
 
 // Something went wrong somewhere.
 export const failure = state =>

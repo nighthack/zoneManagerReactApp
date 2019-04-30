@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
+import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import HeaderComponent from '../Components/HeaderComponent'
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 import LoadingOverlay from '../Components/LoadingOverlay';
+import LoginActions from '../Redux/LoginRedux'
 import { NavigationEvents } from 'react-navigation';
 import { Images } from '../Themes/'
 import Styles from './Styles/BenefeciaryDetailViewStyle'
@@ -22,10 +23,6 @@ class BeneficiaryList extends Component {
     this.renderRow = this.renderRow.bind(this);
   }
 
-  componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-  }
-
   componentDidMount() {
     this.onTableFetchRequest();
   }
@@ -33,7 +30,16 @@ class BeneficiaryList extends Component {
   onTableFetchRequest = (pageNo) => {
     const { user, lastCalledPage, currentPage } = this.props;
     const { access_token } = user;
-    this.props.getBeneficiarySchemesList(access_token, currentPage, lastCalledPage);
+    let accessToken = access_token;
+    if(!accessToken) {
+      AsyncStorage.getItem('user').then((userToken) => {
+        accessToken = JSON.parse(userToken).access_token;
+        this.props.getBeneficiarySchemesList(accessToken, currentPage, lastCalledPage);
+        this.props.saveUserToken(JSON.parse(userToken));
+      });
+    } else {
+      this.props.getBeneficiarySchemesList(accessToken, currentPage, lastCalledPage);
+    }
   }
 
   getMoreItems = () => {
@@ -98,7 +104,15 @@ class BeneficiaryList extends Component {
     return (
       <Container>
         <HeaderComponent title={''} {...this.props} />
-        <Content contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}>
+        <Content 
+          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
+          refreshControl={
+            <RefreshControl
+              refreshing={fetching} 
+              onRefresh={this.onRefresh} 
+            />
+          }
+        >
           <Image source={Images.background} style={Styles.bgImg} />
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
@@ -115,8 +129,6 @@ class BeneficiaryList extends Component {
               renderItem={this.renderRow}
               onEndReached={this.getMoreItems}
               removeClippedSubview
-              onRefresh={this.onRefresh}
-              refreshing={fetching}
             />
 
           </View>
@@ -147,7 +159,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getBeneficiarySchemesList: (accessToken, pageNo, lastCalledPage) => dispatch(BeneficiaryActions.beneficiaryRequest(accessToken, pageNo, lastCalledPage))
+    getBeneficiarySchemesList: (accessToken, pageNo, lastCalledPage) => dispatch(BeneficiaryActions.beneficiaryRequest(accessToken, pageNo, lastCalledPage)),
+    saveUserToken: (user) => dispatch(LoginActions.loginSuccess(user)),
   }
 }
 

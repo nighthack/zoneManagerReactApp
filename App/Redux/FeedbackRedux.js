@@ -51,14 +51,13 @@ export const request = (state, { data }) =>
 
 // successful api lookup
 export const success = (state, action) => {
-  const { payload } = action;
-  const { lastCalledPage, currentPage } = state;
+  const { payload, pageNo } = action;
   return state.merge({
     fetching: false,
     error: null,
     listData: [...state.listData, ...payload],
-    lastCalledPage: currentPage,
-    currentPage: currentPage + 1
+    lastCalledPage: pageNo,
+    currentPage: pageNo + 1
   });
 }
 

@@ -4,10 +4,10 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  eventRequest: ['accessToken', 'pageNo' ,'lastCalledPage'],
+  eventRequest: ['accessToken', 'pageNo', 'lastCalledPage'],
   eventSuccess: ['payload', 'pageNo'],
   eventFailure: ['data'],
-  eventDetailsRequest: ['id','accessToken'],
+  eventDetailsRequest: ['id', 'accessToken'],
   eventDetailsSuccess: ['payload'],
   eventDetailsFailure: ['error'],
   eventLogoutRequest: ['accessToken'],
@@ -38,27 +38,29 @@ export const EventSelectors = {
 
 // request the data from an api
 export const request = (state, { data }) => state.merge({ fetching: true })
-  
+
 // successful api lookup
 export const success = (state, action) => {
-  const { payload } = action;
-   const { lastCalledPage, currentPage } = state;
-  return state.merge({ 
-    fetching: false, 
-    error: null, 
+  const { payload, pageNo } = action;
+  return state.merge({
+    fetching: false,
+    error: null,
     eventsList: [...state.eventsList, ...payload],
-    lastCalledPage: currentPage, 
-    currentPage: currentPage + 1,
+    lastCalledPage: pageNo,
+    currentPage: pageNo + 1,
   });
 }
 
 // Something went wrong somewhere.
 export const failure = state =>
-  state.merge({ fetching: false, error: true,  })
+  state.merge({ 
+    fetching: false, 
+    error: true,
+  })
 
 /* ------------- Hookup Reducers To Types ------------- */
 // request the data from an api
-export const eventDetailsRequest = (state, { data }) => 
+export const eventDetailsRequest = (state, { data }) =>
   state.merge({ fetchingDetails: true, dataDetails: data })
 
 // successful api lookup
@@ -69,10 +71,10 @@ export const eventDetailsSuccess = (state, action) => {
 
 // Something went wrong somewhere.
 export const eventDetailsfailure = state =>
-  state.merge({ fetchingDetails: false, errorFetchingDetails: true, dataDetails: {} })  
+  state.merge({ fetchingDetails: false, errorFetchingDetails: true, dataDetails: {} })
 
 export const onLogout = state =>
-  state.merge(INITIAL_STATE)  
+  state.merge(INITIAL_STATE)
 
 export const reducer = createReducer(INITIAL_STATE, {
   [Types.EVENT_REQUEST]: request,

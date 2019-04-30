@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
+import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import { connect } from "react-redux";
 import { format } from 'date-fns';
@@ -9,6 +9,13 @@ import LoadingOverlay from '../Components/LoadingOverlay';
 import { Images } from '../Themes/'
 // Styles
 import Styles from './Styles/BenefeciaryDetailViewStyle'
+
+
+function randomString(length, chars) {
+  var result = '';
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
 
 class DevelopmentWorksList extends Component {
 
@@ -36,9 +43,9 @@ class DevelopmentWorksList extends Component {
   }
 
   getMoreItems = () => {
-    if(!this.props.fetching) {
-			this.onTableFetchRequest();
-		}
+    if (!this.props.fetching) {
+      this.onTableFetchRequest();
+    }
   }
   renderRow({ item, index }) {
     return (
@@ -55,7 +62,7 @@ class DevelopmentWorksList extends Component {
             </View>
           </View>
           <View style={Styles.tripInfo}>
-                          <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+              <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
                 <Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
                 <Text style={Styles.truckData}>{item.department}</Text>
               </View>
@@ -128,9 +135,17 @@ class DevelopmentWorksList extends Component {
   render() {
     const { data, fetching } = this.props;
     return (
-        <Container>
+      <Container>
         <HeaderComponent title={''} {...this.props} />
-        <Content contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}>
+        <Content
+          refreshControl={
+            <RefreshControl
+              refreshing={fetching} 
+              onRefresh={this.onRefresh} 
+            />
+          }
+          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
+        >
           <Image source={Images.background} style={Styles.bgImg} />
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
@@ -143,13 +158,11 @@ class DevelopmentWorksList extends Component {
             </View>
             <FlatList
               contentContainerStyle={Styles.listContent}
-              keyExtractor={item => item.id.toString()}
+              keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
               data={data}
               removeClippedSubview
               renderItem={this.renderRow}
               onEndReached={this.getMoreItems}
-              onRefresh={this.onRefresh}
-              refreshing={fetching}
             />
 
           </View>

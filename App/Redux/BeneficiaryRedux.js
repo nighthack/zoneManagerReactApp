@@ -1,5 +1,6 @@
 import { createReducer, createActions } from 'reduxsauce'
-import Immutable from 'seamless-immutable'
+import Immutable from 'seamless-immutable';
+import { NavigationActions } from 'react-navigation';
 
 /* ------------- Types and Action Creators ------------- */
 
@@ -43,14 +44,13 @@ export const request = (state) =>
 
 // successful api lookup
 export const success = (state, action) => {
-  const { response } = action;
-  const { lastCalledPage, currentPage } = state;
+  const { response, pageNo } = action;
   return state.merge({
     fetching: false,
     error: null,
     beneficiaryList: [...state.beneficiaryList, ...response],
-    lastCalledPage: currentPage,
-    currentPage: currentPage + 1,
+    lastCalledPage: pageNo,
+    currentPage: pageNo + 1,
   });
 }
 
@@ -65,7 +65,7 @@ export const beneficiaryDetailrequest = (state) =>
 
 // successful api lookup
 export const beneficiaryDetailsuccess = (state, action) => {
-  const { response } = action;
+  const { response,  } = action;
   const { lastCalledPage, currentPage } = state;
   return state.merge({
     detailFetching: false,

@@ -27,9 +27,11 @@ export function * getDevelopmentList ({ accessToken, pageNo, lastCalledPage }) {
       if(status) {
       if (status >= 200 && status < 300) {
         if (!(body && body.length)) {
-          yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
+          yield put(ToastActionsCreators.displayInfo('Nothing New to Show'));
+          yield put(DevelopmentWorkActions.developmentWorkSuccess(body, lastCalledPage))
+        } else {
+          yield put(DevelopmentWorkActions.developmentWorkSuccess(body, pageNo))
         }
-        yield put(DevelopmentWorkActions.developmentWorkSuccess(body, pageNo))
       } else if(status === 401 ) {
         yield put(DevelopmentWorkActions.developmentWorkFailure())
         yield put(ToastActionsCreators.displayWarning('Invalid Session'))
