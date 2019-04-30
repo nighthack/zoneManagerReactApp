@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { Images } from '../Themes/'
 import { ToastActionsCreators } from 'react-native-redux-toast';
 import LoadingOverlay from '../Components/LoadingOverlay';
+import SearchableDropdown from 'react-native-searchable-dropdown';
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 // import YourActions from '../Redux/YourRedux'
 import LoginActions from '../Redux/LoginRedux'
@@ -51,6 +52,14 @@ class Register extends Component {
       showPasswordConfirmation: false,
     });
   }
+
+  onPlantSearch = text => {
+    const { fetchingPlaces } = this.props;
+    if (!fetchingPlaces) {
+      this.props.getPlantsForSearchParam(text);
+    }
+  }
+  
   togglePasswordShow = () => {
     const { showPassword } = this.state;
     this.setState({
@@ -73,7 +82,7 @@ class Register extends Component {
     const { formObj } = this.state;
     const errorsObj = {};
     let errors = 0;
-    const requiredFields = ['user[name]','user[phone]', 'user[password]', 'user[password_confirmation]', 'user[dob]', 'user[gender]' ];
+    const requiredFields = ['user[name]','user[phone]', 'user[password]', 'user[password_confirmation]', 'user[gender]' ];
     requiredFields.map((key) => {
       if (formObj[key]) {
         if (key === 'user[name]') {
@@ -125,6 +134,7 @@ class Register extends Component {
     return true;
   }
 
+
   onFormSubmit = () => {
     const isFormValid = this.validateForm();
     if(isFormValid) {
@@ -137,6 +147,8 @@ class Register extends Component {
             const month = ("0" + (formObj[property].getMonth()+1)).slice(-2);
             const year = formObj[property].getFullYear();
             data.append(property, `${year}-${month}-${date}`);
+          } else if (property === 'user[place_id]') {
+            data.append(property, formObj[property].id);
           } else {
             data.append(property, formObj[property]);
           }
@@ -202,10 +214,19 @@ class Register extends Component {
       }
     }
   }
-
+  renderPickerOptions() {
+    const { OS } = Platform;
+    let options = [];
+    if(OS === 'ios') {
+      options = [ {name:'Male', value: 'male'},  {name:'Female', value: 'female'}, {name:'Others', value: 'others'}]
+    } else {
+      options = [ {name:'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ/ Select Gender', value: null}, {name:'Male', value: 'male'},  {name:'Female', value: 'female'}, {name:'Others', value: 'others'}]
+    } 
+    return options.map(({ value, name }, index) => <Picker.Item key={`gender_${index}`} label={name} value={value} />)
+  }
   render() {
     const { navigate } = this.props.navigation;
-    const { otpStatus, fetching, error } = this.props;
+    const { otpStatus, fetching, error, placesList } = this.props;
     const { formObj, errorsObj, showPassword, showPasswordConfirmation } = this.state;
     return (
       <Container>
@@ -270,7 +291,7 @@ class Register extends Component {
                   />
                   <Text style={Styles.fErrorLabel}>{errorsObj['user[phone]']}</Text>
                 </View>
-                <View style={(errorsObj && errorsObj['user[dob]']) || error ? Styles.fRowError : Styles.fRow }>
+                <View style={Styles.fRow}>
                   <Icon name='calendar-today' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <DatePicker
                     defaultDate={new Date()}
@@ -296,18 +317,33 @@ class Register extends Component {
                       style={Styles.fPickerItem}
                       disabled={fetching}
                       textStyle={Styles.fInput}
+                      placeholder={'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ/ Select Gender'}
+                      placeholderStyle={{ color: 'rgba(36,42,56,0.4)', fontSize: 12 }}
                       selectedValue={formObj['user[gender]']}
                       onValueChange={(itemValue, itemIndex) =>
                         this.onFormChange(itemValue, 'user[gender]')
                       }
                     >
-                      <Picker.Item label='ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ/ Select Gender' value={null} />
-                      <Picker.Item label="Male" value="male" />
-                      <Picker.Item label="Female" value="female" />
-                      <Picker.Item label="Others" value="others" />
+                    {this.renderPickerOptions()}
                     </Picker>
                   </View>
                   <Text style={Styles.fErrorLabel}>{errorsObj['user[gender]']}</Text>
+                </View>
+                <View style={Styles.fSelect}>
+                  <Icon name='map-marker' type="FontAwesome" style={Styles.fIcon} />
+                    <SearchableDropdown
+                      onTextChange={(text) => this.onPlantSearch(text)}
+                      onItemSelect={item => this.onFormChange(item, 'user[place_id]')}
+                      textInputStyle={Styles.fSearchInput}
+                      containerStyle={Styles.fPicker}
+                      itemStyle={Styles.pickerItem}
+                      itemTextStyle={Styles.fSearchInput}
+                      items={placesList}
+                      defaultIndex={0}
+                      placeholder="Select Place/ಸ್ಥಳ ಆರಿಸಿ"
+                      resetValue={false}
+                      underlineColorAndroid="transparent"
+                    />
                 </View>
                 <View style={(errorsObj && errorsObj['user[password]']) || error ? Styles.fRowError : Styles.fRow }>
                   <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
@@ -374,9 +410,7 @@ class Register extends Component {
             </View>
             <View style={Styles.account}>
               <Text style={Styles.accountText}>Already have an account?</Text>
-              <TouchableOpacity style={Styles.accountBtn} onPress={() => {
-                navigate("Login")
-              }}>
+              <TouchableOpacity style={Styles.accountBtn} onPress={() => this.goToPage('Login')}>
                 <Text style={Styles.accountBtnText}>Sign in</Text>
               </TouchableOpacity>
             </View>
@@ -401,6 +435,8 @@ const mapStateToProps = (state) => {
     otpStatus: state.login.getOtpStatus,
     fetching: state.login.fetching,
     error: state.login.signUpErrors,
+    placesList: state.login.placesList,
+    fetchingPlaces: state.login.fetchingPlaces,
   }
 }
 
@@ -410,6 +446,8 @@ const mapDispatchToProps = (dispatch) => {
     errorToast: (msg) => dispatch(ToastActionsCreators.displayError(msg)),
     attempSingUp: (data) => dispatch(LoginActions.signupRequest(data)),
     onNavigationResetState: () => dispatch(LoginActions.resetStateOnNavigation()),
+    getPlantsForSearchParam: (searchParam) =>
+      dispatch(LoginActions.getPreLoginPlacesList(searchParam)),
   }
 }
 

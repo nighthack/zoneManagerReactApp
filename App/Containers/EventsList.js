@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
+import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, TabHeading, ScrollableTab, Card, Left, Right, Body, Input, Tabs, Tab, Footer, View, FooterTab, Badge } from 'native-base'
 import { connect } from 'react-redux'
 import { format } from 'date-fns';
@@ -12,49 +12,37 @@ import EventActions from '../Redux/EventRedux'
 // Styles
 import Styles from './Styles/EventsListStyle'
 
-
+function randomString(length, chars) {
+  var result = '';
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
 class EventsList extends Component {
 
-   constructor(props) {
+  constructor(props) {
     super(props);
     this.renderRow = this.renderRow.bind(this);
-    this.pageNo = 1;
-    this.state = {
-
-    };
   }
 
-
-
-componentWillReceiveProps(nextProps) {
-  const { data } = nextProps;
-  const { canModifyPageNo } = this.state;
-  if (data && this.props.data && data.legnth === this.props.data.legnth && canModifyPageNo) {
-    this.pageNo -= 1;
-    this.setState({
-      canModifyPageNo: false,
-    });
-  }
-}
 
   componentDidMount() {
-    this.onTableFetchRequest(1);
+    this.onTableFetchRequest();
   }
 
   getMoreItems = () => {
-    if(!this.props.fetching) {
-			this.pageNo += 1;
-			this.onTableFetchRequest(this.pageNo);
-			this.setState({
-				canModifyPageNo: true,
-			});
-		}
+    if (!this.props.fetching) {
+      this.onTableFetchRequest();
+    }
   }
- onTableFetchRequest = (pageNo) => {
-    const { user } = this.props;
-    this.props.getEventsList(user.access_token, pageNo);
+  onTableFetchRequest = () => {
+    const { user, lastCalledPage, currentPage } = this.props;
+    const { access_token } = user;
+    this.props.getEventsList(access_token, currentPage, lastCalledPage);
   }
-
+  onRefresh = () => {
+    console.log('refreshing');
+    this.onTableFetchRequest();
+  }
   goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
     navigate("EventDetailScreen", { selectedData });
@@ -69,7 +57,7 @@ componentWillReceiveProps(nextProps) {
           <View style={Styles.truckInfo}>
             <View style={{ flexDirection: 'row' }}>
               <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-              <Text style={Styles.truckText}>{item.date} {item.start_time ? format(new Date(item.start_time), 'hh:mm A'): ''} - {item.end_time ? format(new Date(item.end_time), 'hh:mm A'): ''}</Text>
+              <Text style={Styles.truckText}>{item.date} {item.start_time ? format(new Date(item.start_time), 'hh:mm A') : ''} - {item.end_time ? format(new Date(item.end_time), 'hh:mm A') : ''}</Text>
             </View>
           </View>
           <View style={Styles.tripDest}>
@@ -92,11 +80,19 @@ componentWillReceiveProps(nextProps) {
       </TouchableOpacity>)
   }
   render() {
-    const { data, fetching } = this.props;
+    const { data, fetching, navigation } = this.props;
     return (
       <Container>
-        <HeaderComponent title={'Events'} {...this.props} />
-        <Content contentContainerStyle={[Styles.layoutDefault,  { flex: 1 } ]}>
+        <HeaderComponent title={"Events"} {...this.props} />
+        <Content
+          refreshControl={
+            <RefreshControl
+              refreshing={fetching}
+              onRefresh={this.onRefresh}
+            />
+          }
+          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
+        >
           <Image source={Images.background} style={Styles.bgImg} />
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
@@ -106,23 +102,27 @@ componentWillReceiveProps(nextProps) {
                 <Text style={Styles.hTopDesc}>List of All Public Meetings and Events of our MLA</Text>
               </View>
             </View>
-             <FlatList
-                data={data}
-                showsHorizontalScrollIndicator={false}
-                renderItem={this.renderRow}
-                onEndReached={this.getMoreItems}
-                removeClippedSubview
-              />
-                    <LoadingOverlay
+
+            <FlatList
+              data={data}
+              refreshing={fetching}
+              keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+              showsHorizontalScrollIndicator={false}
+              removeClippedSubview
+              onEndReached={this.getMoreItems}
+              renderItem={this.renderRow}
+            />
+          </View>
+        </Content>
+        <LoadingOverlay
           visible={fetching}
           color="white"
           indicatorSize="large"
           messageFontSize={24}
           message="Loading..."
         />
-          </View>
-        </Content>
       </Container>
+
     )
   }
 }
@@ -132,13 +132,15 @@ const mapStateToProps = (state) => {
     user: state.login.user,
     data: state.event.eventsList,
     fetching: state.event.fetching,
+    lastCalledPage: state.event.lastCalledPage,
+    currentPage: state.event.currentPage,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getEventsList: (accessToken, pageNo) =>
-      dispatch(EventActions.eventRequest(accessToken, pageNo))
+    getEventsList: (accessToken, pageNo, lastCalledPage) =>
+      dispatch(EventActions.eventRequest(accessToken, pageNo, lastCalledPage))
   }
 }
 

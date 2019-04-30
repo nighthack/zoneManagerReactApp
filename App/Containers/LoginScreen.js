@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, Keyboard } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox, Picker } from 'native-base'
+import { StatusBar, TouchableOpacity, TextInput, Image, AsyncStorage, Dimensions, Keyboard } from 'react-native'
+import { Container, Header, Content, Icon, Text, View  } from 'native-base'
 import { ToastActionsCreators } from 'react-native-redux-toast';
 // import YourActions from '../Redux/YourRedux'
 import { Images } from '../Themes/'
@@ -18,7 +18,11 @@ class LoginScreen extends Component {
       errorObj: {},
       showPassword: false,
     }
+    AsyncStorage.getItem('id_token').then((userToken) => {
+      props.navigation.navigate(userToken ? 'App' : 'Auth');
+   });
   }
+
   dismissKeyboard = () => {
     Keyboard.dismiss();
   };

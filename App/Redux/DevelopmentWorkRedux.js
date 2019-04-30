@@ -4,12 +4,13 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  developmentWorkRequest: ['accessToken', 'pageNo'],
-  developmentWorkSuccess: ['payload'],
+  developmentWorkRequest: ['accessToken', 'pageNo' ,'lastCalledPage'],
+  developmentWorkSuccess: ['payload', 'pageNo'],
   developmentWorkFailure: ['error'],
   developmentWorkDetailsRequest: ['id','accessToken'],
   developmentWorkDetailsSuccess: ['payload'],
-  developmentWorkDetailsFailure: ['error']
+  developmentWorkDetailsFailure: ['error'],
+  developmentWorkLogoutRequest: ['accessToken'],
 })
 
 export const DevelopmentWorkTypes = Types
@@ -19,10 +20,12 @@ export default Creators
 
 export const INITIAL_STATE = Immutable({
   listData: [],
-  fetching: null,
+  fetching: false,
   payload: null,
   error: null,
   dataDetails: {},
+  lastCalledPage: 0,
+  currentPage: 1,
 })
 
 /* ------------- Selectors ------------- */
@@ -34,13 +37,19 @@ export const DevelopmentWorkSelectors = {
 /* ------------- Reducers ------------- */
 
 // request the data from an api
-export const request = (state, { data }) =>
-  state.merge({ fetching: true, data, listData: [] })
+export const request = (state) => state.merge({ fetching: true })
+ 
 
 // successful api lookup
 export const success = (state, action) => {
-  const { payload } = action
-  return state.merge({ fetching: false, error: null, listData: state.listData.concat(payload) })
+  const { payload, pageNo } = action;
+  return state.merge({ 
+    fetching: false, 
+    error: null, 
+    listData: [...state.listData, ...payload], 
+    lastCalledPage: pageNo, 
+    currentPage: pageNo + 1 
+  });
 }
 
 // Something went wrong somewhere.
@@ -61,6 +70,8 @@ export const developmentDetailsSuccess = (state, action) => {
 export const developmentDetailsfailure = state =>
   state.merge({ fetchingDetails: false, errorFetchingDetails: true, dataDetails: {} })  
 
+export const onLogout = state =>
+  state.merge(INITIAL_STATE)
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
@@ -70,4 +81,5 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.DEVELOPMENT_WORK_DETAILS_REQUEST]: developmentDetailsRequest,
   [Types.DEVELOPMENT_WORK_DETAILS_SUCCESS]: developmentDetailsSuccess,
   [Types.DEVELOPMENT_WORK_DETAILS_FAILURE]: developmentDetailsfailure,
+  [Types.DEVELOPMENT_WORK_LOGOUT_REQUEST]: onLogout,
 })

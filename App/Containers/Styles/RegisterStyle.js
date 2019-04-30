@@ -204,5 +204,29 @@ export default StyleSheet.create({
     position: 'absolute',
     bottom: -15,
   },
+    fDropdown:{
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // paddingHorizontal: 15,
+    paddingRight: 15,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(36,42,56,0.05)',
+    position: 'relative',
+  },
+  fSearchInput: {
+    flex: 1,
+    padding: 0,
+    // borderColor: 'red',
+    // borderWidth: 2,
+    paddingLeft: 15,
+    paddingVertical: 13,
+  },
+  pickerItem: {
+    padding: 5,
+    borderWidth: 1,
+    borderColor: 'rgba(36,42,56,0.05)',
+    borderRightWidth: 0,
+  },
 
 })
