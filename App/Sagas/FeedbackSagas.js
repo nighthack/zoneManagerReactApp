@@ -23,7 +23,7 @@ export function * getFeedbackList ({ accessToken, pageNo }) {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}feedbacks?access_token=${accessToken}&page=${pageNo}`, options);
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}feedbacks?app_token=${APP_TOKEN}&page=${pageNo}`, options);
     if(status >= 200 && status < 300) {
       yield put(FeedbackActions.feedbackSuccess(body))  
       if (!(body && body.length)) {
@@ -33,12 +33,10 @@ export function * getFeedbackList ({ accessToken, pageNo }) {
       yield put(NavigationActions.navigate({ routeName: 'Login' }))
       yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
     } else {
-      debugger;
       yield put(FeedbackActions.feedbackFailure())
     }
 
   } catch (e) {
-    debugger;
     yield put(FeedbackActions.feedbackFailure())
   }
 }

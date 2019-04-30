@@ -1,5 +1,12 @@
 import { put, call } from 'redux-saga/effects'
 import LoginActions from '../Redux/LoginRedux'
+
+import BeneficiaryActions from '../Redux/BeneficiaryRedux';
+import DevelopmentWorkActions from '../Redux/DevelopmentWorkRedux';
+import EventActions from '../Redux/EventRedux';
+import FeedbackActions from '../Redux/FeedbackRedux';
+
+
 import request from '../Services/request'
 import { ToastActionsCreators } from 'react-native-redux-toast';
 import { NavigationActions } from 'react-navigation'
@@ -26,7 +33,7 @@ export function* login({ phone, password }) {
 
     };
     const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users/sign_in`, options);
-    if(status) {
+    if (status) {
       const { user, message } = body;
       if (status >= 200 && status < 300) {
         yield put(LoginActions.loginSuccess(user, message))
@@ -37,8 +44,8 @@ export function* login({ phone, password }) {
         yield put(ToastActionsCreators.displayWarning(message))
       }
     } else {
-       yield put(LoginActions.loginFailure())
-       yield put(ToastActionsCreators.displayWarning("Please Check your Internet Connection"))
+      yield put(LoginActions.loginFailure())
+      yield put(ToastActionsCreators.displayWarning("Please Check your Internet Connection"))
     }
   } catch (e) {
     yield put(LoginActions.loginFailure('WRONG'))
@@ -134,8 +141,8 @@ export function* singupRequest({ data }) {
     };
     const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users`, options);
     const { user, message, errors } = body;
-    if((status >= 200 && status < 300)) {
-      if(user && user.access_token) {
+    if ((status >= 200 && status < 300)) {
+      if (user && user.access_token) {
         yield put(LoginActions.signupSuccess(user));
         yield put(NavigationActions.navigate({ routeName: 'Home' }))
         yield put(LoginActions.resetStateOnNavigation());
@@ -186,8 +193,8 @@ export function* onResetPasswordAction({ data }) {
     };
     const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}users/reset_password`, options);
     const { user, message, errors } = body;
-    if((status >= 200 && status < 300)) {
-      if(user && user.access_token) {
+    if ((status >= 200 && status < 300)) {
+      if (user && user.access_token) {
         yield put(LoginActions.resetPasswordSuccess(user));
         yield put(NavigationActions.navigate({ routeName: 'Home' }))
         yield put(LoginActions.resetStateOnNavigation());
@@ -200,7 +207,7 @@ export function* onResetPasswordAction({ data }) {
       yield put(LoginActions.resetPasswordFailure({}))
       yield put(ToastActionsCreators.displayWarning(message))
     }
-    
+
   } catch (e) {
     yield put(NavigationActions.navigate({ routeName: 'NetworkError' }))
     yield put(LoginActions.resetPasswordFailure({}))
@@ -216,19 +223,47 @@ export function* onVerifyUser({ phone }) {
     };
     const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}users/exists?app_token=${APP_TOKEN}&phone=${phone}`, options);
     yield put(LoginActions.otpRequest(phone))
-    if(!(status >= 200 && status < 300)) {
-      yield put(NavigationActions.navigate(
-        { routeName: 'RegisterScreen' },
-        { phone }
-        )
-      )
+    if (!(status >= 200 && status < 300)) {
+      yield put(NavigationActions.navigate({ routeName: 'RegisterScreen' }, { phone }))
       yield put(ToastActionsCreators.displayInfo('Oops Looks like you are new, Please Register first'))
     }
   } catch (e) {
     yield put(LoginActions.verifyUserFail())
     yield put(
-        NavigationActions.navigate({ routeName: 'NetworkError' })
-      )
+      NavigationActions.navigate({ routeName: 'NetworkError' })
+    )
     yield put(ToastActionsCreators.displayInfo('Oops Looks like you are new, Please Register first'))
+  }
+}
+
+
+export function* getPlacesListForSearch({ searchParam }) {
+  try {
+    const options = {
+      method: 'GET',
+    };
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}commons/places?search=${searchParam}&app_token=${APP_TOKEN}`, options);
+    if (status >= 200 && status < 300) {
+      yield put(LoginActions.getPreLoginPlacesListSuccess(body))
+    } else if (status === 401) {
+      yield put(NavigationActions.navigate({ routeName: 'Login' }))
+      yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
+    } else {
+      yield put(LoginActions.getPreLoginPlacesListFail())
+    }
+  } catch (e) {
+    yield put(LoginActions.getPreLoginPlacesListFail())
+  }
+}
+
+
+export function* logout() {
+  try {
+    yield put(BeneficiaryActions.beneficiaryLogoutRequest());
+    yield put(DevelopmentWorkActions.developmentWorkLogoutRequest());
+    yield put(EventActions.eventLogoutRequest());
+    yield put(FeedbackActions.feedbackOnLogout());
+  } catch {
+    yield put(ToastActionsCreators.displayWarning('Please Refresh the app'))
   }
 }

@@ -17,26 +17,30 @@ import { NavigationActions } from 'react-navigation'
 import { ToastActionsCreators } from 'react-native-redux-toast';
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
 
-export function * getEventsList ({ accessToken, pageNo }) {
+export function * getEventsList ({ accessToken, pageNo, lastCalledPage }) {
   try {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}events?page=${pageNo}&access_token=${accessToken}`, options);
-    if(status >= 200 && status < 300) {
-      if (!(body && body.length)) {
-        yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
+    if(lastCalledPage !== pageNo) { 
+      const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}events?page=${pageNo}&access_token=${accessToken}`, options);
+      if(status >= 200 && status < 300) {
+        if (!(body && body.length)) {
+          yield put(ToastActionsCreators.displayInfo('Nothing New to Show'));
+        }
+        yield put(EventActions.eventSuccess(body, pageNo));
+      } else if( status === 401) {
+        yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'));
+        yield put(NavigationActions.navigate({ routeName: 'Login' }));
+      } else {
+        yield put(EventActions.eventFailure());
       }
-      yield put(EventActions.eventSuccess(body))
-    } else if( status === 401) {
-    	yield put(NavigationActions.navigate({ routeName: 'Login' }))
-    	yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
     } else {
-    	yield put(EventActions.eventFailure())
+      yield put(ToastActionsCreators.displayInfo('Nothing New to Show'));
+      yield put(EventActions.eventSuccess([], lastCalledPage));
     }
-
   } catch (e) {
-    yield put(EventActions.eventFailure())
+    yield put(EventActions.eventFailure());
   }
 }
 

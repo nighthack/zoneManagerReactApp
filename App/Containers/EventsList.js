@@ -15,46 +15,29 @@ import Styles from './Styles/EventsListStyle'
 
 class EventsList extends Component {
 
-   constructor(props) {
+  constructor(props) {
     super(props);
     this.renderRow = this.renderRow.bind(this);
-    this.pageNo = 1;
-    this.state = {
-
-    };
   }
 
-
-
-componentWillReceiveProps(nextProps) {
-  const { data } = nextProps;
-  const { canModifyPageNo } = this.state;
-  if (data && this.props.data && data.legnth === this.props.data.legnth && canModifyPageNo) {
-    this.pageNo -= 1;
-    this.setState({
-      canModifyPageNo: false,
-    });
-  }
-}
 
   componentDidMount() {
-    this.onTableFetchRequest(1);
+    this.onTableFetchRequest();
   }
 
   getMoreItems = () => {
-    if(!this.props.fetching) {
-			this.pageNo += 1;
-			this.onTableFetchRequest(this.pageNo);
-			this.setState({
-				canModifyPageNo: true,
-			});
-		}
+    if (!this.props.fetching) {
+      this.onTableFetchRequest();
+    }
   }
- onTableFetchRequest = (pageNo) => {
-    const { user } = this.props;
-    this.props.getEventsList(user.access_token, pageNo);
+  onTableFetchRequest = () => {
+    const { user, lastCalledPage, currentPage } = this.props;
+    const { access_token } = user;
+    this.props.getEventsList(access_token, currentPage, lastCalledPage);
   }
-
+  onRefresh = () => {
+    this.onTableFetchRequest();
+  }
   goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
     navigate("EventDetailScreen", { selectedData });
@@ -112,8 +95,10 @@ componentWillReceiveProps(nextProps) {
                 renderItem={this.renderRow}
                 onEndReached={this.getMoreItems}
                 removeClippedSubview
+                onRefresh={this.onRefresh}
+                refreshing={fetching}
               />
-                    <LoadingOverlay
+        <LoadingOverlay
           visible={fetching}
           color="white"
           indicatorSize="large"
@@ -132,13 +117,15 @@ const mapStateToProps = (state) => {
     user: state.login.user,
     data: state.event.eventsList,
     fetching: state.event.fetching,
+    lastCalledPage: state.event.lastCalledPage,
+    currentPage: state.event.currentPage,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getEventsList: (accessToken, pageNo) =>
-      dispatch(EventActions.eventRequest(accessToken, pageNo))
+    getEventsList: (accessToken, pageNo, lastCalledPage) =>
+      dispatch(EventActions.eventRequest(accessToken, pageNo, lastCalledPage))
   }
 }
 

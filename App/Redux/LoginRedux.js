@@ -32,6 +32,11 @@ const { Types, Creators } = createActions({
   resetPasswordSuccess: ['response'],
   resetPasswordFailure: ['response'],
 
+// Get Places List
+  getPreLoginPlacesList: ['searchParam'],
+  getPreLoginPlacesListSuccess: ['data'],
+  getPreLoginPlacesListFail:['data'],
+
   logoutRequest: ['accessToken'],
 })
 
@@ -46,6 +51,7 @@ export const INITIAL_STATE = Immutable({
   user: null,
   error: null,
   verifyOtpResponse: {},
+  placesList: [],
 })
 
 /* ------------- Selectors ------------- */
@@ -112,6 +118,12 @@ export const onVerifyUser = state =>  state.merge({ fetching: true })
 export const onVerifyUserSuccess = state =>  state.merge({ fetching: false })
 export const onVerifyUserFail = state => state.merge({ fetching: false })
 
+export const onPlantLists = (state, action) => state.merge({ fetchingPlaces: true });
+export const onPlantListsSuccess = (state, { data }) => {
+  return state.merge({ placesList: data, fetchingPlaces: false  });
+}
+export const onPlantListsFail = state => state.merge({ placesList: [], fetchingPlaces: false })
+
 export const onLogout = state =>
   state.merge(INITIAL_STATE)
 
@@ -142,6 +154,11 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.RESET_PASSWORD_REQUEST]: onResetPassword,
   [Types.RESET_PASSWORD_SUCCESS]: onResetPasswordsuccess,
   [Types.RESET_PASSWORD_FAILURE]: onResetPasswordfailure,
+
+  [Types.GET_PRE_LOGIN_PLACES_LIST]: onPlantLists,
+  [Types.GET_PRE_LOGIN_PLACES_LIST_SUCCESS]: onPlantListsSuccess,
+  [Types.GET_PRE_LOGIN_PLACES_LIST_FAIL]: onPlantListsFail,
+  
   // Logout Request
   [Types.LOGOUT_REQUEST]: onLogout,
 })

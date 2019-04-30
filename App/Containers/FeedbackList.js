@@ -5,55 +5,35 @@ import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackgro
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import HeaderComponent from "../Components/HeaderComponent";
 import LoadingOverlay from '../Components/LoadingOverlay';
-// Add Actions - replace 'Your' with whatever your reducer is called :)
 import FeedbackActions from '../Redux/FeedbackRedux';
 
 // Styles
 import Styles from './Styles/FeedbackListStyle'
 
 class FeedbackList extends Component {
-
-	constructor(props) {
-    super(props);
-		this.pageNo = 1;
-		this.state = {
-		}
-  }
-
-	componentWillReceiveProps(nextProps) {
-		const { data } = nextProps;
-		const { canModifyPageNo } = this.state;
-		if (data && this.props.data && data.legnth === this.props.data.legnth && canModifyPageNo) {
-			this.pageNo -= 1;
-			this.setState({
-				canModifyPageNo: false,
-			});
-		}
-	}
   componentDidMount() {
-    this.onTableFetchRequest(1);
+    this.onTableFetchRequest();
   }
 
   onTableFetchRequest = (pageNo) => {
-		const { access_token } = this.props.user;
-		this.props.getFeedbackList(access_token, pageNo);
-
+  	const { user, lastCalledPage, currentPage } = this.props;
+    const { access_token } = user;
+    this.props.getFeedbackList(access_token, currentPage, lastCalledPage);
   }
 
   getMoreItems = () => {
-		if(!this.props.fetching) {
-			this.pageNo += 1;
-			this.onTableFetchRequest(this.pageNo);
-			this.setState({
-				canModifyPageNo: true,
-			});
-		}
-	}
-	
-	render() {
-		const { data, navigation, fetching } = this.props;
-		return (
-			<Container>
+    if (!this.props.fetching) {
+      this.onTableFetchRequest(this.pageNo);
+    }
+  }
+  onRefresh = () => {
+    this.onTableFetchRequest();
+    alert('refreshing');
+  }
+  render() {
+    const { data, navigation, fetching } = this.props;
+    return (
+      <Container>
 				<HeaderComponent title={"Feedback"} {...this.props} />
 				<View contentContainerStyle={[Styles.layoutDefault]}>
 					<Image source={Images.background} style={Styles.bgImg} />
@@ -80,6 +60,8 @@ class FeedbackList extends Component {
 								showsHorizontalScrollIndicator={false}
 								removeClippedSubview
 								onEndReached={this.getMoreItems}
+								onRefresh={this.onRefresh}
+                refreshing={fetching}
 								renderItem={({ item, separators }) => (
 									<View>
 										<TouchableOpacity style={Styles.msgItem}>
@@ -109,23 +91,25 @@ class FeedbackList extends Component {
 				</View>
 
 			</Container>
-		)
-	}
+    )
+  }
 }
 
 const mapStateToProps = (state) => {
-	return {
-		user: state.login.user,
-		data: state.feedback.listData,
-		fetching: state.feedback.fetching,
-	}
+  return {
+    user: state.login.user,
+    data: state.feedback.listData,
+    fetching: state.feedback.fetching,
+    lastCalledPage: state.feedback.lastCalledPage,
+    currentPage: state.feedback.currentPage,
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
-	return {
-		getFeedbackList: (accessToken, pageNo) =>
-			dispatch(FeedbackActions.feedbackRequest(accessToken, pageNo))
-	}
+  return {
+    getFeedbackList: (accessToken, pageNo, lastCalledPage) =>
+      dispatch(FeedbackActions.feedbackRequest(accessToken, pageNo, lastCalledPage))
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(FeedbackList)

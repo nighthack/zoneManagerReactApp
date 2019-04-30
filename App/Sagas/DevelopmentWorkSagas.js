@@ -17,18 +17,19 @@ import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
 import { NavigationActions } from 'react-navigation'
 import { ToastActionsCreators } from 'react-native-redux-toast';
 
-export function * getDevelopmentList ({ accessToken, pageNo }) {
+export function * getDevelopmentList ({ accessToken, pageNo, lastCalledPage }) {
   try {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}development_works?page=${pageNo}&access_token=${accessToken}`, options);
-    if(status) {
+    if(lastCalledPage !== pageNo) {
+      const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}development_works?page=${pageNo}&access_token=${accessToken}`, options);
+      if(status) {
       if (status >= 200 && status < 300) {
         if (!(body && body.length)) {
           yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
         }
-        yield put(DevelopmentWorkActions.developmentWorkSuccess(body))
+        yield put(DevelopmentWorkActions.developmentWorkSuccess(body, pageNo))
       } else if(status === 401 ) {
         yield put(DevelopmentWorkActions.developmentWorkFailure())
         yield put(ToastActionsCreators.displayWarning('Invalid Session'))
@@ -36,6 +37,11 @@ export function * getDevelopmentList ({ accessToken, pageNo }) {
       } else {
         yield put(DevelopmentWorkActions.developmentWorkFailure())
       }
+    } else {
+      yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
+      yield put(DevelopmentWorkActions.developmentWorkSuccess(body, lastCalledPage))
+    }
+    
     }
   } catch (e) {
     yield put(DevelopmentWorkActions.developmentWorkFailure())
@@ -54,8 +60,8 @@ export function * getDevelopmentDetails ({ accessToken, id }) {
         yield put(DevelopmentWorkActions.developmentWorkDetailsSuccess(body))
       } else if(status === 401 ) {
         yield put(DevelopmentWorkActions.developmentWorkDetailsFailure())
-        yield put(ToastActionsCreators.displayWarning('Invalid Session'))
         yield put(NavigationActions.navigate({ routeName: 'Login' }))
+        yield put(ToastActionsCreators.displayWarning('Invalid Session'))
       } else {
         yield put(DevelopmentWorkActions.developmentWorkDetailsFailure())
       }

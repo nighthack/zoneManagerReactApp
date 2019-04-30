@@ -5,6 +5,7 @@ import { StatusBar, TouchableOpacity, Image, } from 'react-native'
 import { Container, Header, Content, Icon, Text, View } from 'native-base'
 import { Images } from '../Themes/'
 import LoadingOverlay from '../Components/LoadingOverlay';
+import ImageViewerComponent from '../Components/ImageViewer';
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 
 // Styles
@@ -81,8 +82,11 @@ class BenefeciaryDetailView extends Component {
                 <Text style={Styles.msgText}>{selectedScheme.remarks || 'No Remarks'}</Text>
               </View>
             </View>
-
           </View>
+          {
+            selectedScheme.images && selectedScheme.images.length ? <ImageViewerComponent data={selectedScheme.images}/> : null
+          }
+
         </Content>
         <LoadingOverlay
           visible={fetching}

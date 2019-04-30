@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 import { StatusBar, TouchableOpacity, Image } from 'react-native'
 import { Container, Header, Content, Icon, Text, View } from 'native-base'
+import ImageViewerComponent from '../Components/ImageViewer';
 import LoadingOverlay from '../Components/LoadingOverlay';
 import { connect } from 'react-redux'
 import { Images } from '../Themes/'
@@ -102,7 +103,9 @@ class DevelopmentWorkDetail extends Component {
               </View>
             </View>
           </View>
-
+          {
+            data.images && data.images.length ? <ImageViewerComponent data={data.images}/> : null
+          }
         </Content>
       )
     }

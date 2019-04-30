@@ -4,12 +4,13 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  beneficiaryRequest: ['accessToken', 'pageNo'],
-  beneficiarySuccess: ['response'],
+  beneficiaryRequest: ['accessToken', 'pageNo', 'lastCalledPage'],
+  beneficiarySuccess: ['response', 'pageNo'],
   beneficiaryFailure: null,
-  beneficiaryDetailsRequest: ['id', 'accessToken',],
+  beneficiaryDetailsRequest: ['id', 'accessToken', ],
   beneficiaryDetailsSuccess: ['response'],
-  beneficiaryDetailsFailure: null
+  beneficiaryDetailsFailure: null,
+  beneficiaryLogoutRequest: ['accessToken'],
 })
 
 export const BeneficiaryTypes = Types
@@ -19,11 +20,13 @@ export default Creators
 
 export const INITIAL_STATE = Immutable({
   data: null,
-  fetching: null,
+  fetching: false,
   payload: null,
   error: null,
   beneficiaryList: [],
   beneficiaryDetails: {},
+  lastCalledPage: 0,
+  currentPage: 1,
 })
 
 /* ------------- Selectors ------------- */
@@ -41,7 +44,14 @@ export const request = (state) =>
 // successful api lookup
 export const success = (state, action) => {
   const { response } = action;
-  return state.merge({ fetching: false, error: null, beneficiaryList: state.beneficiaryList.concat(response) })
+  const { lastCalledPage, currentPage } = state;
+  return state.merge({
+    fetching: false,
+    error: null,
+    beneficiaryList: [...state.beneficiaryList, ...response],
+    lastCalledPage: currentPage,
+    currentPage: currentPage + 1,
+  });
 }
 
 // Something went wrong somewhere.
@@ -55,13 +65,23 @@ export const beneficiaryDetailrequest = (state) =>
 
 // successful api lookup
 export const beneficiaryDetailsuccess = (state, action) => {
-  const { response } = action
-  return state.merge({ detailFetching: false, detailError: null, beneficiaryDetails: response })
+  const { response } = action;
+  const { lastCalledPage, currentPage } = state;
+  return state.merge({
+    detailFetching: false,
+    detailError: null,
+    beneficiaryDetails: response,
+    lastCalledPage: currentPage,
+    currentPage: currentPage + 1
+  })
 }
 
 // Something went wrong somewhere.
 export const beneficiaryDetailfailure = state =>
   state.merge({ detailFetching: false, detailError: true })
+
+export const onLogout = state =>
+  state.merge(INITIAL_STATE)
 
 /* ------------- Hookup Reducers To Types ------------- */
 
@@ -72,4 +92,5 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.BENEFICIARY_DETAILS_REQUEST]: beneficiaryDetailrequest,
   [Types.BENEFICIARY_DETAILS_SUCCESS]: beneficiaryDetailsuccess,
   [Types.BENEFICIARY_DETAILS_FAILURE]: beneficiaryDetailfailure,
+  [Types.BENEFICIARY_LOGOUT_REQUEST]: onLogout,
 })

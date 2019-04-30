@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import { Images } from '../Themes/'
 import HeaderComponent from '../Components/HeaderComponent'
 import LoadingOverlay from '../Components/LoadingOverlay';
-// Add Actions - replace 'Your' with whatever your reducer is called :)
+import ImageViewerComponent from '../Components/ImageViewer';
 import EventActions from '../Redux/EventRedux'
 
 // Styles
@@ -26,9 +26,9 @@ class EventDetail extends Component {
   }
   renderContent() {
     const { data } = this.props;
-    if(data) {
-      return(
-         <Content contentContainerStyle={Styles.layoutDefault}>
+    if (data) {
+      return (
+        <Content contentContainerStyle={Styles.layoutDefault}>
           <Image source={Images.background} style={Styles.bgImg} />
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
@@ -70,8 +70,11 @@ class EventDetail extends Component {
               </View>
             </View>
           </View>
+          {
+            data.images && data.images.length ? <ImageViewerComponent data={data.images}/> : null
+          }
         </Content>
-       )
+      )
     }
     return null;
   }
@@ -79,7 +82,7 @@ class EventDetail extends Component {
   renderHeader = () => {
     const { navigation } = this.props;
     return (
-              <Header style={Styles.navigation}>
+      <Header style={Styles.navigation}>
           <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
           <View style={Styles.nav}>
             <View style={Styles.navLeft}>
@@ -93,8 +96,8 @@ class EventDetail extends Component {
             <View style={Styles.navRight} />
           </View>
         </Header>
-        )
-  } 
+    )
+  }
   render() {
     const { data, navigation, user, fetching } = this.props;
     const parentProps = navigation.getParam('selectedData', null);
