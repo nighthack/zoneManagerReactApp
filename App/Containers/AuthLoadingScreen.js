@@ -5,9 +5,6 @@ import LoginActions from '../Redux/LoginRedux'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import { Images } from '../Themes/'
 
-// Styles
-import styles from './Styles/AuthLoadingScreenStyle'
-
 class AuthLoadingScreen extends Component {
   constructor(props) {
     super(props);
