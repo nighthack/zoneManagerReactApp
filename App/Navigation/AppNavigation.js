@@ -8,6 +8,7 @@ import LoginScreen from '../Containers/LoginScreen'
 import SplashScreen from '../Components/SplashScreen';
 import ForgotPasswordScreen from '../Containers/ForgotPassword'
 import NetworkError from '../Components/NetworkErrorScreen'
+import AuthLoadingScreen from '../Containers/AuthLoadingScreen'
 
 
 // These Are the post authencation Screens
@@ -70,12 +71,12 @@ const MyDrawerNavigator = createDrawerNavigator({
     contentComponent: DrawerComponent
   });
 
-// const AppStack = createStackNavigator({
-//   DrawerStack: { screen: MyDrawerNavigator }
-// },
-//   {
-//     headerMode: 'none',
-//   });
+const AppStack = createStackNavigator({
+  DrawerStack: { screen: MyDrawerNavigator }
+},
+  {
+    headerMode: 'none',
+  });
 
 const AuthStack = createStackNavigator(
   {
@@ -99,12 +100,12 @@ const AuthStack = createStackNavigator(
 
 const AppNavigator = createSwitchNavigator(
   {
-    // AuthLoading: AuthLoadingScreen,
-    App: MyDrawerNavigator,
+    AuthLoading: AuthLoadingScreen,
+    App: AppStack,
     Auth: AuthStack,
   },
   {
-    initialRouteName: 'Auth',
+    initialRouteName: 'AuthLoading',
   }
 );
 const InitialNavigator = createSwitchNavigator({

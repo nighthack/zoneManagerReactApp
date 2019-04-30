@@ -1,59 +1,60 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
+import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import HeaderComponent from '../Components/HeaderComponent'
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 import LoadingOverlay from '../Components/LoadingOverlay';
+import LoginActions from '../Redux/LoginRedux'
 import { NavigationEvents } from 'react-navigation';
 import { Images } from '../Themes/'
 import Styles from './Styles/BenefeciaryDetailViewStyle'
 
+
+function randomString(length, chars) {
+  var result = '';
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
 class BeneficiaryList extends Component {
-  static navigationOptions = {
-    headerTitle: 'Beneficiary Schemes',
-  };
+
   constructor(props) {
     super(props);
     this.renderRow = this.renderRow.bind(this);
-    this.pageNo = 1;
-    this.state= {
-
-    }
   }
-  componentWillReceiveProps(nextProps) {
-		const { data } = nextProps;
-		const { canModifyPageNo } = this.state;
-		if (data && this.props.data && data.legnth === this.props.data.legnth && canModifyPageNo) {
-			this.pageNo -= 1;
-			this.setState({
-				canModifyPageNo: false,
-			});
-		}
-	}
+
   componentDidMount() {
-    this.onTableFetchRequest(1);
+    this.onTableFetchRequest();
   }
 
   onTableFetchRequest = (pageNo) => {
-    const { access_token } = this.props.user;
-    this.props.getBeneficiarySchemesList(access_token, pageNo);
-    this.renderRow = this.renderRow.bind(this);
+    const { user, lastCalledPage, currentPage } = this.props;
+    const { access_token } = user;
+    let accessToken = access_token;
+    if(!accessToken) {
+      AsyncStorage.getItem('user').then((userToken) => {
+        accessToken = JSON.parse(userToken).access_token;
+        this.props.getBeneficiarySchemesList(accessToken, currentPage, lastCalledPage);
+        this.props.saveUserToken(JSON.parse(userToken));
+      });
+    } else {
+      this.props.getBeneficiarySchemesList(accessToken, currentPage, lastCalledPage);
+    }
   }
 
   getMoreItems = () => {
-    if(!this.props.fetching) {
-			this.pageNo += 1;
-			this.onTableFetchRequest(this.pageNo);
-			this.setState({
-				canModifyPageNo: true,
-			});
-		}
+    if (!this.props.fetching) {
+      this.onTableFetchRequest();
+    }
   }
 
   goToBeneficiaryDetailView(selectedScheme) {
     const { navigate } = this.props.navigation;
     navigate('BenfeciaryDetail', { selectedScheme });
+  }
+
+  onRefresh = () => {
+    this.onTableFetchRequest();
   }
 
   renderRow({ item, index }) {
@@ -62,8 +63,7 @@ class BeneficiaryList extends Component {
         <View style={Styles.tripItem}>
           <View style={Styles.truckInfo}>
             <View>
-              <Text style={Styles.infoLabel}>
-ಹೆಸರು/Name</Text>
+              <Text style={Styles.infoLabel}>ಹೆಸರು/Name</Text>
               <Text style={Styles.truckData}>{item.beneficiary_name}</Text>
               <View>
                 <View>
@@ -104,7 +104,15 @@ class BeneficiaryList extends Component {
     return (
       <Container>
         <HeaderComponent title={''} {...this.props} />
-        <Content contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}>
+        <Content 
+          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
+          refreshControl={
+            <RefreshControl
+              refreshing={fetching} 
+              onRefresh={this.onRefresh} 
+            />
+          }
+        >
           <Image source={Images.background} style={Styles.bgImg} />
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
@@ -116,7 +124,7 @@ class BeneficiaryList extends Component {
             </View>
             <FlatList
               contentContainerStyle={Styles.listContent}
-              keyExtractor={item => item.id.toString()}
+              keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
               data={beneficiaryList}
               renderItem={this.renderRow}
               onEndReached={this.getMoreItems}
@@ -144,12 +152,15 @@ const mapStateToProps = (state) => {
     user: state.login.user,
     beneficiaryList: state.beneficiary.beneficiaryList,
     fetching: state.beneficiary.fetching,
+    lastCalledPage: state.beneficiary.lastCalledPage,
+    currentPage: state.beneficiary.currentPage,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getBeneficiarySchemesList: (accessToken, pageNo) => dispatch(BeneficiaryActions.beneficiaryRequest(accessToken, pageNo))
+    getBeneficiarySchemesList: (accessToken, pageNo, lastCalledPage) => dispatch(BeneficiaryActions.beneficiaryRequest(accessToken, pageNo, lastCalledPage)),
+    saveUserToken: (user) => dispatch(LoginActions.loginSuccess(user)),
   }
 }
 

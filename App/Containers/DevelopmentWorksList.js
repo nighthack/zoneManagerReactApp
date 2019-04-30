@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
+import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import { connect } from "react-redux";
 import { format } from 'date-fns';
@@ -10,51 +10,42 @@ import { Images } from '../Themes/'
 // Styles
 import Styles from './Styles/BenefeciaryDetailViewStyle'
 
+
+function randomString(length, chars) {
+  var result = '';
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
+
 class DevelopmentWorksList extends Component {
 
   constructor(props) {
     super(props);
     this.renderRow = this.renderRow.bind(this);
-    this.pageNo = 1;
-    this.state = {
-
-    };
   }
 
-  componentWillReceiveProps(nextProps) {
-		const { data } = nextProps;
-		const { canModifyPageNo } = this.state;
-		if (data && this.props.data && data.legnth === this.props.data.legnth && canModifyPageNo) {
-			this.pageNo -= 1;
-			this.setState({
-				canModifyPageNo: false,
-			});
-		}
-	}
 
   componentDidMount() {
-    this.onTableFetchRequest(1);
+    this.onTableFetchRequest();
   }
 
-  onTableFetchRequest = (pageNo) => {
-    const { user } = this.props;
-    this.props.getDevelopmentWorkslist(user.access_token, pageNo);
-    this.renderRow = this.renderRow.bind(this);
+  onTableFetchRequest = () => {
+    const { user, lastCalledPage, currentPage } = this.props;
+    this.props.getDevelopmentWorkslist(user.access_token, currentPage, lastCalledPage);
   }
 
+  onRefresh = () => {
+    this.onTableFetchRequest();
+  }
   goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
     navigate("DevelopmentWorkDetail", { selectedData });
   }
 
   getMoreItems = () => {
-    if(!this.props.fetching) {
-			this.pageNo += 1;
-			this.onTableFetchRequest(this.pageNo);
-			this.setState({
-				canModifyPageNo: true,
-			});
-		}
+    if (!this.props.fetching) {
+      this.onTableFetchRequest();
+    }
   }
   renderRow({ item, index }) {
     return (
@@ -71,7 +62,7 @@ class DevelopmentWorksList extends Component {
             </View>
           </View>
           <View style={Styles.tripInfo}>
-                          <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+              <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
                 <Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
                 <Text style={Styles.truckData}>{item.department}</Text>
               </View>
@@ -144,9 +135,17 @@ class DevelopmentWorksList extends Component {
   render() {
     const { data, fetching } = this.props;
     return (
-        <Container>
+      <Container>
         <HeaderComponent title={''} {...this.props} />
-        <Content contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}>
+        <Content
+          refreshControl={
+            <RefreshControl
+              refreshing={fetching} 
+              onRefresh={this.onRefresh} 
+            />
+          }
+          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
+        >
           <Image source={Images.background} style={Styles.bgImg} />
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
@@ -159,7 +158,7 @@ class DevelopmentWorksList extends Component {
             </View>
             <FlatList
               contentContainerStyle={Styles.listContent}
-              keyExtractor={item => item.id.toString()}
+              keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
               data={data}
               removeClippedSubview
               renderItem={this.renderRow}
@@ -185,13 +184,15 @@ const mapStateToProps = state => {
     user: state.login.user,
     data: state.development.listData,
     fetching: state.development.fetching,
+    lastCalledPage: state.development.lastCalledPage,
+    currentPage: state.development.currentPage,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    getDevelopmentWorkslist: (accessToken, pageNo) =>
-      dispatch(DevelopmentWorksActions.developmentWorkRequest(accessToken, pageNo))
+    getDevelopmentWorkslist: (accessToken, pageNo, lastCalledPage) =>
+      dispatch(DevelopmentWorksActions.developmentWorkRequest(accessToken, pageNo, lastCalledPage))
   };
 };
 

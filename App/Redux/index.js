@@ -13,9 +13,14 @@ export const reducers = combineReducers({
   feedback: require('./FeedbackRedux').reducer,
   toast,
 })
-
+export const rootReducer = (state, action) => {
+  if (action.type === 'USER_LOGOUT') {
+    state = undefined
+  }
+  return reducers(state, action)
+}
 export default () => {
-  let { store, sagasManager, sagaMiddleware } = configureStore(reducers, rootSaga)
+  let { store, sagasManager, sagaMiddleware } = configureStore(rootReducer, rootSaga)
 
   if (module.hot) {
     module.hot.accept(() => {

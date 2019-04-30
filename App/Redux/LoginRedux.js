@@ -1,5 +1,6 @@
 import { createReducer, createActions } from 'reduxsauce'
-import Immutable from 'seamless-immutable'
+import Immutable from 'seamless-immutable';
+import AsyncStorage from '@react-native-community/async-storage';
 
 /* ------------- Types and Action Creators ------------- */
 
@@ -32,6 +33,11 @@ const { Types, Creators } = createActions({
   resetPasswordSuccess: ['response'],
   resetPasswordFailure: ['response'],
 
+// Get Places List
+  getPreLoginPlacesList: ['searchParam'],
+  getPreLoginPlacesListSuccess: ['data'],
+  getPreLoginPlacesListFail:['data'],
+
   logoutRequest: ['accessToken'],
 })
 
@@ -43,9 +49,10 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   data: null,
   fetching: null,
-  user: null,
+  user: {},
   error: null,
   verifyOtpResponse: {},
+  placesList: [],
 })
 
 /* ------------- Selectors ------------- */
@@ -61,7 +68,9 @@ export const request = (state, { data }) =>
   state.merge({ fetching: true, data })
 
 // successful api lookup
-export const success = (state, { user }) => state.merge({ fetching: false, error: null, user })
+export const success = (state, { user }) => {
+  return state.merge({ fetching: false, error: null, user })
+}
 
 // Something went wrong somewhere.
 export const failure = state =>
@@ -112,6 +121,12 @@ export const onVerifyUser = state =>  state.merge({ fetching: true })
 export const onVerifyUserSuccess = state =>  state.merge({ fetching: false })
 export const onVerifyUserFail = state => state.merge({ fetching: false })
 
+export const onPlantLists = (state, action) => state.merge({ fetchingPlaces: true });
+export const onPlantListsSuccess = (state, { data }) => {
+  return state.merge({ placesList: data, fetchingPlaces: false  });
+}
+export const onPlantListsFail = state => state.merge({ placesList: [], fetchingPlaces: false })
+
 export const onLogout = state =>
   state.merge(INITIAL_STATE)
 
@@ -142,6 +157,11 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.RESET_PASSWORD_REQUEST]: onResetPassword,
   [Types.RESET_PASSWORD_SUCCESS]: onResetPasswordsuccess,
   [Types.RESET_PASSWORD_FAILURE]: onResetPasswordfailure,
+
+  [Types.GET_PRE_LOGIN_PLACES_LIST]: onPlantLists,
+  [Types.GET_PRE_LOGIN_PLACES_LIST_SUCCESS]: onPlantListsSuccess,
+  [Types.GET_PRE_LOGIN_PLACES_LIST_FAIL]: onPlantListsFail,
+  
   // Logout Request
   [Types.LOGOUT_REQUEST]: onLogout,
 })

@@ -6,7 +6,6 @@ import DebugConfig from '../Config/DebugConfig'
 /* ------------- Types ------------- */
 
 import { LoginTypes } from '../Redux/LoginRedux'
-import { VerifiedSignUpTypes } from '../Redux/VerifiedSignUpRedux'
 import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
 import { DevelopmentWorkTypes } from '../Redux/DevelopmentWorkRedux'
 import { EventTypes } from '../Redux/EventRedux'
@@ -22,6 +21,8 @@ import {
     onLogout, 
     onResetPasswordAction, 
     onVerifyUser,
+    getPlacesListForSearch,
+    logout,
 } from './LoginSaga'
 import { getBeneficiary, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevelopmentList, getDevelopmentDetails } from './DevelopmentWorkSagas'
@@ -48,6 +49,8 @@ export default function* root() {
     takeLatest(LoginTypes.LOGOUT_REQUEST, onLogout),
     takeLatest(LoginTypes.RESET_PASSWORD_REQUEST, onResetPasswordAction),
     takeLatest(LoginTypes.VERIFY_USER, onVerifyUser),
+
+    takeLatest(LoginTypes.GET_PRE_LOGIN_PLACES_LIST, getPlacesListForSearch),
     // Beneficiary Module
     takeLatest(BeneficiaryTypes.BENEFICIARY_REQUEST, getBeneficiary),
     takeLatest(BeneficiaryTypes.BENEFICIARY_DETAILS_REQUEST, getBeneficiaryDetails),
@@ -62,5 +65,8 @@ export default function* root() {
     // Events
     takeLatest(EventTypes.EVENT_REQUEST, getEventsList),
     takeLatest(EventTypes.EVENT_DETAILS_REQUEST,getEventDetails),
+
+    // Logout Saga
+    takeLatest(LoginTypes.LOGOUT_REQUEST, logout),
   ])
 }

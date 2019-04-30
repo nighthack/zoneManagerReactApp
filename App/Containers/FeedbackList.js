@@ -1,61 +1,53 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Images } from '../Themes/'
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
+import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import HeaderComponent from "../Components/HeaderComponent";
 import LoadingOverlay from '../Components/LoadingOverlay';
-// Add Actions - replace 'Your' with whatever your reducer is called :)
 import FeedbackActions from '../Redux/FeedbackRedux';
 
 // Styles
 import Styles from './Styles/FeedbackListStyle'
 
+function randomString(length, chars) {
+  var result = '';
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
 class FeedbackList extends Component {
-
-	constructor(props) {
-    super(props);
-		this.pageNo = 1;
-		this.state = {
-		}
-  }
-
-	componentWillReceiveProps(nextProps) {
-		const { data } = nextProps;
-		const { canModifyPageNo } = this.state;
-		if (data && this.props.data && data.legnth === this.props.data.legnth && canModifyPageNo) {
-			this.pageNo -= 1;
-			this.setState({
-				canModifyPageNo: false,
-			});
-		}
+	componentDidMount() {
+		this.onTableFetchRequest();
 	}
-  componentDidMount() {
-    this.onTableFetchRequest(1);
-  }
 
-  onTableFetchRequest = (pageNo) => {
-		const { access_token } = this.props.user;
-		this.props.getFeedbackList(access_token, pageNo);
+	onTableFetchRequest = (pageNo) => {
+		const { user, lastCalledPage, currentPage } = this.props;
+		const { access_token } = user;
+		this.props.getFeedbackList(access_token, currentPage, lastCalledPage);
+	}
 
-  }
-
-  getMoreItems = () => {
-		if(!this.props.fetching) {
-			this.pageNo += 1;
+	getMoreItems = () => {
+		if (!this.props.fetching) {
 			this.onTableFetchRequest(this.pageNo);
-			this.setState({
-				canModifyPageNo: true,
-			});
 		}
 	}
-	
+	onRefresh = () => {
+		this.onTableFetchRequest();
+	}
 	render() {
 		const { data, navigation, fetching } = this.props;
 		return (
 			<Container>
 				<HeaderComponent title={"Feedback"} {...this.props} />
-				<View contentContainerStyle={[Styles.layoutDefault]}>
+				<Content
+					refreshControl={
+						<RefreshControl
+							refreshing={fetching}
+							onRefresh={this.onRefresh}
+						/>
+					}
+					contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
+				>
 					<Image source={Images.background} style={Styles.bgImg} />
 					<View style={Styles.bgLayout}>
 						<View style={Styles.hTop}>
@@ -75,39 +67,47 @@ class FeedbackList extends Component {
 						</View>
 
 						<FlatList
-								data={data}
-								refreshing={fetching}
-								showsHorizontalScrollIndicator={false}
-								removeClippedSubview
-								onEndReached={this.getMoreItems}
-								renderItem={({ item, separators }) => (
-									<View>
-										<TouchableOpacity style={Styles.msgItem}>
-											<View>
-												<View>
-													<Text style={Styles.msgName}>ವಿಷಯ/Title</Text>
-													<Text style={Styles.msgContent}>{item.name}</Text>
-												</View>
-												<View>
-													<Text style={Styles.msgName}>ಇಲಾಖೆ/Department</Text>
-													<Text style={Styles.msgContent}>{item.department}</Text>
-												</View>
-												<View>
-													<Text style={Styles.msgName}>ಹಾಲಿ ಸ್ಥಿತಿ/Status</Text>
-													<Text style={Styles.msgContent}>{item.status}</Text>
-												</View>
-												<View>
-													<Text style={Styles.msgName}>ಕ್ರಿಯೆ/Action</Text>
-													<Text style={Styles.msgContent}>{item.action_taken}</Text>
-												</View>
-											</View>
-										</TouchableOpacity>
-									</View>
-								)}
-							/>
-					</View>
-				</View>
+							data={data}
+							refreshing={fetching}
+							showsHorizontalScrollIndicator={false}
+							removeClippedSubview
+							keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+              onEndReached={this.getMoreItems}
 
+							renderItem={({ item, separators }) => (
+								<View>
+									<TouchableOpacity style={Styles.msgItem}>
+										<View>
+											<View>
+												<Text style={Styles.msgName}>ವಿಷಯ/Title</Text>
+												<Text style={Styles.msgContent}>{item.name}</Text>
+											</View>
+											<View>
+												<Text style={Styles.msgName}>ಇಲಾಖೆ/Department</Text>
+												<Text style={Styles.msgContent}>{item.department}</Text>
+											</View>
+											<View>
+												<Text style={Styles.msgName}>ಹಾಲಿ ಸ್ಥಿತಿ/Status</Text>
+												<Text style={Styles.msgContent}>{item.status}</Text>
+											</View>
+											<View>
+												<Text style={Styles.msgName}>ಕ್ರಿಯೆ/Action</Text>
+												<Text style={Styles.msgContent}>{item.action_taken}</Text>
+											</View>
+										</View>
+									</TouchableOpacity>
+								</View>
+							)}
+						/>
+					</View>
+				</Content>
+				<LoadingOverlay
+          visible={fetching}
+          color="white"
+          indicatorSize="large"
+          messageFontSize={24}
+          message="Loading..."
+        />
 			</Container>
 		)
 	}
@@ -118,13 +118,15 @@ const mapStateToProps = (state) => {
 		user: state.login.user,
 		data: state.feedback.listData,
 		fetching: state.feedback.fetching,
+		lastCalledPage: state.feedback.lastCalledPage,
+		currentPage: state.feedback.currentPage,
 	}
 }
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		getFeedbackList: (accessToken, pageNo) =>
-			dispatch(FeedbackActions.feedbackRequest(accessToken, pageNo))
+		getFeedbackList: (accessToken, pageNo, lastCalledPage) =>
+			dispatch(FeedbackActions.feedbackRequest(accessToken, pageNo, lastCalledPage))
 	}
 }
 
@@ -136,10 +138,4 @@ export default connect(mapStateToProps, mapDispatchToProps)(FeedbackList)
 // 										}}
 
 
-// <LoadingOverlay
-// visible={fetching}
-// >
-// <View>
-// 	<Image source={Images.bjpGif} />
-// </View>
-// </LoadingOverlay>
+

@@ -16,26 +16,35 @@ import { NavigationActions } from 'react-navigation'
 import { ToastActionsCreators } from 'react-native-redux-toast';
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
 
-export function * getBeneficiary ({ accessToken, pageNo }) {
+export function * getBeneficiary ({ accessToken, pageNo, lastCalledPage }) {
   try {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes?page=${pageNo}&access_token=${accessToken}`, options);
+    if(lastCalledPage !== pageNo) {
+      const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}beneficiary_schemes?page=${pageNo}&access_token=${accessToken}`, options);
     if(status) {
       if (status >= 200 && status < 300) {
         if (!(body && body.length)) {
           yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
+          yield put(BeneficiaryActions.beneficiarySuccess([], lastCalledPage))
+        } else {
+          yield put(BeneficiaryActions.beneficiarySuccess(body, pageNo))
         }
-        yield put(BeneficiaryActions.beneficiarySuccess(body))
+        
       } else if(status === 401 ) {
         yield put(BeneficiaryActions.beneficiaryFailure())
-        yield put(ToastActionsCreators.displayWarning('message'))
+        yield put(ToastActionsCreators.displayWarning('Invalid Session'))
         yield put(NavigationActions.navigate({ routeName: 'Login' }))
       } else {
         yield put(BeneficiaryActions.beneficiaryFailure())
       }
     }
+  } else {
+    yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
+    yield put(BeneficiaryActions.beneficiarySuccess([], lastCalledPage))
+  }
+    
    
   } catch (e) {
     yield put(BeneficiaryActions.beneficiaryFailure())
