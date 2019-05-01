@@ -104,7 +104,7 @@ class FeedbackDetailView extends Component {
           <View style={Styles.nav}>
             <View style={Styles.navLeft}>
               <TouchableOpacity style={Styles.navLeft} onPress={() => {
-                navigation.navigate("Fe")
+                navigation.navigate("FeedbackList")
               }}>
                 <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
               </TouchableOpacity>
