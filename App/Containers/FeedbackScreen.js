@@ -27,6 +27,7 @@ class FeedbackScreen extends Component {
         formObj: {},
         errorsObj: {},
       });
+      nextProps.navigation.navigate('FeedbackList');
     }
   }
 
@@ -275,6 +276,7 @@ const mapStateToProps = (state) => {
     statuses: state.feedback.statuses,
     error: state.feedback.formError,
     errorCode: state.feedback.createFeedbackErrorCode,
+    createFeedbackResponse: state.feedback.createFeedbackResponse,
   }
 }
 

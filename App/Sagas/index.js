@@ -64,7 +64,7 @@ export default function* root() {
     takeLatest(FeedbackTypes.GET_DEPARTMENTS_LIST, getDepartmentsList),
     takeLatest(FeedbackTypes.FEEDBACK_ON_LIST_REQUEST,getFeedbackList),
     takeLatest(FeedbackTypes.FEEDBACK_ON_DETAIL_REQUEST,getFeedbackDetails),
-    // takeLatest(FeedbackTypes.CREATE_FEEDBACK, createFeedback),
+    takeLatest(FeedbackTypes.CREATE_FEEDBACK, createFeedback),
     
     
     // Events
