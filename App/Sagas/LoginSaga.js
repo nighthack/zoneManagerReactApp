@@ -36,7 +36,7 @@ export function* login({ phone, password }) {
     if (status) {
       const { user, message } = body;
       if (status >= 200 && status < 300) {
-        AsyncStorage.setItem('user', JSON.stringify(user));
+        AsyncStorage.setItem('accessToken', user.access_token);
         yield put(LoginActions.loginSuccess(user, message));
         yield put(NavigationActions.navigate({ routeName: 'Home' }))
         yield put(LoginActions.resetStateOnNavigation());
@@ -161,6 +161,7 @@ export function* singupRequest({ data }) {
 }
 
 export function* onLogout({ accessToken }) {
+  AsyncStorage.removeItem('accessToken');
   try {
     const headers = new Headers({
       "cache-control": "no-cache",
@@ -170,11 +171,15 @@ export function* onLogout({ accessToken }) {
       headers,
     };
     yield call(request, `${BASE_URL}${API_VERSION}users/sign_out?access_token=${accessToken}`, options);
-
+    yield put(BeneficiaryActions.beneficiaryOnListReset());
+    yield put(DevelopmentWorkActions.devWorkOnListReset());
+    yield put(EventActions.eventOnListReset());
+    yield put(FeedbackActions.feedbackOnListReset());
   } catch (e) {
-    // yield put(LoginActions.logoutRequest(accessToken))
-    yield put(ToastActionsCreators.displayInfo('Unable to logout Currently'))
+    console.log(e);
+    yield put(ToastActionsCreators.displayWarning('Please Refresh the app'));
   }
+  
 }
 
 export function* onResetPasswordAction({ data }) {
@@ -258,13 +263,3 @@ export function* getPlacesListForSearch({ searchParam }) {
 }
 
 
-export function* logout() {
-  try {
-    yield put(BeneficiaryActions.beneficiaryLogoutRequest());
-    yield put(DevelopmentWorkActions.developmentWorkLogoutRequest());
-    yield put(EventActions.eventLogoutRequest());
-    yield put(FeedbackActions.feedbackOnLogout());
-  } catch {
-    yield put(ToastActionsCreators.displayWarning('Please Refresh the app'))
-  }
-}

@@ -4,21 +4,29 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  feedbackRequest: ['accessToken', 'pageNo', 'lastCalledPage'],
-  feedbackSuccess: ['payload', 'pageNo'],
-  feedbackFailure: null,
-  getPlacesList: ['accessToken', 'searchParam'],
+  feedbackOnListRequest: ['accessToken', 'pageNo'],
+  feedbackOnListSuccess: ['listData', 'pageNo'],
+  feedbackOnListFailure: ['errorCode'],
+  feedbackOnListReset: ['payload'],
+  feedbackOnDetailRequest: ['accessToken', 'id'],
+  feedbackOnDetailSuccess: ['detailData'],
+  feedbackOnDetailFailure: ['errorCode'],
+
+  getPlacesList: ['searchParam'],
   getPlacesListSuccess: ['data'],
-  getPlacesListFail: ['data'],
+  getPlacesListFail: ['errorCode'],
+
   getDepartmentsList: ['accessToken'],
   getDepartmentsListSuccess: ['data'],
   getDepartmentsListFail: ['data'],
+
   createFeedback: ['accessToken', 'data'],
   createFeedbackSuccess: ['data'],
-  createFeedbackFail: ['data'],
-  resetStateOnNavigation: ['data'],
-  feedbackOnLogout: ['accessToken'],
-})
+  createFeedbackFail: ['errorCode'],
+
+  resetStateOnNavigation: ['code'],
+
+});
 
 export const FeedbackTypes = Types
 export default Creators
@@ -28,14 +36,16 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   data: null,
   fetching: false,
-  payload: null,
-  error: null,
+  listData: null,
+  listError: null,
+  listData: [],
+  lastCalledPage: 1,
+  detailError: null,
+  detailData: {},
+  plantsList: [],
   departments: [],
   statuses: [],
-  plantsList: [],
-  listData: [],
-  lastCalledPage: 0,
-  currentPage: 1,
+  createFeedbackErrorCode: null,
 })
 
 /* ------------- Selectors ------------- */
@@ -46,63 +56,108 @@ export const FeedbackSelectors = {
 
 /* ------------- Reducers ------------- */
 
-export const request = (state, { data }) =>
-  state.merge({ fetching: true, fetchListAPIStatus: 0 })
+// This is called when the list fetch API is called
+export const onListRequest = (state) =>
+  state.merge({ 
+    fetching: true,
+  });
 
-// successful api lookup
-export const success = (state, action) => {
-  const { payload, pageNo } = action;
-  return state.merge({
-    fetching: false,
-    error: null,
-    listData: [...state.listData, ...payload],
-    lastCalledPage: pageNo,
-    currentPage: pageNo + 1
+// This is called when the list fetch API is Successfull
+export const onListFetchSuccess = (state, action) => {
+  const { listData, pageNo } = action;
+  return state.merge({ 
+    fetching: false, 
+    listError: null, 
+    listData,
+    lastCalledPage: pageNo, 
+  })
+}
+
+// This is called when the list fetch API Fails
+export const OnListFetchFail = (state, { errorCode }) => {
+  return state.merge({ 
+    fetching: false, 
+    listError: errorCode, 
+    listData: [] 
   });
 }
 
-// Something went wrong somewhere.
-export const failure = state =>
-  state.merge({ fetching: false, error: true, listData: [], fetchListAPIStatus: 2 })
 
-export const onRequestDeptsLists = (state, action) => state.merge(({ fetching: true }));
+export const onDetailRequest = (state) =>
+  state.merge({ 
+    fetching: true,
+  });
+
+// This is called when the list fetch API is Successfull
+export const onDetailFetchSuccess = (state, action) => {
+  const { detailData } = action;
+  return state.merge({ 
+    fetching: false, 
+    detailError: null, 
+    detailData,
+  })
+}
+
+// This is called when the list fetch API Fails
+export const OnDetailFetchFail = (state, { errorCode }) => {
+  return state.merge({ 
+    fetching: false, 
+    detailError: errorCode, 
+    detailData: {},
+  });
+}
+
+export const onPlacesListsFetch = (state, action) => state.merge({ fetching: true });
+export const onPlacesListsSuccess = (state, { data }) => {
+  return state.merge({ plantsList: data, createFeedbackErrorCode: null, fetching: false });
+}
+export const onPlacesListsFail = (state, { errorCode }) => state.merge({ plantsList: [], createFeedbackErrorCode: errorCode, fetching: false })
+export const onRequestDeptsLists = (state) => state.merge(({ fetching: true }));
 export const onRequestDeptsSuccess = (state, { data }) => {
-  return state.merge({ fetching: false, ...data })
+  return state.merge({ fetching: false, ...data, createFeedbackErrorCode: null })
 }
-export const onRequestDeptsFail = state => {
-  return state.merge({ fetching: false, })
+export const onRequestDeptsFail = (state, { errorCode }) => {
+  return state.merge({ fetching: false, createFeedbackErrorCode: errorCode })
 }
-export const onPlantLists = (state, action) => state;
-export const onPlantListsSuccess = (state, { data }) => {
-  return state.merge({ plantsList: data });
-}
-export const onPlantListsFail = state => state.merge({ plantsList: [] })
+
 export const onCreateFeedback = (state, action) => state.merge(({ fetching: true }));
 export const onCreateFeedbackSuccess = (state, { data }) => {
-  return state.merge({ fetching: false, createFeedbackResponse: data })
+  return state.merge({ fetching: false, createFeedbackResponse: data, formError: null })
 }
-export const onCreateFeedbackFail = state => {
-  return state.merge({ fetching: false, })
+export const onCreateFeedbackFail = (state, { errorCode }) => {
+  return state.merge({ fetching: false, createFeedbackErrorCode: errorCode  })
 }
-export const resetState = state => state.merge({ fetching: false, createFeedbackResponse: null })
+
+export const resetFeedbackCreate = state => state.merge({ createFeedbackResponse: null, plantsList: [] });
+export const onListReset = state =>
+    state.merge(INITIAL_STATE)
+
 /* ------------- Hookup Reducers To Types ------------- */
 
-export const onLogout = state =>
-  state.merge(INITIAL_STATE)  
-
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.FEEDBACK_REQUEST]: request,
-  [Types.FEEDBACK_SUCCESS]: success,
-  [Types.FEEDBACK_FAILURE]: failure,
+  [Types.FEEDBACK_ON_LIST_REQUEST]: onListRequest,
+  [Types.FEEDBACK_ON_LIST_SUCCESS]: onListFetchSuccess,
+  [Types.FEEDBACK_ON_LIST_FAILURE]: OnListFetchFail,
+  [Types.FEEDBACK_ON_LIST_RESET]: onListReset,
+
+  [Types.FEEDBACK_ON_DETAIL_REQUEST]: onDetailRequest,
+  [Types.FEEDBACK_ON_DETAIL_SUCCESS]: onDetailFetchSuccess,
+  [Types.FEEDBACK_ON_DETAIL_FAILURE]: OnDetailFetchFail,
+  
+  [Types.GET_PLACES_LIST]: onPlacesListsFetch,
+  [Types.GET_PLACES_LIST_SUCCESS]: onPlacesListsSuccess,
+  [Types.GET_PLACES_LIST_FAIL]: onPlacesListsFail,
+
   [Types.GET_DEPARTMENTS_LIST]: onRequestDeptsLists,
   [Types.GET_DEPARTMENTS_LIST_SUCCESS]: onRequestDeptsSuccess,
   [Types.GET_DEPARTMENTS_LIST_FAIL]: onRequestDeptsFail,
-  [Types.GET_PLACES_LIST]: onPlantLists,
-  [Types.GET_PLACES_LIST_SUCCESS]: onPlantListsSuccess,
-  [Types.GET_PLACES_LIST_FAIL]: onPlantListsFail,
+
   [Types.CREATE_FEEDBACK]: onCreateFeedback,
   [Types.CREATE_FEEDBACK_SUCCESS]: onCreateFeedbackSuccess,
   [Types.CREATE_FEEDBACK_FAIL]: onCreateFeedbackFail,
-  [Types.RESET_STATE_ON_NAVIGATION]: resetState,
-  [Types.FEEDBACK_ON_LOGOUT]: onLogout,
-})
+
+  [Types.RESET_STATE_ON_NAVIGATION]: resetFeedbackCreate,
+
+
+  // [Types.MODULE_ON_LIST_RESET]: onListReset,
+});

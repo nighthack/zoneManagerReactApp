@@ -1,13 +1,32 @@
 import React from 'react';
-import { Image, TouchableHighlight, ImageBackground } from 'react-native';
+import { Image, View } from 'react-native';
 import { Images, Metrics } from '../Themes/'
+
+const styles = {
+  image: {
+    flex: 1,
+    height: null,
+    width: null,
+  },
+  imageContainer: {
+    bottom: 0,
+    flex: 1,
+    height: '135%',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    width: '100%',
+  },
+};
+
 
 class SplashScreen extends React.Component {
   performTimeConsumingTask = async () => {
     return new Promise((resolve) =>
       setTimeout(
         () => { resolve('result') },
-        2000
+        1000
       )
     )
   }
@@ -24,43 +43,17 @@ class SplashScreen extends React.Component {
 
   render() {
     return (
-      <ImageBackground
-        source={Images.splashBackground}
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      />
+      <View style={styles.imageContainer}>
+        <Image
+          resizeMode="cover"
+          source={Images.splashBackground}
+          style={styles.image}
+        />
+      </View>
+
     );
   }
 }
 
-const styles = {
-  viewStyles: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#f5821f'
-  },
-  textStyles: {
-    color: 'white',
-    fontSize: 40,
-    fontWeight: 'bold'
-  },
-  profileImgContainer: {
-    marginLeft: 10,
-    height: 200,
-    width: 200,
-    borderRadius: 100,
-  },
-  profileImg: {
-    height: 200,
-    width: 200,
-    borderRadius: 100,
-  },
-}
 
 export default SplashScreen;

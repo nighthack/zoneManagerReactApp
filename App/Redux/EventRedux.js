@@ -4,14 +4,15 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  eventRequest: ['accessToken', 'pageNo', 'lastCalledPage'],
-  eventSuccess: ['payload', 'pageNo'],
-  eventFailure: ['data'],
-  eventDetailsRequest: ['id', 'accessToken'],
-  eventDetailsSuccess: ['payload'],
-  eventDetailsFailure: ['error'],
-  eventLogoutRequest: ['accessToken'],
-})
+  eventOnListRequest: ['accessToken', 'pageNo'],
+  eventOnListSuccess: ['listData', 'pageNo'],
+  eventOnListFailure: ['errorCode'],
+  eventOnListReset: ['payload'],
+  eventOnDetailRequest: ['accessToken', 'id'],
+  eventOnDetailSuccess: ['detailData'],
+  eventOnDetailFailure: ['errorCode'],
+
+});
 
 export const EventTypes = Types
 export default Creators
@@ -21,11 +22,12 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   data: null,
   fetching: false,
-  eventsList: [],
-  error: null,
-  dataDetails: {},
-  lastCalledPage: 0,
-  currentPage: 1,
+  listData: null,
+  listError: null,
+  listData: [],
+  lastCalledPage: 1,
+  detailError: null,
+  detailData: {},
 })
 
 /* ------------- Selectors ------------- */
@@ -36,52 +38,70 @@ export const EventSelectors = {
 
 /* ------------- Reducers ------------- */
 
-// request the data from an api
-export const request = (state, { data }) => state.merge({ fetching: true })
+// This is called when the list fetch API is called
+export const onListRequest = (state) =>
+  state.merge({ 
+    fetching: true,
+  });
 
-// successful api lookup
-export const success = (state, action) => {
-  const { payload, pageNo } = action;
-  return state.merge({
-    fetching: false,
-    error: null,
-    eventsList: [...state.eventsList, ...payload],
-    lastCalledPage: pageNo,
-    currentPage: pageNo + 1,
+// This is called when the list fetch API is Successfull
+export const onListFetchSuccess = (state, action) => {
+  const { listData, pageNo } = action;
+  return state.merge({ 
+    fetching: false, 
+    listError: null, 
+    listData,
+    lastCalledPage: pageNo, 
+  })
+}
+
+// This is called when the list fetch API Fails
+export const OnListFetchFail = (state, { errorCode }) => {
+  return state.merge({ 
+    fetching: false, 
+    listError: errorCode, 
+    listData: [] 
   });
 }
 
-// Something went wrong somewhere.
-export const failure = state =>
+
+export const onDetailRequest = (state) =>
   state.merge({ 
+    fetching: true,
+  });
+
+// This is called when the list fetch API is Successfull
+export const onDetailFetchSuccess = (state, action) => {
+  const { detailData } = action;
+  return state.merge({ 
     fetching: false, 
-    error: true,
+    detailError: null, 
+    detailData,
   })
-
-/* ------------- Hookup Reducers To Types ------------- */
-// request the data from an api
-export const eventDetailsRequest = (state, { data }) =>
-  state.merge({ fetchingDetails: true, dataDetails: data })
-
-// successful api lookup
-export const eventDetailsSuccess = (state, action) => {
-  const { payload } = action
-  return state.merge({ fetchingDetails: false, errorFetchingDetails: null, dataDetails: payload })
 }
 
-// Something went wrong somewhere.
-export const eventDetailsfailure = state =>
-  state.merge({ fetchingDetails: false, errorFetchingDetails: true, dataDetails: {} })
+// This is called when the list fetch API Fails
+export const OnDetailFetchFail = (state, { errorCode }) => {
+  return state.merge({ 
+    fetching: false, 
+    detailError: errorCode, 
+    detailData: {},
+  });
+}
 
-export const onLogout = state =>
-  state.merge(INITIAL_STATE)
+  export const onReset = state =>
+    state.merge(INITIAL_STATE)
+
+/* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.EVENT_REQUEST]: request,
-  [Types.EVENT_SUCCESS]: success,
-  [Types.EVENT_FAILURE]: failure,
-  [Types.EVENT_DETAILS_REQUEST]: eventDetailsRequest,
-  [Types.EVENT_DETAILS_SUCCESS]: eventDetailsSuccess,
-  [Types.EVENT_DETAILS_FAILURE]: eventDetailsfailure,
-  [Types.EVENT_LOGOUT_REQUEST]: onLogout,
-})
+  [Types.EVENT_ON_LIST_REQUEST]: onListRequest,
+  [Types.EVENT_ON_LIST_SUCCESS]: onListFetchSuccess,
+  [Types.EVENT_ON_LIST_FAILURE]: OnListFetchFail,
+  [Types.EVENT_ON_LIST_RESET]: onReset,
+
+  [Types.EVENT_ON_DETAIL_REQUEST]: onDetailRequest,
+  [Types.EVENT_ON_DETAIL_SUCCESS]: onDetailFetchSuccess,
+  [Types.EVENT_ON_DETAIL_FAILURE]: OnDetailFetchFail,
+  // [Types.MODULE_ON_LIST_RESET]: onListReset,
+});

@@ -1,8 +1,8 @@
 export default function request(url, options) {
-  console.log(url, options);
+  // console.log(url, options);
   return fetch(url, options)
     .then(r => {
-      console.log(r);
+      // console.log(r);
       return r.json().then(
         data => ({
           status: r.status,
@@ -11,7 +11,7 @@ export default function request(url, options) {
       )
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       return error;
     });
 }

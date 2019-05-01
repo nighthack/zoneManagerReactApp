@@ -34,13 +34,13 @@ export default StyleSheet.create({
   },
   hTopText: {
     fontSize: 20,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#FFF',
     marginBottom: 5
   },
   hTopDesc: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(255,255,255,0.6)',
     marginBottom: 10
   },
@@ -53,7 +53,7 @@ export default StyleSheet.create({
     borderWidth: 0
   },
   addText: {
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 11,
     color: '#FFF'
   },
@@ -70,7 +70,7 @@ export default StyleSheet.create({
   },
   searchInput: {
     flex: 1,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 12,
     paddingVertical: 12
   },
@@ -106,13 +106,12 @@ export default StyleSheet.create({
   },
   truckTrip: {
     fontSize: 14,
-    // fontFamily: 'Montserrat-SemiBold',
+      
     color: 'rgba(36,42,56,1)'
   },
   truckData: {
     fontSize: 12,
-    marginVertical: 2,
-    // fontFamily: 'Montserrat-Regular',
+    marginVertical: 4,
     color: 'rgba(36,42,56,0.7)'
   },
   checkIcon: {
@@ -146,7 +145,7 @@ export default StyleSheet.create({
   },
   placeText: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     marginLeft: 5,
     color: 'rgba(36,42,56,0.9)'
   },
@@ -168,12 +167,12 @@ export default StyleSheet.create({
   },
   price: {
     fontSize: 20,
-    // fontFamily: 'Montserrat-SemiBold',
+      
     color: 'rgba(36,42,56,0.99)'
   },
   postedOn: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(36,42,56,0.5)'
   },
   editBtn: {
@@ -190,7 +189,7 @@ export default StyleSheet.create({
   },
   editText: {
     fontSize: 10,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     paddingHorizontal: 5,
     color: 'rgba(36,42,56,0.9)'
   },
@@ -203,7 +202,7 @@ export default StyleSheet.create({
   },
   msgText: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(36,42,56,0.7)',
     lineHeight: 16
   },
@@ -227,7 +226,7 @@ export default StyleSheet.create({
   },
   btnText: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-SemiBold',
+      
     color: '#FFF',
     alignSelf: 'center'
   },

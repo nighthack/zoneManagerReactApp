@@ -1,18 +1,18 @@
 import { createReducer, createActions } from 'reduxsauce'
-import Immutable from 'seamless-immutable';
-import { NavigationActions } from 'react-navigation';
+import Immutable from 'seamless-immutable'
 
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  beneficiaryRequest: ['accessToken', 'pageNo', 'lastCalledPage'],
-  beneficiarySuccess: ['response', 'pageNo'],
-  beneficiaryFailure: null,
-  beneficiaryDetailsRequest: ['id', 'accessToken', ],
-  beneficiaryDetailsSuccess: ['response'],
-  beneficiaryDetailsFailure: null,
-  beneficiaryLogoutRequest: ['accessToken'],
-})
+  beneficiaryOnListRequest: ['accessToken', 'pageNo'],
+  beneficiaryOnListSuccess: ['listData', 'pageNo'],
+  beneficiaryOnListFailure: ['errorCode'],
+  beneficiaryOnListReset: ['payload'],
+  beneficiaryOnDetailRequest: ['accessToken', 'id'],
+  beneficiaryOnDetailSuccess: ['detailData'],
+  beneficiaryOnDetailFailure: ['errorCode'],
+
+});
 
 export const BeneficiaryTypes = Types
 export default Creators
@@ -22,12 +22,12 @@ export default Creators
 export const INITIAL_STATE = Immutable({
   data: null,
   fetching: false,
-  payload: null,
-  error: null,
-  beneficiaryList: [],
-  beneficiaryDetails: {},
-  lastCalledPage: 0,
-  currentPage: 1,
+  listData: null,
+  listError: null,
+  listData: [],
+  lastCalledPage: 1,
+  detailError: null,
+  detailData: {},
 })
 
 /* ------------- Selectors ------------- */
@@ -38,59 +38,70 @@ export const BeneficiarySelectors = {
 
 /* ------------- Reducers ------------- */
 
-// request the data from an api
-export const request = (state) =>
-  state.merge({ fetching: true })
-
-// successful api lookup
-export const success = (state, action) => {
-  const { response, pageNo } = action;
-  return state.merge({
-    fetching: false,
-    error: null,
-    beneficiaryList: [...state.beneficiaryList, ...response],
-    lastCalledPage: pageNo,
-    currentPage: pageNo + 1,
+// This is called when the list fetch API is called
+export const onListRequest = (state) =>
+  state.merge({ 
+    fetching: true,
   });
-}
 
-// Something went wrong somewhere.
-export const failure = state =>
-  state.merge({ fetching: false, error: true })
-
-
-// request the data from an api
-export const beneficiaryDetailrequest = (state) =>
-  state.merge({ detailFetching: true })
-
-// successful api lookup
-export const beneficiaryDetailsuccess = (state, action) => {
-  const { response,  } = action;
-  const { lastCalledPage, currentPage } = state;
-  return state.merge({
-    detailFetching: false,
-    detailError: null,
-    beneficiaryDetails: response,
-    lastCalledPage: currentPage,
-    currentPage: currentPage + 1
+// This is called when the list fetch API is Successfull
+export const onListFetchSuccess = (state, action) => {
+  const { listData, pageNo } = action;
+  return state.merge({ 
+    fetching: false, 
+    listError: null, 
+    listData,
+    lastCalledPage: pageNo, 
   })
 }
 
-// Something went wrong somewhere.
-export const beneficiaryDetailfailure = state =>
-  state.merge({ detailFetching: false, detailError: true })
+// This is called when the list fetch API Fails
+export const OnListFetchFail = (state, { errorCode }) => {
+  return state.merge({ 
+    fetching: false, 
+    listError: errorCode, 
+    listData: [] 
+  });
+}
 
-export const onLogout = state =>
-  state.merge(INITIAL_STATE)
+
+export const onDetailRequest = (state) =>
+  state.merge({ 
+    fetching: true,
+  });
+
+// This is called when the list fetch API is Successfull
+export const onDetailFetchSuccess = (state, action) => {
+  const { detailData } = action;
+  return state.merge({ 
+    fetching: false, 
+    detailError: null, 
+    detailData,
+  })
+}
+
+// This is called when the list fetch API Fails
+export const OnDetailFetchFail = (state, { errorCode }) => {
+  return state.merge({ 
+    fetching: false, 
+    detailError: errorCode, 
+    detailData: {},
+  });
+}
+
+  export const onListReset = state =>
+    state.merge(INITIAL_STATE)
 
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.BENEFICIARY_REQUEST]: request,
-  [Types.BENEFICIARY_SUCCESS]: success,
-  [Types.BENEFICIARY_FAILURE]: failure,
-  [Types.BENEFICIARY_DETAILS_REQUEST]: beneficiaryDetailrequest,
-  [Types.BENEFICIARY_DETAILS_SUCCESS]: beneficiaryDetailsuccess,
-  [Types.BENEFICIARY_DETAILS_FAILURE]: beneficiaryDetailfailure,
-  [Types.BENEFICIARY_LOGOUT_REQUEST]: onLogout,
-})
+  [Types.BENEFICIARY_ON_LIST_REQUEST]: onListRequest,
+  [Types.BENEFICIARY_ON_LIST_SUCCESS]: onListFetchSuccess,
+  [Types.BENEFICIARY_ON_LIST_FAILURE]: OnListFetchFail,
+  [Types.BENEFICIARY_ON_LIST_RESET]: onListReset,
+
+  [Types.BENEFICIARY_ON_DETAIL_REQUEST]: onDetailRequest,
+  [Types.BENEFICIARY_ON_DETAIL_SUCCESS]: onDetailFetchSuccess,
+  [Types.BENEFICIARY_ON_DETAIL_FAILURE]: OnDetailFetchFail,
+  // [Types.MODULE_ON_LIST_RESET]: onListReset,
+});

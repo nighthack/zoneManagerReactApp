@@ -11,6 +11,9 @@ export const reducers = combineReducers({
   development: require('./DevelopmentWorkRedux').reducer,
   event: require('./EventRedux').reducer,
   feedback: require('./FeedbackRedux').reducer,
+
+  // Generic
+  moduleName: require('./ModuleRedux').reducer,
   toast,
 })
 export const rootReducer = (state, action) => {

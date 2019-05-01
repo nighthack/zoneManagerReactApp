@@ -1,74 +1,95 @@
-/* ***********************************************************
-* A short word on how to use this automagically generated file.
-* We're often asked in the ignite gitter channel how to connect
-* to a to a third party api, so we thought we'd demonstrate - but
-* you should know you can use sagas for other flow control too.
-*
-* Other points:
-*  - You'll need to add this saga to sagas/index.js
-*  - This template uses the api declared in sagas/index.js, so
-*    you'll need to define a constant in that file.
-*************************************************************/
-
 import { call, put } from 'redux-saga/effects'
-import DevelopmentWorkActions from '../Redux/DevelopmentWorkRedux'
-import request from '../Services/request'
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
-import { NavigationActions } from 'react-navigation'
+import { NavigationActions } from 'react-navigation';
 import { ToastActionsCreators } from 'react-native-redux-toast';
+import DevWorkActions from '../Redux/DevelopmentWorkRedux';
+import LoginActions from '../Redux/LoginRedux';
+import request from '../Services/request'
 
-export function * getDevelopmentList ({ accessToken, pageNo, lastCalledPage }) {
+// import { ModuleSelectors } from '../Redux/ModuleRedux'
+const moduleURL = 'development_works';
+
+export function* getDevWorksList({ accessToken, pageNo }) {
   try {
     const options = {
       method: 'GET',
     };
-    if(lastCalledPage !== pageNo) {
-      const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}development_works?page=${pageNo}&access_token=${accessToken}`, options);
-      if(status) {
-      if (status >= 200 && status < 300) {
-        if (!(body && body.length)) {
-          yield put(ToastActionsCreators.displayInfo('Nothing New to Show'));
-          yield put(DevelopmentWorkActions.developmentWorkSuccess(body, lastCalledPage))
-        } else {
-          yield put(DevelopmentWorkActions.developmentWorkSuccess(body, pageNo))
-        }
-      } else if(status === 401 ) {
-        yield put(DevelopmentWorkActions.developmentWorkFailure())
-        yield put(ToastActionsCreators.displayWarning('Invalid Session'))
-        yield put(NavigationActions.navigate({ routeName: 'Login' }))
-      } else {
-        yield put(DevelopmentWorkActions.developmentWorkFailure())
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}?access_token=${accessToken}&page=${pageNo}`, options);
+    switch (status) {
+      case undefined: {
+        yield put(DevWorkActions.devWorkOnListFailure(503));
+        yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
+        break;
       }
-    } else {
-      yield put(ToastActionsCreators.displayInfo('Nothing New to Show'))
-      yield put(DevelopmentWorkActions.developmentWorkSuccess(body, lastCalledPage))
+      case 401: {
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+        yield put(DevWorkActions.devWorkOnListFailure(status));
+        yield put(ToastActionsCreators.displayWarning('Invalid Access'));
+        yield put(LoginActions.logoutRequest(accessToken));
+        // TO DO ADD LOGOUT
+        break;
+      }
+      case 200: {
+        yield put(DevWorkActions.devWorkOnListSuccess(body, pageNo))
+        if (!(body && body.length)) {
+          yield put(ToastActionsCreators.displayInfo('End of List'));
+        }
+        break;
+      }
+      default: {
+        yield put(DevWorkActions.devWorkOnListFailure(status || 503 ));
+        if(body && body.message && typeof body.message === 'string') {
+          yield put(ToastActionsCreators.displayInfo(message));
+        } else {
+          yield put(ToastActionsCreators.displayInfo('oops!!'));
+        }
+      }
     }
-    
-    }
-  } catch (e) {
-    yield put(DevelopmentWorkActions.developmentWorkFailure())
+
+  } catch (error) {
+    console.log(error);
+    yield put(DevWorkActions.devWorkOnListFailure(503));
+    yield put(ToastActionsCreators.displayInfo('oops!!'));
   }
 }
 
-export function * getDevelopmentDetails ({ accessToken, id }) {
+
+export function* getDevWorkDetails({ accessToken, id }) {
   try {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}development_works/${id}?access_token=${accessToken}`, options);
-    
-    if(status) {
-      if (status >= 200 && status < 300) {
-        yield put(DevelopmentWorkActions.developmentWorkDetailsSuccess(body))
-      } else if(status === 401 ) {
-        yield put(DevelopmentWorkActions.developmentWorkDetailsFailure())
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}/${id}?access_token=${accessToken}`, options);
+    switch (status) {
+      case undefined: {
+        yield put(DevWorkActions.devWorkOnDetailFailure(503));
+        yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
+        break;
+      }
+      case 401: {
         yield put(NavigationActions.navigate({ routeName: 'Login' }))
-        yield put(ToastActionsCreators.displayWarning('Invalid Session'))
-      } else {
-        yield put(DevelopmentWorkActions.developmentWorkDetailsFailure())
+        yield put(DevWorkActions.devWorkOnDetailFailure(status));
+        yield put(ToastActionsCreators.displayWarning('Invalid Access'));
+        yield put(LoginActions.logoutRequest(accessToken));
+        // TO DO ADD LOGOUT
+        break;
+      }
+      case 200: {
+        yield put(DevWorkActions.devWorkOnDetailSuccess(body))
+        break;
+      }
+      default: {
+        yield put(DevWorkActions.devWorknDetailFailure(status || 503 ));
+        if(body && body.message && typeof body.message === 'string') {
+          yield put(ToastActionsCreators.displayInfo(message));
+        } else {
+          yield put(ToastActionsCreators.displayInfo('oops!!'));
+        }
       }
     }
-  } catch (e) {
-    yield put(DevelopmentWorkActions.developmentWorkDetailsFailure())
+
+  } catch (error) {
+    yield put(DevWorkActions.devWorkOnDetailFailure(503));
+    yield put(ToastActionsCreators.displayInfo('oops!!'));
   }
 }

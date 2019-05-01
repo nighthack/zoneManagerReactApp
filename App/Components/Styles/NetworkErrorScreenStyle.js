@@ -34,13 +34,13 @@ export default StyleSheet.create({
   },
   hTopText: {
     fontSize: 20,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#FFF',
     marginBottom: 5
   },
   hTopDesc: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(255,255,255,0.6)',
     marginBottom: 10
   },
@@ -72,17 +72,17 @@ export default StyleSheet.create({
   },
   truckTrip: {
     fontSize: 14,
-    // fontFamily: 'Montserrat-SemiBold',
+      
     color: 'rgba(36,42,56,1)'
   },
   truckData: {
     fontSize: 12,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(36,42,56,0.7)',
     lineHeight: 18
   },
   truckFare: {
-    // fontFamily: 'Montserrat-SemiBold',
+      
     fontSize: 18,
     color: 'rgba(36,42,56,0.99)'
   },
@@ -115,7 +115,7 @@ export default StyleSheet.create({
   },
   placeText: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     marginLeft: 10,
     color: 'rgba(36,42,56,0.9)'
   },
@@ -136,7 +136,7 @@ export default StyleSheet.create({
   },
   msgText: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(36,42,56,0.7)',
     lineHeight: 16
   },
@@ -159,7 +159,7 @@ export default StyleSheet.create({
   },
   btnText: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-SemiBold',
+      
     color: '#FFF',
     alignSelf: 'center'
   }

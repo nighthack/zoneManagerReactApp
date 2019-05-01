@@ -1,82 +1,83 @@
 import React, { Component } from 'react'
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
+import { StatusBar, TouchableOpacity, AsyncStorage, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, TabHeading, ScrollableTab, Card, Left, Right, Body, Input, Tabs, Tab, Footer, View, FooterTab, Badge } from 'native-base'
 import { connect } from 'react-redux'
 import { format } from 'date-fns';
 import { Images } from '../Themes/'
-import HeaderComponent from '../Components/HeaderComponent'
+import ErrorPage from '../Components/NetworkErrorScreen';
 import LoadingOverlay from '../Components/LoadingOverlay';
 import ImageViewerComponent from '../Components/ImageViewer';
+// import EventActions from '../Redux/EventRedux'
 import EventActions from '../Redux/EventRedux'
-
 // Styles
 import Styles from './Styles/EventsListStyle'
 
 class EventDetail extends Component {
-  // constructor (props) {
-  //   super(props)
-  //   this.state = {}
-  // }
-  componentDidMount() {
-    const { navigation, user } = this.props;
-    const selectedData = navigation.getParam('selectedData', null);
-    if (user && selectedData && selectedData.id) {
-      this.props.getDetailsForSelection(selectedData.id, user.access_token);
+
+  refreshPage() {
+    const { navigation, fetching } = this.props;
+    const parentProps = navigation.getParam('selectedData', null);
+    if (parentProps && parentProps.id) {
+      AsyncStorage.getItem('accessToken').then((accessToken) => {
+        if (!fetching) {
+          this.props.getDetailsForSelection(accessToken, parentProps.id, );
+        }
+      });
     }
   }
   renderContent() {
-    const { data } = this.props;
-    if (data) {
-      return (
-        <Content contentContainerStyle={Styles.layoutDefault}>
-          <Image source={Images.background} style={Styles.bgImg} />
-          <View style={Styles.bgLayout}>
-            <View style={Styles.hTop}>
-              <Icon name='calendar-check-o' type="FontAwesome" style={Styles.hImg} />
-              <View style={Styles.hContent}>
-                <Text style={Styles.hTopText}>{data.name}</Text>
-              </View>
+    const { data, detailError } = this.props;
+    if (detailError) {
+      return <ErrorPage status={detailError} onButtonClick={() => this.refreshPage()} />
+    }
+    return (
+      <Content contentContainerStyle={Styles.layoutDefault}>
+        <Image source={Images.background} style={Styles.bgImg} />
+        <View style={Styles.bgLayout}>
+          <View style={Styles.hTop}>
+            <Icon name='calendar-check-o' type="FontAwesome" style={Styles.hImg} />
+            <View style={Styles.hContent}>
+              <Text style={Styles.hTopText}>{data.name}</Text>
             </View>
-            <View style={Styles.infoBox}>
-              <View style={Styles.bookingItem}>
-                <View style={Styles.tripTo} />
-                <View style={Styles.truckInfo}>
+          </View>
+          <View style={Styles.infoBox}>
+            <View style={Styles.bookingItem}>
+              <View style={Styles.tripTo} />
+              <View style={Styles.truckInfo}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
+                  <Text style={Styles.truckText}>{data.date} {data.start_time ? format(new Date(data.start_time), 'hh:mm A'): ''} - {data.end_time ? format(new Date(data.end_time), 'hh:mm A'): ''}</Text>
+                </View>
+
+              </View>
+              <View style={Styles.tripDest}>
+                <View style={Styles.locations}>
                   <View style={{ flexDirection: 'row' }}>
-                    <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-                    <Text style={Styles.truckText}>{data.date} {data.start_time ? format(new Date(data.start_time), 'hh:mm A'): ''} - {data.end_time ? format(new Date(data.end_time), 'hh:mm A'): ''}</Text>
-                  </View>
-
-                </View>
-                <View style={Styles.tripDest}>
-                  <View style={Styles.locations}>
-                    <View style={{ flexDirection: 'row' }}>
-                      <Icon name="location-pin" type="Entypo" style={[Styles.locationIcon, Styles.colorGreen]} />
-                      <Text style={Styles.placeText}>{data.venue}</Text>
-                    </View>
+                    <Icon name="location-pin" type="Entypo" style={[Styles.locationIcon, Styles.colorGreen]} />
+                    <Text style={Styles.placeText}>{data.venue}</Text>
                   </View>
                 </View>
+              </View>
 
-                <View style={Styles.msgBox}>
-                  <Text style={[Styles.placeText, { marginBottom: 10 }]}>ವಿವರಗಳು/Details</Text>
-                  <Text style={Styles.msgText}>{data.details}</Text>
-                </View>
-                <View style={Styles.msgBox}>
-                  <Text style={[Styles.placeText, { marginBottom: 10 }]}>ಷರಾ/Remarks</Text>
-                  <Text style={Styles.msgText}>{data.remarks}</Text>
-                </View>
-                <View style={Styles.orderDetails}>
-                  <Text style={Styles.orderText}>Updated at {data.updated_at ? format(new Date(data.updated_at), 'DD-MMM-YY') : 'NA'}</Text>
-                </View>
+              <View style={Styles.msgBox}>
+                <Text style={[Styles.placeText, { marginBottom: 10 }]}>ವಿವರಗಳು/Details</Text>
+                <Text style={Styles.msgText}>{data.details}</Text>
+              </View>
+              <View style={Styles.msgBox}>
+                <Text style={[Styles.placeText, { marginBottom: 10 }]}>ಷರಾ/Remarks</Text>
+                <Text style={Styles.msgText}>{data.remarks}</Text>
+              </View>
+              <View style={Styles.orderDetails}>
+                <Text style={Styles.orderText}>Updated at {data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
               </View>
             </View>
           </View>
-          {
-            data.images && data.images.length ? <ImageViewerComponent data={data.images}/> : null
-          }
-        </Content>
-      )
-    }
-    return null;
+        </View>
+        {
+          data.images && data.images.length ? <ImageViewerComponent data={data.images}/> : null
+        }
+      </Content>
+    )
   }
 
   renderHeader = () => {
@@ -99,10 +100,15 @@ class EventDetail extends Component {
     )
   }
   render() {
-    const { data, navigation, user, fetching } = this.props;
+    const { data, navigation, fetching } = this.props;
     const parentProps = navigation.getParam('selectedData', null);
     if (parentProps && data && (parentProps.id !== data.id)) {
-      this.props.getDetailsForSelection(parentProps.id, user.access_token);
+      const { fetching } = this.props;
+      AsyncStorage.getItem('accessToken').then((accessToken) => {
+        if (!fetching) {
+          this.props.getDetailsForSelection(accessToken, parentProps.id);
+        }
+      });
     }
     return (
       <Container>
@@ -122,15 +128,15 @@ class EventDetail extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.login.user,
-    data: state.event.dataDetails,
+    data: state.event.detailData,
     fectching: state.event.fetchingDetails,
+    detailError: state.event.detailError,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getDetailsForSelection: (id, accessToken) => dispatch(EventActions.eventDetailsRequest(id, accessToken))
+    getDetailsForSelection: (id, accessToken) => dispatch(EventActions.eventOnDetailRequest(id, accessToken))
   }
 }
 

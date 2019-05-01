@@ -29,13 +29,13 @@ export default StyleSheet.create({
   },
   hTopText: {
     fontSize: 20,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#FFF',
     marginBottom: 5
   },
   hTopDesc: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(255,255,255,0.6)',
     marginBottom: 10
   },
@@ -71,7 +71,7 @@ regForm: {
   },
   regText: {
     fontSize: 12,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#FFF'
   },
   infoBox: {
@@ -95,7 +95,7 @@ regForm: {
     paddingVertical: 15
   },
   infoHeaderText: {
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 14,
     color: '#FFF'
   },
@@ -136,7 +136,7 @@ regForm: {
   },
   fInput: {
     flex: 1,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 12,
     paddingVertical: 8
   },
@@ -153,12 +153,12 @@ regForm: {
     marginBottom: 15
   },
   fBtnText: {
-    // fontFamily: 'Montserrat-SemiBold',
+      
     fontSize: 14,
     color: '#FFF'
   },
   fBtnIcon: {
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 12,
     color: '#FFF'
   },

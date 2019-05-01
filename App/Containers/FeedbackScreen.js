@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { StatusBar, TouchableOpacity, TextInput, Image } from 'react-native'
+import { AsyncStorage, StatusBar, TouchableOpacity, TextInput, Image, Platform } from 'react-native'
 import { Container, Header, Content, Icon, Text, Picker, View, Textarea } from 'native-base'
 import { connect } from 'react-redux'
 import { Images } from '../Themes/'
 import LoadingOverlay from '../Components/LoadingOverlay';
+import ErrorPage from '../Components/NetworkErrorScreen';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 import FeedbackActions from '../Redux/FeedbackRedux'
@@ -20,18 +21,13 @@ class FeedbackScreen extends Component {
     }
   }
 
-  // componentWillUnmount() {
-  //   if (this.timeout) {
-  //     clearTimeout(this.timeout);
-  //   }
-  // }
-
   componentWillReceiveProps(nextProps) {
-    if(nextProps.createFeedbackResponse) {
+    if (nextProps.createFeedbackResponse && nextProps.createFeedbackResponse.id) {
       this.setState({
         formObj: {},
-       errorsObj: {},
+        errorsObj: {},
       });
+      nextProps.navigation.navigate('FeedbackList');
     }
   }
 
@@ -61,7 +57,6 @@ class FeedbackScreen extends Component {
     const isFormValid = this.validateForm();
     const { formObj } = this.state;
     if (isFormValid) {
-      const { user } = this.props;
       let data = new FormData();
       for (let property in formObj) {
         if (property === 'feedback[place_id]') {
@@ -70,12 +65,27 @@ class FeedbackScreen extends Component {
           data.append(property, formObj[property]);
         }
       }
-      this.props.createFeedback(user.access_token, data);
+      AsyncStorage.getItem('accessToken').then((accessToken) => {
+        this.props.createFeedback(accessToken, data);
+      });
+
     }
   }
   componentDidMount() {
-    const { user } = this.props;
-    this.props.getDepartmentsStatus(user.access_token);
+    const { fetching } = this.props;
+    AsyncStorage.getItem('accessToken').then((accessToken) => {
+      if (!fetching) {
+        this.props.getDepartmentsStatus(accessToken);
+      }
+    });
+  }
+  refreshPage = () => {
+    const { fetching } = this.props;
+    AsyncStorage.getItem('accessToken').then((accessToken) => {
+      if (!fetching) {
+        this.props.getDepartmentsStatus(accessToken);
+      }
+    });
   }
 
   onFormChange = (value, key) => {
@@ -85,8 +95,7 @@ class FeedbackScreen extends Component {
     });
   }
   onPlantSearch = text => {
-    const { user } = this.props;
-    this.props.getPlantsForSearchParam(user.access_token, text);
+    this.props.getPlantsForSearchParam(text);
   }
   goToPage = () => {
     const { navigation } = this.props;
@@ -97,16 +106,150 @@ class FeedbackScreen extends Component {
     });
     navigation.navigate("FeedbackList");
   }
-  render() {
-    const { fetching, departments, statuses, plantsList } = this.props;
+
+  renderStatusesDropDown = () => {
+    const { statuses } = this.props;
+    const { OS } = Platform;
+    if (OS === 'ios') {
+      return statuses.map((value, index) => <Picker.Item key={`status_${value}`} label={value} value={value === 'Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ' ? null : value} />)
+    } else {
+      const tempStatuses = ['Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ', ...statuses];
+      return tempStatuses.map((status, index) => <Picker.Item key={`status_${index}`} label={status} value={status === 'Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ' ? null : status} />);
+    }
+  }
+
+  renderDepartmentsDropdown = () => {
+    const { departments } = this.props;
+    const { OS } = Platform;
+    if (OS === 'ios') {
+      return departments.map(({ id, name }, index) => <Picker.Item key={`status_${index}`} label={name} value={id} />)
+    } else {
+      const tempDepartments = [{ index: null, name: 'Department/ಇಲಾಖೆ ಆರಿಸಿ' }, ...departments]
+      return tempDepartments.map(({ id, name }, index) => <Picker.Item key={`status_${index}`} label={name} value={id} />);
+    }
+
+  }
+
+  renderComponent() {
+    const { plantsList, errorCode } = this.props;
+    const { OS } = Platform;
     const { formObj, errorsObj } = this.state;
+    if (errorCode) {
+      return <ErrorPage status={errorCode} onButtonClick={() => this.refreshPage(1)} />
+    }
+    return (
+      <Content contentContainerStyle={Styles.layoutDefault}>
+        <Image source={Images.background} style={Styles.bgImg} />
+        <View style={Styles.bgLayout}>
+          <View style={Styles.hTop}>
+            <Icon name='comment' type="FontAwesome" style={Styles.hImg} />
+            <View style={Styles.hContent}>
+              <Text style={Styles.hTopText}>Create Feedback</Text>
+              <Text style={Styles.hTopDesc}>Create Feedbacks and suggestions are very important for us</Text>
+            </View>
+          </View>
+          <View style={Styles.regForm}>
+            <View style={Styles.infoBox}>
+              <View style={Styles.infoHeader}>
+                <Text style={Styles.infoHeaderText}>Details</Text>
+              </View>
+              <View style={(errorsObj && errorsObj['feedback[name]']) ? Styles.fRowError : Styles.fRow}>
+                <TextInput
+                  style={Styles.fInput}
+                  placeholder='Title/ವಿಷಯ'
+                  placeholderTextColor='rgba(36,42,56,0.4)'
+                  onChangeText={(text) => this.onFormChange(text, 'feedback[name]')}
+                />
+                <Icon name='id-card' type="FontAwesome" style={Styles.fIcon} />
+              </View>
+              <View style={(errorsObj && errorsObj['feedback[place_id]']) ? Styles.fSelectError : Styles.fSelect}>
+                <SearchableDropdown
+                  onTextChange={(text) => this.onPlantSearch(text)}
+                  onItemSelect={item => this.onFormChange(item, 'feedback[place_id]')}
+                  textInputStyle={(errorsObj && errorsObj['feedback[place_id]']) ? Styles.fSearchInputError : Styles.fSearchInput}
+                  containerStyle={Styles.fPicker}
+                  itemStyle={Styles.pickerItem}
+                  itemTextStyle={Styles.fSearchInput}
+                  items={plantsList}
+                  defaultIndex={0}
+                  placeholder="Select Place"
+                  resetValue
+                  underlineColorAndroid="transparent"
+                />
+                <Icon name='google-maps' type="MaterialCommunityIcons" style={Styles.fIcon} />
+              </View>
+              <View style={(errorsObj && errorsObj['feedback[feedback_type]']) ? Styles.fSelectError : Styles.fSelect}>
+                <View style={Styles.fPicker}>
+                  <Picker
+                    style={Styles.fPickerItem}
+                    textStyle={Styles.fInput}
+                    placeholder="Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ"
+                    placeholderStyle={Styles.placeholderStyle}
+                    selectedValue={formObj['feedback[feedback_type]']}
+                    onValueChange={(itemValue, itemIndex) =>
+                      this.onFormChange(itemValue, 'feedback[feedback_type]')
+                    }
+                  >
+                    {this.renderStatusesDropDown()}
+                  </Picker>
+                </View>
+                {
+                  OS === 'ios' ? <Icon name='arrow-down' type="FontAwesome" style={Styles.fIcon} /> : null
+                }
+
+              </View>
+              <View style={(errorsObj && errorsObj['feedback[department_id]']) ? Styles.fSelectError : Styles.fSelect}>
+                <View style={Styles.fPicker}>
+                  <Picker
+                    style={Styles.fPickerItem}
+                    textStyle={Styles.fInput}
+                    placeholder="Department/ಇಲಾಖೆ ಆರಿಸಿ"
+                    placeholderStyle={Styles.placeholderStyle}
+                    selectedValue={formObj['feedback[department_id]']}
+                    onValueChange={(itemValue, itemIndex) =>
+                      this.onFormChange(itemValue, 'feedback[department_id]')
+                    }
+                  >
+                    {this.renderDepartmentsDropdown()}
+                  </Picker>
+                </View>
+                {
+                  OS === 'ios' ? <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} /> : null
+                }
+              </View>
+              <View style={(errorsObj && errorsObj['feedback[details]']) ? Styles.fRowError : Styles.fRow}>
+                <TextInput
+                  style={Styles.fInput}
+                  placeholder='Details/ವಿವರ'
+                  placeholderTextColor='rgba(36,42,56,0.4)'
+                  onChangeText={(text) => this.onFormChange(text, 'feedback[details]')}
+                  numberOfLines={10}
+                  multiline
+                />
+                <Icon name='comment' type="FontAwesome" style={Styles.fIcon} />
+              </View>
+            </View>
+          </View>
+          <TouchableOpacity style={Styles.fBtn} onPress={this.onFormSubmit}>
+            <Text style={Styles.fBtnText}>Submit</Text>
+            <Icon name='check' type="FontAwesome" style={Styles.fBtnIcon} />
+          </TouchableOpacity>
+        </View>
+      </Content>
+    )
+  }
+
+  render() {
+    const { fetching, navigation } = this.props;
     return (
       <Container>
         <Header style={Styles.navigation}>
           <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
           <View style={Styles.nav}>
             <View style={Styles.navLeft}>
-              <TouchableOpacity style={Styles.navLeft} onPress={this.goToPage}>
+              <TouchableOpacity style={Styles.navLeft} onPress={() => {
+                navigation.navigate("FeedbackList")
+              }}>
                 <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
               </TouchableOpacity>
             </View>
@@ -114,117 +257,7 @@ class FeedbackScreen extends Component {
             <View style={Styles.navRight} />
           </View>
         </Header>
-
-        <Content contentContainerStyle={Styles.layoutDefault}>
-
-          <Image source={Images.background} style={Styles.bgImg} />
-          <View style={Styles.bgLayout}>
-            <View style={Styles.hTop}>
-              <Icon name='feedback' type="MaterialIcons" style={Styles.hImg} />
-              <View style={Styles.hContent}>
-                <Text style={Styles.hTopText}>Feedback</Text>
-                <Text style={Styles.hTopDesc}>Your Feedback is very important for us</Text>
-              </View>
-            </View>
-            <View style={Styles.regForm}>
-              <View style={Styles.infoBox}>
-                <View style={Styles.infoHeader}>
-                  <Text style={Styles.infoHeaderText}>Feedback Details</Text>
-                </View>
-                <View style={Styles.fRow}>
-                  <TextInput
-                    style={Styles.fInput}
-                    placeholder='Title/ವಿಷಯ'
-                    placeholderTextColor='rgba(36,42,56,0.4)'
-                    onChangeText={(text) => this.onFormChange(text, 'feedback[name]')}
-                  />
-                </View>
-                <View><Text style={Styles.fErrorLabel}>{errorsObj['feedback[name]']}</Text></View>
-                <View style={Styles.fDropdown}>
-                  <SearchableDropdown
-                    onTextChange={(text) => this.onPlantSearch(text)}
-                    onItemSelect={item => this.onFormChange(item, 'feedback[place_id]')}
-                    textInputStyle={Styles.fSearchInput}
-                    containerStyle={Styles.fPicker}
-                    itemStyle={Styles.pickerItem}
-                    itemTextStyle={Styles.fSearchInput}
-                    items={plantsList}
-                    defaultIndex={0}
-                    placeholder="Select Place/ಸ್ಥಳ ಆರಿಸಿ"
-                    resetValue={false}
-                    underlineColorAndroid="transparent"
-                  />
-
-                </View>
-                <View><Text style={Styles.fErrorLabel}>{errorsObj['feedback[place_id]']}</Text></View>
-                <View style={Styles.fSelect}>
-                  <View style={Styles.fPicker}>
-                    <Picker
-                      style={Styles.fPickerItem}
-                      textStyle={Styles.fInput}
-                      placeholder="Select Department/ಇಲಾಖೆ ಆರಿಸಿ"
-                      placeholderStyle={Styles.placeholderStyle}
-                      selectedValue={formObj['feedback[department_id]']}
-                      iosIcon={<Icon name='chevron-down' type="MaterialCommunityIcons" style={Styles.fIcon} />}
-                      onValueChange={(itemValue, itemIndex) =>
-                        this.onFormChange(itemValue, 'feedback[department_id]')
-                      }
-                    >
-                      <Picker.Item key="no_data_key" label="Department/ಇಲಾಖೆ" value={null} />
-                      {
-                        departments.map(({ id, name }) => <Picker.Item key={`${name}_${id}`} label={name} value={id} />
-                        )
-                      }
-                    </Picker>
-                  </View>
-
-                </View>
-                <View><Text style={Styles.fErrorLabel}>{errorsObj['feedback[department_id]']}</Text></View>
-                <View style={Styles.fSelect}>
-                  <View style={Styles.fPicker}>
-                    <Picker
-                      style={Styles.fPickerItem}
-                      textStyle={Styles.fInput}
-                      placeholder="Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ"
-                      placeholderStyle={Styles.placeholderStyle}
-                      selectedValue={formObj['feedback[feedback_type]']}
-                      onValueChange={(itemValue, itemIndex) =>
-                        this.onFormChange(itemValue, 'feedback[feedback_type]')
-                      }
-                      iosIcon={<Icon name='chevron-down' type="MaterialCommunityIcons" style={Styles.fIcon} />}
-                    >
-                      <Picker.Item key="no_data_key" label="Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ" value={null} />
-                      {
-                        statuses.map((status) =>
-                          <Picker.Item key={`${status}`} label={status} value={status} />
-                        )}
-                    </Picker>
-
-                  </View>
-                </View>
-                <View><Text style={Styles.fErrorLabel}>{errorsObj['feedback[feedback_type]']}</Text></View>
-
-                <View style={Styles.fRow}>
-                  <Textarea
-                    style={Styles.fInput}
-                    placeholder='Details/ವಿವರ'
-                    placeholderTextColor='rgba(36,42,56,0.4)'
-                    multiline={true}
-                    numberOfLines={10}
-                    iosIcon={<Icon name='chevron-down' type="MaterialCommunityIcons" style={Styles.fIcon} />}
-                    onChangeText={(text) => this.onFormChange(text, 'feedback[details]')}
-                  />
-
-                </View>
-                <View><Text style={Styles.fErrorLabel}>{errorsObj['feedback[details]']}</Text></View>
-              </View>
-            </View>
-            <TouchableOpacity style={Styles.fBtn} onPress={this.onFormSubmit}>
-              <Text style={Styles.fBtnText}>Save</Text>
-              <Icon name='check' type="FontAwesome" style={Styles.fBtnIcon} />
-            </TouchableOpacity>
-          </View>
-        </Content>
+        {this.renderComponent()}
         <LoadingOverlay
           visible={fetching}
           color="white"
@@ -233,23 +266,26 @@ class FeedbackScreen extends Component {
           message="Loading..."
         />
       </Container>
+
     )
   }
 }
 
 const mapStateToProps = (state) => {
   return {
-    user: state.login.user,
     plantsList: state.feedback.plantsList,
     departments: state.feedback.departments,
     statuses: state.feedback.statuses,
+    error: state.feedback.formError,
+    errorCode: state.feedback.createFeedbackErrorCode,
+    createFeedbackResponse: state.feedback.createFeedbackResponse,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getPlantsForSearchParam: (accessToken, searchParam) =>
-      dispatch(FeedbackActions.getPlacesList(accessToken, searchParam)),
+    getPlantsForSearchParam: (searchParam) =>
+      dispatch(FeedbackActions.getPlacesList(searchParam)),
     getDepartmentsStatus: (accessToken) =>
       dispatch(FeedbackActions.getDepartmentsList(accessToken)),
     createFeedback: (accessToken, data) =>
@@ -262,22 +298,30 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(mapStateToProps, mapDispatchToProps)(FeedbackScreen)
 
                 // <View style={Styles.fDropdown}>
-                //   <SearchableDropdown
-                //     onTextChange={(text) => this.onPlantSearch(text)}
-                //     onItemSelect={item => this.onFormChange(item, 'feedback[feedback_type]')}
-                //     textInputStyle={Styles.fSearchInput}
-                //     containerStyle={Styles.fPicker}
-                //     itemStyle={Styles.pickerItem}
-                //     itemTextStyle={Styles.fSearchInput}
-                //     items={statuses}
-                //     defaultIndex={0}
-                //     placeholder="Select Place"
-                //     resetValue={false}
-                //     underlineColorAndroid="transparent"
-                //   />
+
                 //   <Icon
                 //     name='message-text-outline'
                 //     type="MaterialCommunityIcons"
                 //     style={Styles.fDropdownIcon}
                 //   />
                 // </View>
+
+            //     <View style={Styles.regForm}>
+            //   <View style={Styles.infoBox}>
+            //     <View style={Styles.infoHeader}>
+            //       <Text style={Styles.infoHeaderText}>Documents</Text>
+            //     </View>
+            //     <View style={Styles.fRow}>
+            //       <TextInput style={Styles.fInput} placeholder='RC Book' placeholderTextColor='rgba(36,42,56,0.4)' />
+            //       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
+            //     </View>
+            //     <View style={Styles.fRow}>
+            //       <TextInput style={Styles.fInput} placeholder='Insurance Document' placeholderTextColor='rgba(36,42,56,0.4)' />
+            //       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
+            //     </View>
+            //     <View style={Styles.fRow}>
+            //       <TextInput style={Styles.fInput} placeholder='Pollution Document' placeholderTextColor='rgba(36,42,56,0.4)' />
+            //       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
+            //     </View>
+            //   </View>
+            // </View>

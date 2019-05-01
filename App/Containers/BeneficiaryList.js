@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
-import HeaderComponent from '../Components/HeaderComponent'
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
+import { format } from 'date-fns';
+import HeaderComponent from '../Components/HeaderComponent'
 import LoadingOverlay from '../Components/LoadingOverlay';
-import LoginActions from '../Redux/LoginRedux'
+import FooterComponent from '../Components/ListFooter';
+import ErrorPage from '../Components/NetworkErrorScreen';
 import { NavigationEvents } from 'react-navigation';
 import { Images } from '../Themes/'
 import Styles from './Styles/BenefeciaryDetailViewStyle'
@@ -24,37 +26,34 @@ class BeneficiaryList extends Component {
   }
 
   componentDidMount() {
-    this.onTableFetchRequest();
+    this.onTableFetchRequest(1);
   }
 
-  onTableFetchRequest = (pageNo) => {
-    const { user, lastCalledPage, currentPage } = this.props;
-    const { access_token } = user;
-    let accessToken = access_token;
-    if(!accessToken) {
-      AsyncStorage.getItem('user').then((userToken) => {
-        accessToken = JSON.parse(userToken).access_token;
-        this.props.getBeneficiarySchemesList(accessToken, currentPage, lastCalledPage);
-        this.props.saveUserToken(JSON.parse(userToken));
-      });
-    } else {
-      this.props.getBeneficiarySchemesList(accessToken, currentPage, lastCalledPage);
+  goToPage = (option) => {
+    const { lastCalledPage } = this.props;
+    if (option === 'next') {
+      this.onTableFetchRequest(lastCalledPage + 1);
+    } else if (option === 'prev') {
+      this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
+    } else if (option === 'first') {
+      this.onTableFetchRequest(1);
+    } else if(option === 'refresh') {
+      this.onTableFetchRequest(lastCalledPage);
     }
   }
 
-  getMoreItems = () => {
-    if (!this.props.fetching) {
-      this.onTableFetchRequest();
-    }
+  onTableFetchRequest = (pageID) => {
+    const { fetching } = this.props;
+    AsyncStorage.getItem('accessToken').then((accessToken) => {
+      if (!fetching) {
+        this.props.getListData(accessToken, pageID);
+      }
+    });
   }
 
-  goToBeneficiaryDetailView(selectedScheme) {
+  goToBeneficiaryDetailView(selectedData) {
     const { navigate } = this.props.navigation;
-    navigate('BenfeciaryDetail', { selectedScheme });
-  }
-
-  onRefresh = () => {
-    this.onTableFetchRequest();
+    navigate('BenfeciaryDetail', { selectedData });
   }
 
   renderRow({ item, index }) {
@@ -92,47 +91,62 @@ class BeneficiaryList extends Component {
 
           </View>
           <View style={Styles.more}>
-            <Text style={Styles.postedOn}>Applied on: {item.application_date}</Text>
+            <Text style={Styles.postedOn}>Applied on: {item.application_date ? format(new Date(item.application_date), 'DD-MM-YYYY') : 'NA'}</Text>
           </View>
         </View>
       </TouchableOpacity>
     )
   }
 
-  render() {
-    const { beneficiaryList, fetching } = this.props;
+  renderContent = () => {
+    const { listError, lastCalledPage, data, fetching } = this.props;
+    if (listError) {
+      return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
+    }
     return (
-      <Container>
-        <HeaderComponent title={''} {...this.props} />
-        <Content 
+      <View style={{ flex: 1 }}>
+        <Content
           contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-          refreshControl={
-            <RefreshControl
-              refreshing={fetching} 
-              onRefresh={this.onRefresh} 
-            />
-          }
         >
           <Image source={Images.background} style={Styles.bgImg} />
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
               <Icon name='package' type="MaterialCommunityIcons" style={Styles.hImg} />
-              <View style={Styles.hContent}>
+              <TouchableOpacity style={Styles.hContent} onPress={() => {
+                this.goToPage('first')
+              }}>
                 <Text style={Styles.hTopText}>Beneficiary Schemes</Text>
                 <Text style={Styles.hTopDesc}>View all the beneficiary schemes</Text>
-              </View>
+              </TouchableOpacity>
             </View>
             <FlatList
+              style={{ marginBottom: 80 }}
               contentContainerStyle={Styles.listContent}
               keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-              data={beneficiaryList}
+              data={data}
               renderItem={this.renderRow}
-              onEndReached={this.getMoreItems}
               removeClippedSubview
             />
-
           </View>
         </Content>
+        <FooterComponent
+          goToFirstPage={() => this.goToPage('first')}
+          goToNextPage={() => this.goToPage('next')}
+          goToPrevPage={() => this.goToPage('prev')}
+          refreshPage={()=> this.goToPage('refresh')}
+          data={data}
+          currentPage={lastCalledPage}
+        />
+      </View>
+    )
+  }
+
+  render() {
+    const { fetching } = this.props;
+    return (
+      <Container>
+        <HeaderComponent title={''} {...this.props} />
+        {this.renderContent()}
         <LoadingOverlay
           visible={fetching}
           color="white"
@@ -149,57 +163,19 @@ class BeneficiaryList extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.login.user,
-    beneficiaryList: state.beneficiary.beneficiaryList,
+    data: state.beneficiary.listData,
     fetching: state.beneficiary.fetching,
     lastCalledPage: state.beneficiary.lastCalledPage,
-    currentPage: state.beneficiary.currentPage,
+    currentPage: state.beneficiary.pageNo,
+    listError: state.beneficiary.listError,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getBeneficiarySchemesList: (accessToken, pageNo, lastCalledPage) => dispatch(BeneficiaryActions.beneficiaryRequest(accessToken, pageNo, lastCalledPage)),
-    saveUserToken: (user) => dispatch(LoginActions.loginSuccess(user)),
+    getListData: (accessToken, pageNo, lastCalledPage) =>
+      dispatch(BeneficiaryActions.beneficiaryOnListRequest(accessToken, pageNo, lastCalledPage))
   }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(BeneficiaryList)
-
-
-
-
-// <View style={Styles.layoutDefault}>
-//   <NavigationEvents
-//     onWillFocus={payload => console.log('will focus',payload)}
-//     onDidFocus={payload => console.log('did focus',payload)}
-//     onWillBlur={payload => console.log('will blur',payload)}
-//     onDidBlur={payload => console.log('did blur',payload)}
-//   />
-//   <HeaderComponent title={'Beneficiary List'} {...this.props} />
-//   <FlatList
-//     contentContainerStyle={Styles.listContent}
-//     data={beneficiaryList}
-//     renderItem={this.renderRow}
-//     keyExtractor={this.keyExtractor}
-//     initialNumToRender={this.oneScreensWorth}
-//     ListEmptyComponent={this.renderEmpty}
-//     onEndReached={this.getMoreItems}
-//   />
-//   <LoadingOverlay
-//     visible={fetching}
-//   >
-//   <View>
-//       <Image
-//         source={Images.bjpGif}
-//         />
-//     </View>
-//   </LoadingOverlay>
-
-// </View>
-
-
-// <View style={Styles.search}>
-//     <TextInput style={Styles.searchInput} placeholder='' placeholderTextColor='rgba(255,255,255,0.5)' />
-//     <Icon name='search' type="FontAwesome" style={Styles.searchIcon} />
-// </View>

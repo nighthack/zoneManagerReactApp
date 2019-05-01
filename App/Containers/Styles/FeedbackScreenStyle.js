@@ -35,13 +35,13 @@ export default StyleSheet.create({
   },
   hTopText: {
     fontSize: 20,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#FFF',
     marginBottom: 5
   },
   hTopDesc: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(255,255,255,0.6)',
     marginBottom: 10
   },
@@ -52,7 +52,7 @@ regForm: {
   },
   regText: {
     fontSize: 12,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#FFF'
   },
   infoBox: {
@@ -76,7 +76,7 @@ regForm: {
     paddingVertical: 15
   },
   infoHeaderText: {
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 14,
     color: '#FFF'
   },
@@ -87,6 +87,16 @@ regForm: {
     paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderColor: 'rgba(36,42,56,0.05)'
+  },
+    fSelectError: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 15,
+    paddingLeft: 5,
+    borderBottomWidth: 1,
+    borderColor: '#bb0000',
+    backgroundColor: '#fff6f6',
   },
   fRow: {
     flex: 1,
@@ -102,6 +112,22 @@ regForm: {
     borderBottomWidth: 1,
     borderColor: 'rgba(36,42,56,0.05)'
   },
+  fRowError: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // paddingVertical: 5,
+    ...Platform.select({
+      ios: {
+        paddingVertical: 10,
+      },
+    }),
+    paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderColor: '#bb0000',
+    backgroundColor: '#fff6f6',
+  },
+
   fPicker: {
     flex: 1
   },
@@ -117,7 +143,7 @@ regForm: {
   },
   fInput: {
     flex: 1,
-    // fontFamily: 'Montserrat-Regular',/
+    // /
     fontSize: 12,
     paddingVertical: 8
   },
@@ -134,12 +160,12 @@ regForm: {
     marginBottom: 15
   },
   fBtnText: {
-    // fontFamily: 'Montserrat-SemiBold',
+      
     fontSize: 14,
     color: '#FFF'
   },
   fBtnIcon: {
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 12,
     color: '#FFF'
   },
@@ -166,8 +192,18 @@ regForm: {
     padding: 0,
     // borderColor: 'red',
     // borderWidth: 2,
-    paddingLeft: 15,
+    paddingLeft: 10,
     paddingVertical: 13,
+  },
+  fSearchInputError: {
+    flex: 1,
+    padding: 0,
+    // borderColor: 'red',
+    // borderWidth: 2,
+    paddingLeft: 10,
+    paddingVertical: 13,
+    borderColor: '#bb0000',
+    backgroundColor: '#fff6f6',
   },
   pickerItem: {
     padding: 5,
