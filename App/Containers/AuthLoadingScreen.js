@@ -15,7 +15,7 @@ const styles = {
   imageContainer: {
     bottom: 0,
     flex: 1,
-    height: '135%',
+    height: '100%',
     left: 0,
     position: 'absolute',
     right: 0,
