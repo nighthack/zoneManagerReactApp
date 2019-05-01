@@ -36,7 +36,7 @@ export function* login({ phone, password }) {
     if (status) {
       const { user, message } = body;
       if (status >= 200 && status < 300) {
-        AsyncStorage.setItem('user', JSON.stringify(user));
+        AsyncStorage.setItem('accessToken', user.access_token);
         yield put(LoginActions.loginSuccess(user, message));
         yield put(NavigationActions.navigate({ routeName: 'Home' }))
         yield put(LoginActions.resetStateOnNavigation());

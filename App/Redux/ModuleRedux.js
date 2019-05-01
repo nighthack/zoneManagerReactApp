@@ -4,17 +4,17 @@ import Immutable from 'seamless-immutable'
 /* ------------- Types and Action Creators ------------- */
 
 const { Types, Creators } = createActions({
-  devWorkOnListRequest: ['accessToken', 'pageNo'],
-  devWorkOnListSuccess: ['listData', 'pageNo'],
-  devWorkOnListFailure: ['errorCode'],
-  devWorkOnListReset: ['payload'],
-  devWorkOnDetailRequest: ['accessToken', 'id'],
-  devWorkOnDetailSuccess: ['detailData'],
-  devWorkOnDetailFailure: ['errorCode'],
+  moduleOnListRequest: ['accessToken', 'pageNo'],
+  moduleOnListSuccess: ['listData', 'pageNo'],
+  moduleOnListFailure: ['errorCode'],
+  moduleOnListReset: ['payload'],
+  moduleOnDetailRequest: ['accessToken', 'id'],
+  moduleOnDetailSuccess: ['detailData'],
+  moduleOnDetailFailure: ['errorCode'],
 
 });
 
-export const DevWorkTypes = Types
+export const ModuleTypes = Types
 export default Creators
 
 /* ------------- Initial State ------------- */
@@ -95,13 +95,13 @@ export const OnDetailFetchFail = (state, { errorCode }) => {
 /* ------------- Hookup Reducers To Types ------------- */
 
 export const reducer = createReducer(INITIAL_STATE, {
-  [Types.DEV_WORK_ON_LIST_REQUEST]: onListRequest,
-  [Types.DEV_WORK_ON_LIST_SUCCESS]: onListFetchSuccess,
-  [Types.DEV_WORK_ON_LIST_FAILURE]: OnListFetchFail,
-  [Types.DEV_WORK_ON_LIST_RESET]: onListReset,
+  [Types.MODULE_ON_LIST_REQUEST]: onListRequest,
+  [Types.MODULE_ON_LIST_SUCCESS]: onListFetchSuccess,
+  [Types.MODULE_ON_LIST_FAILURE]: OnListFetchFail,
+  [Types.MODULE_ON_LIST_RESET]: onListReset,
 
-  [Types.DEV_WORK_ON_DETAIL_REQUEST]: onDetailRequest,
-  [Types.DEV_WORK_ON_DETAIL_SUCCESS]: onDetailFetchSuccess,
-  [Types.DEV_WORK_ON_DETAIL_FAILURE]: OnDetailFetchFail,
+  [Types.MODULE_ON_DETAIL_REQUEST]: onDetailRequest,
+  [Types.MODULE_ON_DETAIL_SUCCESS]: onDetailFetchSuccess,
+  [Types.MODULE_ON_DETAIL_FAILURE]: OnDetailFetchFail,
   // [Types.MODULE_ON_LIST_RESET]: onListReset,
 });

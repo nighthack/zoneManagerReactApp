@@ -1,71 +1,137 @@
-/* ***********************************************************
- * A short word on how to use this automagically generated file.
- * We're often asked in the ignite gitter channel how to connect
- * to a to a third party api, so we thought we'd demonstrate - but
- * you should know you can use sagas for other flow control too.
- *
- * Other points:
- *  - You'll need to add this saga to sagas/index.js
- *  - This template uses the api declared in sagas/index.js, so
- *    you'll need to define a constant in that file.
- *************************************************************/
-
-
 import { call, put, all } from 'redux-saga/effects'
-import FeedbackActions from '../Redux/FeedbackRedux'
-import request from '../Services/request'
-import { NavigationActions } from 'react-navigation'
-import { ToastActionsCreators } from 'react-native-redux-toast';
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
+import { NavigationActions } from 'react-navigation';
+import { ToastActionsCreators } from 'react-native-redux-toast';
+import FeedbackActions from '../Redux/FeedbackRedux';
+import LoginActions from '../Redux/LoginRedux';
+import request from '../Services/request'
 
-export function* getFeedbackList({ accessToken, pageNo, lastCalledPage }) {
-  try {
-    if (lastCalledPage !== pageNo) {
-      const options = {
-        method: 'GET',
-      };
-      const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}feedbacks?access_token=${accessToken}&page=${pageNo}`, options);
-      if (status >= 200 && status < 300) {
-        if (!(body && body.length)) {
-          yield put(ToastActionsCreators.displayInfo('Nothing New to Show'));
-          yield put(FeedbackActions.feedbackSuccess([], lastCalledPage));
-        } else {
-          yield put(FeedbackActions.feedbackSuccess(body))
-        }
-      } else if (status === 401) {
-        yield put(NavigationActions.navigate({ routeName: 'Login' }))
-        yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
-      } else {
-        yield put(FeedbackActions.feedbackFailure())
-      }
-    } else {
-      yield put(ToastActionsCreators.displayInfo('Nothing New to Show'));
-      yield put(FeedbackActions.feedbackSuccess([], lastCalledPage));
-    }
+// import { ModuleSelectors } from '../Redux/ModuleRedux'
+const moduleURL = 'feedbacks';
 
-
-  } catch (e) {
-    yield put(FeedbackActions.feedbackFailure())
-  }
-}
-
-
-export function* getPlacesList({ accessToken, searchParam }) {
+export function* getFeedbackList({ accessToken, pageNo }) {
   try {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}commons/places?app_token=${APP_TOKEN}&search=${searchParam}`, options);
-    if (status >= 200 && status < 300) {
-      yield put(FeedbackActions.getPlacesListSuccess(body))
-    } else if (status === 401) {
-      yield put(NavigationActions.navigate({ routeName: 'Login' }))
-      yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
-    } else {
-      yield put(FeedbackActions.getPlacesListFail())
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}?access_token=${accessToken}&page=${pageNo}`, options);
+    switch (status) {
+      case undefined: {
+        yield put(FeedbackActions.feedbackOnListFailure(503));
+        yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
+        break;
+      }
+      case 401: {
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+        yield put(FeedbackActions.feedbackOnListFailure(status));
+        yield put(ToastActionsCreators.displayWarning('Invalid Access'));
+        yield put(LoginActions.logoutRequest(accessToken));
+        // TO DO ADD LOGOUT
+        break;
+      }
+      case 200: {
+        yield put(FeedbackActions.feedbackOnListSuccess(body, pageNo))
+        if (!(body && body.length)) {
+          yield put(ToastActionsCreators.displayInfo('End of List'));
+        }
+        break;
+      }
+      default: {
+        yield put(FeedbackActions.feedbackOnListFailure(status || 503 ));
+        if(body && body.message && typeof body.message === 'string') {
+          yield put(ToastActionsCreators.displayInfo(message));
+        } else {
+          yield put(ToastActionsCreators.displayInfo('oops!!'));
+        }
+      }
     }
-  } catch (e) {
-    yield put(FeedbackActions.getPlacesListFail())
+
+  } catch (error) {
+    yield put(FeedbackActions.feedbackOnListFailure(503));
+    yield put(ToastActionsCreators.displayInfo('oops!!'));
+  }
+}
+
+
+export function* getFeedbackDetails({ accessToken, id }) {
+  try {
+    const options = {
+      method: 'GET',
+    };
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}/${id}?access_token=${accessToken}`, options);
+    switch (status) {
+      case undefined: {
+        yield put(FeedbackActions.feedbackOnDetailFailure(503));
+        yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
+        break;
+      }
+      case 401: {
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+        yield put(FeedbackActions.feedbackOnDetailFailure(status));
+        yield put(ToastActionsCreators.displayWarning('Invalid Access'));
+        yield put(LoginActions.logoutRequest(accessToken));
+        // TO DO ADD LOGOUT
+        break;
+      }
+      case 200: {
+        yield put(FeedbackActions.feedbackOnDetailSuccess(body))
+        break;
+      }
+      default: {
+        yield put(FeedbackActions.feedbackOnDetailFailure(status || 503 ));
+        if(body && body.message && typeof body.message === 'string') {
+          yield put(ToastActionsCreators.displayInfo(message));
+        } else {
+          yield put(ToastActionsCreators.displayInfo('oops!!'));
+        }
+      }
+    }
+
+  } catch (error) {
+    yield put(FeedbackActions.feedbackOnDetailFailure(503));
+    yield put(ToastActionsCreators.displayInfo('oops!!'));
+  }
+}
+
+
+export function* getPlacesListForSearchParam({ searchParam }) {
+  try {
+    const options = {
+      method: 'GET',
+    };
+
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}commons/places?app_token=${APP_TOKEN}&search=${searchParam}`, options);
+    switch (status) {
+      case undefined: {
+        yield put(FeedbackActions.getPlacesListFail(503));
+        yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
+        break;
+      }
+      case 401: {
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+        yield put(FeedbackActions.getPlacesListFail(status));
+        yield put(ToastActionsCreators.displayWarning('Invalid Access'));
+        yield put(LoginActions.logoutRequest(accessToken));
+        // TO DO ADD LOGOUT
+        break;
+      }
+      case 200: {
+        yield put(FeedbackActions.getPlacesListSuccess(body))
+        break;
+      }
+      default: {
+        yield put(FeedbackActions.getPlacesListFail(status || 503 ));
+        if(body && body.message && typeof body.message === 'string') {
+          yield put(ToastActionsCreators.displayInfo(message));
+        } else {
+          yield put(ToastActionsCreators.displayInfo('oops!!'));
+        }
+      }
+    }
+
+  } catch (error) {
+    yield put(FeedbackActions.getPlacesListFail(503));
+    yield put(ToastActionsCreators.displayInfo('oops!!'));
   }
 }
 
@@ -74,27 +140,45 @@ export function* getDepartmentsList({ accessToken }) {
     const options = {
       method: 'GET',
     };
+
     const { departments, statuses } = yield all({
       departments: call(request, `${BASE_URL}${API_VERSION}commons/departments?access_token=${accessToken}`, options),
       statuses: call(request, `${BASE_URL}${API_VERSION}commons/status_list?access_token=${accessToken}&model=Feedback`, options),
-    })
-
-    if (departments.status >= 200 && departments.status < 300) {
-      const data = {
-        departments: departments.body,
-        statuses: statuses.body,
+    });
+    const status = departments.status;
+    switch (status) {
+      case undefined: {
+        yield put(FeedbackActions.getDepartmentsListFail(503));
+        yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
+        break;
       }
-      yield put(FeedbackActions.getDepartmentsListSuccess(data))
-    } else if (status === 401) {
-      yield put(NavigationActions.navigate({ routeName: 'Login' }))
-      yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
-    } else {
-      yield put(FeedbackActions.getDepartmentsListFail())
+      case 401: {
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+        yield put(FeedbackActions.getDepartmentsListFail(status));
+        yield put(ToastActionsCreators.displayWarning('Invalid Access'));
+        yield put(LoginActions.logoutRequest(accessToken));
+        break;
+      }
+      case 200: {
+        yield put(FeedbackActions.getDepartmentsListSuccess({ departments: departments.body, statuses:statuses.body }))
+        break;
+      }
+      default: {
+        yield put(FeedbackActions.getDepartmentsListFail(status || 503 ));
+        if(body && body.message && typeof body.message === 'string') {
+          yield put(ToastActionsCreators.displayInfo(message));
+        } else {
+          yield put(ToastActionsCreators.displayInfo('oops!!'));
+        }
+      }
     }
-  } catch (e) {
-    yield put(FeedbackActions.getDepartmentsListFail())
+
+  } catch (error) {
+    yield put(FeedbackActions.getDepartmentsListFail(503));
+    yield put(ToastActionsCreators.displayInfo('oops!!'));
   }
 }
+
 
 export function* createFeedback({ accessToken, data }) {
   try {
@@ -102,41 +186,47 @@ export function* createFeedback({ accessToken, data }) {
       'Content-Type': 'multipart/form-data',
       "cache-control": "no-cache",
     });
-    // data.append("app_token", APP_TOKEN);
+    data.append("app_token", APP_TOKEN);
     const options = {
       method: 'POST',
+      body: data,
       headers,
       processData: false,
       contentType: false,
-      credentials: 'same-origin',
-      body: data,
+      credentials: 'same-origin'
     };
+    
+
     const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}feedbacks?access_token=${accessToken}`, options);
-    if (status) {
-      const { data, message, errors } = body;
-      if ((status >= 200 && status < 300)) {
-        if (body && body.id) {
-          yield put(FeedbackActions.createFeedbackSuccess(data));
-          yield put(NavigationActions.navigate({ routeName: 'Home' }))
-          yield put(ToastActionsCreators.displayInfo('Thanks for sharing your feedback'))
-          yield put(FeedbackActions.resetStateOnNavigation());
-        } else if (status === 401) {
-          yield put(NavigationActions.navigate({ routeName: 'Login' }))
-          yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
-        } else {
-          yield put(FeedbackActions.createFeedbackSuccess(errors))
-        }
-      } else {
-        yield put(FeedbackActions.createFeedbackFail({}))
-        yield put(ToastActionsCreators.displayWarning(message))
+    switch (status) {
+      case undefined: {
+        yield put(FeedbackActions.createFeedbackFail(503));
+        yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
+        break;
       }
-    } else {
-      yield put(FeedbackActions.createFeedbackFail({}))
-      yield put(ToastActionsCreators.displayWarning('Network Error'))
+      case 401: {
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+        yield put(FeedbackActions.createFeedbackFail(status));
+        yield put(ToastActionsCreators.displayWarning('Invalid Access'));
+        yield put(LoginActions.logoutRequest(accessToken));
+        break;
+      }
+      case 200: {
+        yield put(FeedbackActions.createFeedbackSuccess(body))
+        break;
+      }
+      default: {
+        yield put(FeedbackActions.createFeedbackFail(status || 503 ));
+        if(body && body.message && typeof body.message === 'string') {
+          yield put(ToastActionsCreators.displayInfo(message));
+        } else {
+          yield put(ToastActionsCreators.displayInfo('oops!!'));
+        }
+      }
     }
 
-  } catch (e) {
-    yield put(FeedbackActions.createFeedbackFail({}))
-    yield put(ToastActionsCreators.displayInfo('Please Make sure you have filled all the fields'))
+  } catch (error) {
+    yield put(FeedbackActions.createFeedbackFail(503));
+    yield put(ToastActionsCreators.displayInfo('oops!!'));
   }
 }

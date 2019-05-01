@@ -1,16 +1,19 @@
 import { createStackNavigator, createAppContainer, createSwitchNavigator, createDrawerNavigator } from 'react-navigation'
 
-import RegisterScreen from '../Containers/Register'
-import LaunchScreen from '../Containers/LaunchScreen'
+import RegisterScreen from '../Containers/Register';
+import LaunchScreen from '../Containers/LaunchScreen';
 // These are the Pre Authentication Screens
 
-import LoginScreen from '../Containers/LoginScreen'
+import LoginScreen from '../Containers/LoginScreen';
 import SplashScreen from '../Components/SplashScreen';
-import ForgotPasswordScreen from '../Containers/ForgotPassword'
-import NetworkError from '../Components/NetworkErrorScreen'
-import AuthLoadingScreen from '../Containers/AuthLoadingScreen'
+import ForgotPasswordScreen from '../Containers/ForgotPassword';
+import NetworkError from '../Components/NetworkErrorScreen';
+import AuthLoadingScreen from '../Containers/AuthLoadingScreen';
 
 
+// Sample Screen Which needs to be replicated
+
+import ModuleListScreen from '../Containers/ModuleListView';
 // These Are the post authencation Screens
 import BeneficiaryListingScreen from '../Containers/BeneficiaryList'
 import BeneficiaryDetailScreen from '../Containers/BenefeciaryDetailView'
@@ -34,7 +37,7 @@ import DrawerComponent from '../Containers/SideMenu';
 
 const MyDrawerNavigator = createDrawerNavigator({
   Home: {
-    screen: BeneficiaryListingScreen,
+    screen: FeedbackScreen,
   },
   BenfeciaryDetail: {
     screen: BeneficiaryDetailScreen,

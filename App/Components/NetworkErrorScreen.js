@@ -18,40 +18,34 @@ export default class NetworkErrorScreen extends Component {
   // }
 
   render() {
-    const { navigation } = this.props;
+    const { onButtonClick, status } = this.props;
     return (
-      <Container>
-        <Header style={Styles.navigation} />
-        <Content contentContainerStyle={Styles.layoutDefault}>
-            <Image source={Images.background} style={Styles.bgImg} />
-            <View style={Styles.bgLayout}>
-                <View style={Styles.hTop}>
-                    <Icon name='signal-wifi-off' type="MaterialIcons" style={Styles.hImg} />
-                    <View style={Styles.hContent}>
-                        <Text style={Styles.hTopText}>Network Error</Text>
-                        <Text style={Styles.hTopDesc}>Oops!! there is some trouble</Text>
-                    </View>
-                </View>
-
-                <View style={Styles.tripItem}>
-                    <View style={Styles.truckInfo}>
-                      <View>
-                        <Text style={Styles.truckTrip}>Sorry</Text>
-                        <Text style={Styles.truckData}>Looks Like the internet is too slow please try back in some time or click below to retry</Text>
-                      </View>
-                    </View>
-                    <View style={Styles.decisionBox}>
-                        <TouchableOpacity style={Styles.acceptBtn} onPress={() => {
-                           navigation.navigate("Login")
-                        }}>
-                            <Text style={Styles.btnText}>Retry</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-
+      <Content contentContainerStyle={Styles.layoutDefault}>
+        <Image source={Images.background} style={Styles.bgImg} />
+        <View style={Styles.bgLayout}>
+          <View style={Styles.hTop}>
+            <Icon name='signal-wifi-off' type="MaterialIcons" style={Styles.hImg} />
+            <View style={Styles.hContent}>
+              <Text style={Styles.hTopText}>{status || 'Network Error'}</Text>
+              <Text style={Styles.hTopDesc}>Oops!! there is some trouble</Text>
             </View>
-        </Content>
-      </Container>
+          </View>
+          <View style={Styles.tripItem}>
+            <View style={Styles.truckInfo}>
+              <View>
+                <Text style={Styles.truckTrip}>Sorry</Text>
+                <Text style={Styles.truckData}>Looks Like the internet is too slow please try back in some time or click below to retry</Text>
+              </View>
+            </View>
+            <View style={Styles.decisionBox}>
+              <TouchableOpacity style={Styles.acceptBtn} onPress={onButtonClick}>
+                <Text style={Styles.btnText}>Retry</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Content>
+
     )
   }
 }

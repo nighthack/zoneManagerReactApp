@@ -36,12 +36,12 @@ export default StyleSheet.create({
   },
   hTopText: {
     fontSize: 20,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#FFF',
     marginBottom: 5
   },
   hTopDesc: {
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 11,
     color: 'rgba(255,255,255,0.6)',
     marginBottom: 10
@@ -98,7 +98,7 @@ export default StyleSheet.create({
     borderRadius: 3
   },
   tabTxt: {
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 12,
     color: 'rgba(255,255,255,0.8)'
   },  
@@ -106,7 +106,7 @@ export default StyleSheet.create({
     backgroundColor: '#FFD328'
   },
   activeTextStyle: {
-    // fontFamily: 'Montserrat-SemiBold',
+      
     fontSize: 12,
     color: '#FFF'
   },
@@ -175,7 +175,7 @@ export default StyleSheet.create({
   },
   placeText: {
     fontSize: 12,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     alignSelf: 'center'
   },
   truckInfo: {
@@ -193,7 +193,7 @@ export default StyleSheet.create({
   },
   truckText: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     alignSelf: 'center'
   },
   
@@ -205,7 +205,7 @@ export default StyleSheet.create({
   },
   orderText: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#333'
   },
     msgBox: {
@@ -216,7 +216,7 @@ export default StyleSheet.create({
   },
   msgText: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(36,42,56,0.7)',
     lineHeight: 16,
     textAlign:'left',

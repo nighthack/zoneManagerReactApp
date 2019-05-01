@@ -8,9 +8,8 @@ import { Images } from '../Themes/'
 class AuthLoadingScreen extends Component {
   constructor(props) {
     super(props);
-    AsyncStorage.getItem('user').then((userToken) => {
+    AsyncStorage.getItem('accessToken').then((userToken) => {
       props.navigation.navigate(userToken ? 'App' : 'Auth');
-      props.saveUserToken(JSON.parse(userToken))
     })
   }
   render() {

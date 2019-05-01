@@ -1,15 +1,14 @@
 import React, { Component } from 'react'
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, TabHeading, ScrollableTab, Card, Left, Right, Body, Input, Tabs, Tab, Footer, View, FooterTab, Badge } from 'native-base'
+import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
+import { Container, Header, Content, Button, Icon, Text, Title, TabHeading, ScrollableTab, Card, Left, Right, Body, Input, Tabs, Tab, Footer, View, FooterTab, Badge } from 'native-base'
 import { connect } from 'react-redux'
 import { format } from 'date-fns';
 import { Images } from '../Themes/'
 import HeaderComponent from '../Components/HeaderComponent'
 import LoadingOverlay from '../Components/LoadingOverlay';
-// Add Actions - replace 'Your' with whatever your reducer is called :)
+import FooterComponent from '../Components/ListFooter';
+import ErrorPage from '../Components/NetworkErrorScreen';
 import EventActions from '../Redux/EventRedux'
-
-// Styles
 import Styles from './Styles/EventsListStyle'
 
 function randomString(length, chars) {
@@ -24,29 +23,35 @@ class EventsList extends Component {
     this.renderRow = this.renderRow.bind(this);
   }
 
-
   componentDidMount() {
-    this.onTableFetchRequest();
+    this.onTableFetchRequest(1);
   }
 
-  getMoreItems = () => {
-    if (!this.props.fetching) {
-      this.onTableFetchRequest();
+  goToPage = (option) => {
+    const { lastCalledPage } = this.props;
+    if (option === 'next') {
+      this.onTableFetchRequest(lastCalledPage + 1);
+    } else if (option === 'prev') {
+      this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
+    } else if (option === 'first') {
+      this.onTableFetchRequest(1);
     }
   }
-  onTableFetchRequest = () => {
-    const { user, lastCalledPage, currentPage } = this.props;
-    const { access_token } = user;
-    this.props.getEventsList(access_token, currentPage, lastCalledPage);
+
+  onTableFetchRequest = (pageID) => {
+    const { fetching } = this.props;
+    AsyncStorage.getItem('accessToken').then((accessToken) => {
+      if (!fetching) {
+        this.props.getEventsList(accessToken, pageID);
+      }
+    });
   }
-  onRefresh = () => {
-    console.log('refreshing');
-    this.onTableFetchRequest();
-  }
+
   goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
     navigate("EventDetailScreen", { selectedData });
   }
+
   renderRow = ({ item, index }) => {
     return (
       <TouchableOpacity onPress={() => this.goToDetailView(item)}>
@@ -79,41 +84,53 @@ class EventsList extends Component {
         </View>
       </TouchableOpacity>)
   }
+  renderContent = () => {
+    const { listError, lastCalledPage, data, fetching } = this.props;
+    if (listError) {
+      return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
+    } else {
+      return (
+        <View style={{ flex: 1 }}>
+          <Content
+            style={{ paddingBottom: 80 }}
+            contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
+          >
+            <Image source={Images.background} style={Styles.bgImg} />
+            <View style={Styles.bgLayout}>
+              <View style={Styles.hTop}>
+                <Icon name='calendar-check-o' type="FontAwesome" style={Styles.hImg} />
+                <View style={Styles.hContent}>
+                  <Text style={Styles.hTopText}>Events</Text>
+                  <Text style={Styles.hTopDesc}>List of All Public Meetings and Events of our MLA</Text>
+                </View>
+              </View>
+              <FlatList
+                data={data}
+                refreshing={fetching}
+                keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+                showsHorizontalScrollIndicator={false}
+                removeClippedSubview
+                renderItem={this.renderRow}
+              />
+            </View>
+          </Content>
+          <FooterComponent
+            goToFirstPage={() => this.goToPage('first')}
+            goToNextPage={() => this.goToPage('next')}
+            goToPrevPage={() => this.goToPage('prev')}
+            data={data}
+            currentPage={lastCalledPage}
+          />
+        </View>
+      )
+    }
+  }
   render() {
-    const { data, fetching, navigation } = this.props;
+    const { fetching } = this.props;
     return (
       <Container>
         <HeaderComponent title={"Events"} {...this.props} />
-        <Content
-          refreshControl={
-            <RefreshControl
-              refreshing={fetching}
-              onRefresh={this.onRefresh}
-            />
-          }
-          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-        >
-          <Image source={Images.background} style={Styles.bgImg} />
-          <View style={Styles.bgLayout}>
-            <View style={Styles.hTop}>
-              <Icon name='calendar-check-o' type="FontAwesome" style={Styles.hImg} />
-              <View style={Styles.hContent}>
-                <Text style={Styles.hTopText}>Events</Text>
-                <Text style={Styles.hTopDesc}>List of All Public Meetings and Events of our MLA</Text>
-              </View>
-            </View>
-
-            <FlatList
-              data={data}
-              refreshing={fetching}
-              keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-              showsHorizontalScrollIndicator={false}
-              removeClippedSubview
-              onEndReached={this.getMoreItems}
-              renderItem={this.renderRow}
-            />
-          </View>
-        </Content>
+        {this.renderContent()}
         <LoadingOverlay
           visible={fetching}
           color="white"
@@ -129,18 +146,17 @@ class EventsList extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.login.user,
-    data: state.event.eventsList,
+    data: state.event.listData,
     fetching: state.event.fetching,
     lastCalledPage: state.event.lastCalledPage,
-    currentPage: state.event.currentPage,
+    listError: state.event.listError,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getEventsList: (accessToken, pageNo, lastCalledPage) =>
-      dispatch(EventActions.eventRequest(accessToken, pageNo, lastCalledPage))
+    getEventsList: (accessToken, pageNo) =>
+      dispatch(EventActions.eventOnListRequest(accessToken, pageNo))
   }
 }
 

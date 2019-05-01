@@ -1,11 +1,13 @@
 import React, { Component } from "react";
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
+import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import { connect } from "react-redux";
 import { format } from 'date-fns';
 import HeaderComponent from "../Components/HeaderComponent";
 import DevelopmentWorksActions from "../Redux/DevelopmentWorkRedux";
 import LoadingOverlay from '../Components/LoadingOverlay';
+import FooterComponent from '../Components/ListFooter';
+import ErrorPage from '../Components/NetworkErrorScreen';
 import { Images } from '../Themes/'
 // Styles
 import Styles from './Styles/BenefeciaryDetailViewStyle'
@@ -26,13 +28,27 @@ class DevelopmentWorksList extends Component {
 
 
   componentDidMount() {
-    this.onTableFetchRequest();
+    this.onTableFetchRequest(1);
+  }
+  goToPage = (option) => {
+    const { lastCalledPage } = this.props;
+    if (option === 'next') {
+      this.onTableFetchRequest(lastCalledPage + 1);
+    } else if (option === 'prev') {
+      this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
+    } else if (option === 'first') {
+      this.onTableFetchRequest(1);
+    }
+  }
+  onTableFetchRequest = (pageID) => {
+    const { fetching } = this.props;
+    AsyncStorage.getItem('accessToken').then((accessToken) => {
+      if (!fetching) {
+        this.props.getDevelopmentWorkslist(accessToken, pageID);
+      }
+    });
   }
 
-  onTableFetchRequest = () => {
-    const { user, lastCalledPage, currentPage } = this.props;
-    this.props.getDevelopmentWorkslist(user.access_token, currentPage, lastCalledPage);
-  }
 
   onRefresh = () => {
     this.onTableFetchRequest();
@@ -42,31 +58,24 @@ class DevelopmentWorksList extends Component {
     navigate("DevelopmentWorkDetail", { selectedData });
   }
 
-  getMoreItems = () => {
-    if (!this.props.fetching) {
-      this.onTableFetchRequest();
-    }
-  }
   renderRow({ item, index }) {
     return (
       <TouchableOpacity onPress={() => this.goToDetailView(item)}>
         <View style={Styles.tripItem}>
-          <View style={Styles.truckInfo}>          
-            <View>
-              <Text style={Styles.infoLabel}> ಆರಿಸಿ/Place</Text>
-              <Text style={Styles.truckData}>{item.place}</Text>
-              <Text style={Styles.infoLabel}>ಕಾಮಗಾರಿ/Work</Text>
-              <Text style={Styles.truckTrip}>{item.name}</Text>
-              <Text style={Styles.infoLabel}>ವಿವರಗಳು/Details</Text>
-              <Text style={Styles.truckTrip}>{item.desc}</Text>
-            </View>
+          <View style={Styles.truckInfo}>
+            <Text style={Styles.infoLabel}> ಸ್ಥಳ/Place</Text>
+            <Text style={Styles.truckData}>{item.place}</Text>
+            <Text style={Styles.infoLabel}>ಕಾಮಗಾರಿ/Work</Text>
+            <Text style={Styles.truckTrip}>{item.name}</Text>
+            <Text style={Styles.infoLabel}>ವಿವರಗಳು/Details</Text>
+            <Text style={Styles.truckTrip}>{item.desc}</Text>
           </View>
           <View style={Styles.tripInfo}>
-              <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-                <Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
-                <Text style={Styles.truckData}>{item.department}</Text>
-              </View>
-            <View style={[Styles.rowSpaceAlignment, { marginTop: 10}]}>
+            <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
+              <Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
+              <Text style={Styles.truckData}>{item.department}</Text>
+            </View>
+            <View style={[Styles.rowSpaceAlignment, { marginTop: 10 }]}>
               <View style={Styles.tripPlaces}>
                 <Icon
                   name="circle-o"
@@ -131,42 +140,60 @@ class DevelopmentWorksList extends Component {
       </TouchableOpacity>
     );
   }
+  renderContent = () => {
+    const { listError, lastCalledPage, data, fetching } = this.props;
+    if (listError) {
+      return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
+    } else {
+      return (
+        <View style={{ flex: 1 }}>
+          <Content
+            refreshControl={
+              <RefreshControl
+                refreshing={fetching}
+                onRefresh={this.onRefresh}
+              />
+            }
+            contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
+          >
+            <Image source={Images.background} style={Styles.bgImg} />
+            <View style={Styles.bgLayout}>
+              <View style={Styles.hTop}>
+                <Icon name='package' type="MaterialCommunityIcons" style={Styles.hImg} />
+                <View style={Styles.hContent}>
+                  <Text style={Styles.hTopText}>Development Works</Text>
 
+                  <Text style={Styles.hTopDesc}>View all the development works</Text>
+                </View>
+              </View>
+              <FlatList
+                contentContainerStyle={Styles.listContent}
+                keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+                data={data}
+                removeClippedSubview
+                renderItem={this.renderRow}
+              />
+
+            </View>
+          </Content>
+
+          <FooterComponent
+            goToFirstPage={() => this.goToPage('first')}
+            goToNextPage={() => this.goToPage('next')}
+            goToPrevPage={() => this.goToPage('prev')}
+            data={data}
+            currentPage={lastCalledPage}
+          />
+        </View>
+      )
+    }
+  }
   render() {
     const { data, fetching } = this.props;
     return (
       <Container>
         <HeaderComponent title={''} {...this.props} />
-        <Content
-          refreshControl={
-            <RefreshControl
-              refreshing={fetching} 
-              onRefresh={this.onRefresh} 
-            />
-          }
-          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-        >
-          <Image source={Images.background} style={Styles.bgImg} />
-          <View style={Styles.bgLayout}>
-            <View style={Styles.hTop}>
-              <Icon name='package' type="MaterialCommunityIcons" style={Styles.hImg} />
-              <View style={Styles.hContent}>
-                <Text style={Styles.hTopText}>Development Works</Text>
-
-                <Text style={Styles.hTopDesc}>View all the development works</Text>
-              </View>
-            </View>
-            <FlatList
-              contentContainerStyle={Styles.listContent}
-              keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-              data={data}
-              removeClippedSubview
-              renderItem={this.renderRow}
-              onEndReached={this.getMoreItems}
-            />
-
-          </View>
-        </Content>
+        {this.renderContent()}
         <LoadingOverlay
           visible={fetching}
           color="white"
@@ -181,18 +208,17 @@ class DevelopmentWorksList extends Component {
 
 const mapStateToProps = state => {
   return {
-    user: state.login.user,
     data: state.development.listData,
     fetching: state.development.fetching,
     lastCalledPage: state.development.lastCalledPage,
-    currentPage: state.development.currentPage,
+    listError: state.development.listError,
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    getDevelopmentWorkslist: (accessToken, pageNo, lastCalledPage) =>
-      dispatch(DevelopmentWorksActions.developmentWorkRequest(accessToken, pageNo, lastCalledPage))
+    getDevelopmentWorkslist: (accessToken, pageNo) =>
+      dispatch(DevelopmentWorksActions.devWorkOnListRequest(accessToken, pageNo))
   };
 };
 

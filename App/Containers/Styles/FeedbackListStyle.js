@@ -34,13 +34,13 @@ export default StyleSheet.create({
   },
   hTopText: {
     fontSize: 20,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#FFF',
     marginBottom: 5
   },
   hTopDesc: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: 'rgba(255,255,255,0.6)',
     marginBottom: 10
   },
@@ -76,14 +76,14 @@ export default StyleSheet.create({
     flexWrap: 'wrap',
     paddingVertical: 10
   },
-  msgName: {
-    // fontFamily: 'Montserrat-Regular',
-    fontSize: 13,
-    color: 'rgba(36,42,56,0.99)',
-    marginBottom: 5
+  infoLabel: {
+    fontWeight: 'bold',
+    textAlign: 'left',
+    fontSize: 10,
+    marginBottom: 4,
   },
   msgContent: {
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 11,
     color: 'rgba(36,42,56,0.7)',
     marginBottom: 10
@@ -94,7 +94,7 @@ export default StyleSheet.create({
     paddingRight: 15
   },
   msgDate: {
-    // fontFamily: 'Montserrat-Regular',
+    // 
     fontSize: 10,
     color: 'rgba(36,42,56,0.4)'
   },
@@ -107,13 +107,13 @@ export default StyleSheet.create({
 
   nameTitle: {
     fontSize: 20,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#FFF',
     marginBottom: 5
   },
   regDesc: {
     fontSize: 12,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#FFF',
     marginBottom: 10
   },
@@ -140,12 +140,12 @@ export default StyleSheet.create({
   },
   middleText: {
     fontSize: 12,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     marginLeft: 5
   },
   middleDesc: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#666',
     lineHeight: 15,
     marginLeft: 5
@@ -156,7 +156,7 @@ export default StyleSheet.create({
   },
   rightText: {
     fontSize: 12,
-    // fontFamily: 'Montserrat-Regular',
+    // 
     color: '#333',
     alignSelf: 'center',
     marginLeft: 10
