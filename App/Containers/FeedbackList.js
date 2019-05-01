@@ -60,11 +60,12 @@ class FeedbackList extends Component {
 					<View style={Styles.bgLayout}>
 						<View style={Styles.hTop}>
 							<Icon name='google-maps' type="MaterialCommunityIcons" style={Styles.hImg} />
-							<View style={Styles.hContent}>
+							<TouchableOpacity style={Styles.hContent} onPress={() => {
+                this.goToPage('first')
+              }}>
 								<Text style={Styles.hTopText}>Feedback</Text>
 								<Text style={Styles.hTopDesc}>View the Feedback</Text>
-
-							</View>
+							</TouchableOpacity>
 						</View>
 						<View style={[Styles.decisionBox, { paddingHorizontal: 15 }]}>
 							<TouchableOpacity style={Styles.acceptBtn} onPress={() => {

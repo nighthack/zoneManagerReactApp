@@ -162,11 +162,13 @@ class DevelopmentWorksList extends Component {
             <View style={Styles.bgLayout}>
               <View style={Styles.hTop}>
                 <Icon name='package' type="MaterialCommunityIcons" style={Styles.hImg} />
-                <View style={Styles.hContent}>
+                <TouchableOpacity style={Styles.hContent} onPress={() => {
+                  this.goToPage('first')
+                }}>
                   <Text style={Styles.hTopText}>Development Works</Text>
 
                   <Text style={Styles.hTopDesc}>View all the development works</Text>
-                </View>
+                </TouchableOpacity>
               </View>
               <FlatList
                 style={{ marginBottom: 80 }}

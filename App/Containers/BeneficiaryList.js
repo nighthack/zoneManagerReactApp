@@ -111,10 +111,12 @@ class BeneficiaryList extends Component {
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
               <Icon name='package' type="MaterialCommunityIcons" style={Styles.hImg} />
-              <View style={Styles.hContent}>
+              <TouchableOpacity style={Styles.hContent} onPress={() => {
+                this.goToPage('first')
+              }}>
                 <Text style={Styles.hTopText}>Beneficiary Schemes</Text>
                 <Text style={Styles.hTopDesc}>View all the beneficiary schemes</Text>
-              </View>
+              </TouchableOpacity>
             </View>
             <FlatList
               style={{ marginBottom: 80 }}

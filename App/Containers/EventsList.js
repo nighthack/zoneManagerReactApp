@@ -100,10 +100,12 @@ class EventsList extends Component {
             <View style={Styles.bgLayout}>
               <View style={Styles.hTop}>
                 <Icon name='calendar-check-o' type="FontAwesome" style={Styles.hImg} />
-                <View style={Styles.hContent}>
+                <TouchableOpacity style={Styles.hContent} onPress={() => {
+                  this.goToPage('first')
+                }}>
                   <Text style={Styles.hTopText}>Events</Text>
                   <Text style={Styles.hTopDesc}>List of All Public Meetings and Events of our MLA</Text>
-                </View>
+                </TouchableOpacity>
               </View>
               <FlatList
                 style={{ marginBottom: 80 }}
