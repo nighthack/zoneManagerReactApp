@@ -109,6 +109,14 @@ class Register extends Component {
           } else {
             errorsObj[key] = null;
           }
+        } else if(key === 'user[password]') {
+          const regexp = /^\S*$/; 
+          if ((!regexp.test(formObj[key]) || formObj[key].length < 6)) {
+            errors += 1;
+            errorsObj[key] = "Password length has to be more than 6";
+          } else {
+            errorsObj[key] = null;
+          }
         } else if (key === 'user[password_confirmation]') {
           if (formObj[key] !== formObj['user[password]']) {
             errors += 1;

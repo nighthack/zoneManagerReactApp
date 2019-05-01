@@ -110,30 +110,24 @@ class FeedbackScreen extends Component {
   renderStatusesDropDown = () => {
     const { statuses } = this.props;
     const { OS } = Platform;
-    let options = [];
     if (OS === 'ios') {
-      options = statuses;
+      return statuses.map((value, index) => <Picker.Item key={`status_${value}`} label={value} value={value === 'Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ' ? null : value} />)
     } else {
-      const tempStatuses = statuses;
-      options = tempStatuses.unshift('Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ')
+      const tempStatuses = ['Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ',...statuses];
+      return tempStatuses.map((status, index) => <Picker.Item key={`status_${index}`} label={status} value={status === 'Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ' ? null: status} />);
     }
-    return options.map((value, index) => <Picker.Item key={`status_${value}`} label={value} value={value === 'Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ' ? null : value} />)
   }
 
   renderDepartmentsDropdown = () => {
     const { departments } = this.props;
     const { OS } = Platform;
-    let options = [];
     if (OS === 'ios') {
-      options = departments;
+      return departments.map(({ id, name }, index) => <Picker.Item key={`status_${index}`} label={name} value={id} />)
     } else {
-      const tempDepartments = departments;
-      options = tempDepartments.unshift({
-        id: null,
-        name: 'Department/ಇಲಾಖೆ ಆರಿಸಿ',
-      })
+      const tempDepartments = [{index: null, name : 'Department/ಇಲಾಖೆ ಆರಿಸಿ'}, ...departments]
+      return tempDepartments.map(({ id, name }, index) => <Picker.Item key={`status_${index}`} label={name} value={id} />);
     }
-    return options.map(({ id, name }, index) => <Picker.Item key={`status_${index}`} label={name} value={id} />)
+    
   }
 
   renderComponent() {

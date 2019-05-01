@@ -38,6 +38,8 @@ class DevelopmentWorksList extends Component {
       this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
     } else if (option === 'first') {
       this.onTableFetchRequest(1);
+    } else if(option === 'refresh') {
+      this.onTableFetchRequest(lastCalledPage);
     }
   }
   onTableFetchRequest = (pageID) => {
@@ -62,13 +64,19 @@ class DevelopmentWorksList extends Component {
     return (
       <TouchableOpacity onPress={() => this.goToDetailView(item)}>
         <View style={Styles.tripItem}>
-          <View style={Styles.truckInfo}>
-            <Text style={Styles.infoLabel}> ಸ್ಥಳ/Place</Text>
-            <Text style={Styles.truckData}>{item.place}</Text>
-            <Text style={Styles.infoLabel}>ಕಾಮಗಾರಿ/Work</Text>
-            <Text style={Styles.truckTrip}>{item.name}</Text>
-            <Text style={Styles.infoLabel}>ವಿವರಗಳು/Details</Text>
-            <Text style={Styles.truckTrip}>{item.desc}</Text>
+          <View style={[Styles.truckInfo, { flexDirection: 'column'}]}>
+            <View>
+              <Text style={Styles.infoLabel}> ಸ್ಥಳ/Place</Text>
+              <Text style={Styles.truckData}>{item.place}</Text>
+            </View>
+            <View>
+              <Text style={Styles.infoLabel}>ಕಾಮಗಾರಿ/Work</Text>
+              <Text style={Styles.truckTrip}>{item.name}</Text>
+            </View>
+            <View>
+              <Text style={Styles.infoLabel}>ವಿವರಗಳು/Details</Text>
+              <Text style={Styles.truckTrip}>{item.desc}</Text>
+            </View>
           </View>
           <View style={Styles.tripInfo}>
             <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
@@ -148,12 +156,6 @@ class DevelopmentWorksList extends Component {
       return (
         <View style={{ flex: 1 }}>
           <Content
-            refreshControl={
-              <RefreshControl
-                refreshing={fetching}
-                onRefresh={this.onRefresh}
-              />
-            }
             contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
           >
             <Image source={Images.background} style={Styles.bgImg} />
@@ -167,6 +169,7 @@ class DevelopmentWorksList extends Component {
                 </View>
               </View>
               <FlatList
+                style={{ marginBottom: 80 }}
                 contentContainerStyle={Styles.listContent}
                 keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
                 data={data}
@@ -181,6 +184,7 @@ class DevelopmentWorksList extends Component {
             goToFirstPage={() => this.goToPage('first')}
             goToNextPage={() => this.goToPage('next')}
             goToPrevPage={() => this.goToPage('prev')}
+            refreshPage={()=> this.goToPage('refresh')}
             data={data}
             currentPage={lastCalledPage}
           />

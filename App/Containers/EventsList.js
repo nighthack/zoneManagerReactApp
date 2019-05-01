@@ -35,6 +35,8 @@ class EventsList extends Component {
       this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
     } else if (option === 'first') {
       this.onTableFetchRequest(1);
+    }else if(option === 'refresh') {
+      this.onTableFetchRequest(lastCalledPage);
     }
   }
 
@@ -92,7 +94,6 @@ class EventsList extends Component {
       return (
         <View style={{ flex: 1 }}>
           <Content
-            style={{ paddingBottom: 80 }}
             contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
           >
             <Image source={Images.background} style={Styles.bgImg} />
@@ -105,6 +106,7 @@ class EventsList extends Component {
                 </View>
               </View>
               <FlatList
+                style={{ marginBottom: 80 }}
                 data={data}
                 refreshing={fetching}
                 keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
@@ -118,6 +120,7 @@ class EventsList extends Component {
             goToFirstPage={() => this.goToPage('first')}
             goToNextPage={() => this.goToPage('next')}
             goToPrevPage={() => this.goToPage('prev')}
+            refreshPage={()=> this.goToPage('refresh')}
             data={data}
             currentPage={lastCalledPage}
           />

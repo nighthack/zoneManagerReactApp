@@ -29,13 +29,15 @@ class FeedbackList extends Component {
 	}
 
 	goToPage = (option) => {
-		const { lastCalledPage } = this.props;
+		const { currentPage } = this.props;
 		if (option === 'next') {
-			this.onTableFetchRequest(lastCalledPage + 1);
+			this.onTableFetchRequest(currentPage + 1);
 		} else if (option === 'prev') {
-			this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
+			this.onTableFetchRequest(currentPage - 1 >= 0 ? lastCalledPage - 1 : 1);
 		} else if (option === 'first') {
 			this.onTableFetchRequest(1);
+		} else if (option === 'refresh') {
+			this.onTableFetchRequest(currentPage);
 		}
 	}
 
@@ -73,6 +75,7 @@ class FeedbackList extends Component {
 						</View>
 
 						<FlatList
+							style={{ marginBottom: 80 }}
 							data={data}
 							refreshing={fetching}
 							showsHorizontalScrollIndicator={false}
@@ -123,6 +126,7 @@ class FeedbackList extends Component {
 					goToFirstPage={() => this.goToPage('first')}
 					goToNextPage={() => this.goToPage('next')}
 					goToPrevPage={() => this.goToPage('prev')}
+					refreshPage={()=> this.goToPage('refresh')}
 					data={data}
 					currentPage={lastCalledPage}
 				/>
@@ -153,7 +157,7 @@ const mapStateToProps = (state) => {
 	return {
 		data: state.feedback.listData,
 		fetching: state.feedback.fetching,
-		currentPage: state.feedback.pageNo,
+		currentPage: state.feedback.lastCalledPage,
 		listError: state.feedback.listError,
 	}
 }

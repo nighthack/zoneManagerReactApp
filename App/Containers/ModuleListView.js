@@ -145,12 +145,14 @@ class ModuleListView extends Component {
     }
     return (
       <FlatList
+        style={{ marginBottom: 80 }}
         data={listData}
         ListHeaderComponent={this.renderHeader}
         showsHorizontalScrollIndicator={false}
         renderItem={this.renderListItem}
         keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
         removeClippedSubview
+        refreshPage={()=> this.goToPage('refresh')}
         bounces={false}
       />
     )

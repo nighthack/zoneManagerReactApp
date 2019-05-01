@@ -212,7 +212,8 @@ export function* createFeedback({ accessToken, data }) {
         break;
       }
       case 200: {
-        yield put(FeedbackActions.createFeedbackSuccess(body))
+        yield put(FeedbackActions.createFeedbackSuccess(body));
+        yield put(ToastActionsCreators.displayInfo('Thanks for your valuable feedback'));
         break;
       }
       default: {

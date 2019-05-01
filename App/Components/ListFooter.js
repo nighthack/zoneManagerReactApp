@@ -8,7 +8,7 @@ import styles from './Styles/ListFooterStyle'
 export default class ListFooter extends Component {
 
   render() {
-    const { goToFirstPage, goToNextPage, goToPrevPage, data, currentPage } = this.props;
+    const { goToFirstPage, goToNextPage, goToPrevPage, data, currentPage, refreshPage } = this.props;
     return (
       <Footer style={styles.container}>
         <View style={styles.smn}>
@@ -34,6 +34,14 @@ export default class ListFooter extends Component {
               goToNextPage()
             }}>
             <Icon name='arrow-right' type="FontAwesome" style={styles.smnIcon} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.smnBtn, { backgroundColor: '#ffd328' }]}
+
+            onPress={() => {
+              refreshPage()
+            }}>
+            <Icon name='refresh' type="FontAwesome" style={styles.smnIcon} />
           </TouchableOpacity>
         </View>
       </Footer>

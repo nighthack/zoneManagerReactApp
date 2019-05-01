@@ -36,6 +36,8 @@ class BeneficiaryList extends Component {
       this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
     } else if (option === 'first') {
       this.onTableFetchRequest(1);
+    } else if(option === 'refresh') {
+      this.onTableFetchRequest(lastCalledPage);
     }
   }
 
@@ -115,6 +117,7 @@ class BeneficiaryList extends Component {
               </View>
             </View>
             <FlatList
+              style={{ marginBottom: 80 }}
               contentContainerStyle={Styles.listContent}
               keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
               data={data}
@@ -127,6 +130,7 @@ class BeneficiaryList extends Component {
           goToFirstPage={() => this.goToPage('first')}
           goToNextPage={() => this.goToPage('next')}
           goToPrevPage={() => this.goToPage('prev')}
+          refreshPage={()=> this.goToPage('refresh')}
           data={data}
           currentPage={lastCalledPage}
         />
