@@ -24,6 +24,8 @@ const { Types, Creators } = createActions({
   createFeedbackSuccess: ['data'],
   createFeedbackFail: ['errorCode'],
 
+  resetStateOnNavigation: ['code'],
+
 });
 
 export const FeedbackTypes = Types
@@ -125,6 +127,8 @@ export const onCreateFeedbackSuccess = (state, { data }) => {
 export const onCreateFeedbackFail = (state, { errorCode }) => {
   return state.merge({ fetching: false, createFeedbackErrorCode: errorCode  })
 }
+
+export const resetFeedbackCreate = state => state.merge({ createFeedbackResponse: null, plantsList: [] });
 export const onListReset = state =>
     state.merge(INITIAL_STATE)
 
@@ -151,6 +155,8 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.CREATE_FEEDBACK]: onCreateFeedback,
   [Types.CREATE_FEEDBACK_SUCCESS]: onCreateFeedbackSuccess,
   [Types.CREATE_FEEDBACK_FAIL]: onCreateFeedbackFail,
+
+  [Types.RESET_STATE_ON_NAVIGATION]: resetFeedbackCreate,
 
 
   // [Types.MODULE_ON_LIST_RESET]: onListReset,

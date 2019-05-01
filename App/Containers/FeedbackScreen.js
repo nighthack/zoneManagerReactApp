@@ -22,7 +22,7 @@ class FeedbackScreen extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.createFeedbackResponse) {
+    if (nextProps.createFeedbackResponse && nextProps.createFeedbackResponse.id) {
       this.setState({
         formObj: {},
         errorsObj: {},
@@ -113,8 +113,8 @@ class FeedbackScreen extends Component {
     if (OS === 'ios') {
       return statuses.map((value, index) => <Picker.Item key={`status_${value}`} label={value} value={value === 'Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ' ? null : value} />)
     } else {
-      const tempStatuses = ['Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ',...statuses];
-      return tempStatuses.map((status, index) => <Picker.Item key={`status_${index}`} label={status} value={status === 'Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ' ? null: status} />);
+      const tempStatuses = ['Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ', ...statuses];
+      return tempStatuses.map((status, index) => <Picker.Item key={`status_${index}`} label={status} value={status === 'Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ' ? null : status} />);
     }
   }
 
@@ -124,14 +124,15 @@ class FeedbackScreen extends Component {
     if (OS === 'ios') {
       return departments.map(({ id, name }, index) => <Picker.Item key={`status_${index}`} label={name} value={id} />)
     } else {
-      const tempDepartments = [{index: null, name : 'Department/ಇಲಾಖೆ ಆರಿಸಿ'}, ...departments]
+      const tempDepartments = [{ index: null, name: 'Department/ಇಲಾಖೆ ಆರಿಸಿ' }, ...departments]
       return tempDepartments.map(({ id, name }, index) => <Picker.Item key={`status_${index}`} label={name} value={id} />);
     }
-    
+
   }
 
   renderComponent() {
     const { plantsList, errorCode } = this.props;
+    const { OS } = Platform;
     const { formObj, errorsObj } = this.state;
     if (errorCode) {
       return <ErrorPage status={errorCode} onButtonClick={() => this.refreshPage(1)} />
@@ -192,7 +193,10 @@ class FeedbackScreen extends Component {
                     {this.renderStatusesDropDown()}
                   </Picker>
                 </View>
-                <Icon name='arrow-down' type="FontAwesome" style={Styles.fIcon} />
+                {
+                  OS === 'ios' ? <Icon name='arrow-down' type="FontAwesome" style={Styles.fIcon} /> : null
+                }
+
               </View>
               <View style={(errorsObj && errorsObj['feedback[department_id]']) ? Styles.fSelectError : Styles.fSelect}>
                 <View style={Styles.fPicker}>
@@ -209,7 +213,9 @@ class FeedbackScreen extends Component {
                     {this.renderDepartmentsDropdown()}
                   </Picker>
                 </View>
-                <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} />
+                {
+                  OS === 'ios' ? <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} /> : null
+                }
               </View>
               <View style={(errorsObj && errorsObj['feedback[details]']) ? Styles.fRowError : Styles.fRow}>
                 <TextInput

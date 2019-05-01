@@ -33,7 +33,7 @@ class FeedbackList extends Component {
 		if (option === 'next') {
 			this.onTableFetchRequest(currentPage + 1);
 		} else if (option === 'prev') {
-			this.onTableFetchRequest(currentPage - 1 >= 0 ? lastCalledPage - 1 : 1);
+			this.onTableFetchRequest(currentPage - 1 >= 0 ? currentPage - 1 : 1);
 		} else if (option === 'first') {
 			this.onTableFetchRequest(1);
 		} else if (option === 'refresh') {
@@ -47,7 +47,7 @@ class FeedbackList extends Component {
 	}
 
 	renderContent = () => {
-		const { listError, lastCalledPage, data, fetching, navigation } = this.props;
+		const { listError, currentPage, data, fetching, navigation } = this.props;
 		if (listError) {
 			return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
 		}
@@ -128,7 +128,7 @@ class FeedbackList extends Component {
 					goToPrevPage={() => this.goToPage('prev')}
 					refreshPage={()=> this.goToPage('refresh')}
 					data={data}
-					currentPage={lastCalledPage}
+					currentPage={currentPage}
 				/>
 			</View>
 
