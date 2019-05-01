@@ -37,7 +37,7 @@ import DrawerComponent from '../Containers/SideMenu';
 
 const MyDrawerNavigator = createDrawerNavigator({
   Home: {
-    screen: FeedbackScreen,
+    screen: BeneficiaryListingScreen,
   },
   BenfeciaryDetail: {
     screen: BeneficiaryDetailScreen,
