@@ -114,7 +114,8 @@ class FeedbackScreen extends Component {
     if (OS === 'ios') {
       options = statuses;
     } else {
-      options = statuses.unshift('Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ')
+      const tempStatuses = statuses;
+      options = tempStatuses.unshift('Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ')
     }
     return options.map((value, index) => <Picker.Item key={`status_${value}`} label={value} value={value === 'Select type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ' ? null : value} />)
   }
@@ -126,7 +127,8 @@ class FeedbackScreen extends Component {
     if (OS === 'ios') {
       options = departments;
     } else {
-      options = departments.unshift({
+      const tempDepartments = departments;
+      options = tempDepartments.unshift({
         id: null,
         name: 'Department/ಇಲಾಖೆ ಆರಿಸಿ',
       })
