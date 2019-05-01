@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StatusBar, TouchableOpacity, Image, AsyncStorage } from 'react-native';
 import { NavigationEvents } from "react-navigation";
+import { format } from 'date-fns';
 import { Container, Header, Content, Icon, Text, View } from 'native-base';
 import { Images } from '../Themes/';
 import ErrorPage from '../Components/NetworkErrorScreen';
@@ -44,7 +45,7 @@ class BenefeciaryDetailView extends Component {
               <View style={Styles.hContent}>
                 <Text style={[Styles.infoLabel, { color: '#FFD328' }]}>{data.place}</Text>
               </View>
-              <Text style={Styles.hTopDesc}>Applied on: {data.application_date}</Text>
+              <Text style={Styles.hTopDesc}>Applied on: {data.application_date ? format(new Date(data.application_date), 'DD-MM-YYYY') : 'NA'}</Text>
             </View>
 
           </View>

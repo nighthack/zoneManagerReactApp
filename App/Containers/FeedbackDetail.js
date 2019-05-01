@@ -43,7 +43,7 @@ class FeedbackDetailView extends Component {
               <View style={Styles.hContent}>
                 <Text style={[Styles.infoLabel, { color: '#FFD328' }]}>{data.place}</Text>
               </View>
-              <Text style={Styles.hTopDesc}>Created on: {data.created_at ? format(new Date(data.created_at), 'DD MMM YYYY') : 'NA'}</Text>
+              <Text style={Styles.hTopDesc}>Created on: {data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA'}</Text>
             </View>
 
           </View>
@@ -73,7 +73,7 @@ class FeedbackDetailView extends Component {
               <Text style={Styles.truckData}>{data.remarks || 'No Remarks'}</Text>
             </View>
             <View style={[Styles.msgBox, { paddingVertical: 4 }]}>
-                <Text style={Styles.postedOn}>Last Updated at: {data.updated_at ? format(new Date(data.updated_at), 'DD MMM YYYY') : 'NA'}</Text>
+                <Text style={Styles.postedOn}>Last Updated at: {data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
               </View>
           </View>
         </View>

@@ -1,10 +1,28 @@
 import React, { Component } from 'react'
-import { AsyncStorage, View, ImageBackground } from 'react-native'
+import { AsyncStorage, View, Image } from 'react-native'
 import { connect } from 'react-redux'
 import LoginActions from '../Redux/LoginRedux'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import { Images } from '../Themes/'
 
+
+const styles = {
+  image: {
+    flex: 1,
+    height: null,
+    width: null,
+  },
+  imageContainer: {
+    bottom: 0,
+    flex: 1,
+    height: '135%',
+    left: 0,
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    width: '100%',
+  },
+};
 class AuthLoadingScreen extends Component {
   constructor(props) {
     super(props);
@@ -14,25 +32,20 @@ class AuthLoadingScreen extends Component {
   }
   render() {
     return (
-      <View>
-        <ImageBackground
-          source={Images.splashBackground}
-          style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}
-        />
-        <LoadingOverlay
+      <View style={styles.imageContainer}>
+      <Image
+        resizeMode="cover"
+        source={Images.splashBackground}
+        style={styles.image}
+      />
+             <LoadingOverlay
           visible
           color="white"
           indicatorSize="large"
           messageFontSize={24}
           message="Loading..."
         />
-      </View>
+    </View>
     )
   }
 }

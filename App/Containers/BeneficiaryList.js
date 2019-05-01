@@ -3,6 +3,7 @@ import { connect } from 'react-redux'
 import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
+import { format } from 'date-fns';
 import HeaderComponent from '../Components/HeaderComponent'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import FooterComponent from '../Components/ListFooter';
@@ -90,7 +91,7 @@ class BeneficiaryList extends Component {
 
           </View>
           <View style={Styles.more}>
-            <Text style={Styles.postedOn}>Applied on: {item.application_date}</Text>
+            <Text style={Styles.postedOn}>Applied on: {item.application_date ? format(new Date(item.application_date), 'DD-MM-YYYY') : 'NA'}</Text>
           </View>
         </View>
       </TouchableOpacity>

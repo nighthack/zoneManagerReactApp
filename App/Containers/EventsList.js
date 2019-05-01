@@ -81,7 +81,7 @@ class EventsList extends Component {
             </Text>
           </View>
           <View style={Styles.orderDetails}>
-            <Text style={Styles.orderText}>Updated at {item.updated_at ? format(new Date(item.updated_at), 'DD-MMM-YY') : 'NA'}</Text>
+            <Text style={Styles.orderText}>Updated at {item.updated_at ? format(new Date(item.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
           </View>
         </View>
       </TouchableOpacity>)

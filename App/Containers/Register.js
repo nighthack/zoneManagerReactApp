@@ -309,7 +309,7 @@ class Register extends Component {
                     timeZoneOffsetInMinutes={undefined}
                     modalTransparent={false}
                     animationType={"fade"}
-                    androidMode={"default"}
+                    androidMode={"spinner"}
                     placeHolderText="Date Of Birth"
                     textStyle={Styles.fInput}
                     placeHolderTextStyle={{ color: 'rgba(36,42,56,0.4)' }}

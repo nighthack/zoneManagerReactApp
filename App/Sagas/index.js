@@ -74,8 +74,5 @@ export default function* root() {
     // // Generic Module 
     // takeLatest(ModuleTypes.MODULE_ON_LIST_REQUEST, getModuleList),
     // takeLatest(ModuleTypes.MODULE_ON_DETAIL_REQUEST, getModuleDetails),
-
-    // Logout Saga
-    takeLatest(LoginTypes.LOGOUT_REQUEST, logout),
   ])
 }

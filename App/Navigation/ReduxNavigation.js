@@ -25,7 +25,7 @@ class ReduxNavigation extends React.Component {
       }
       // if (shouldCloseApp(nav)) return false
       dispatch({ type: 'Navigation/BACK' })
-      return true
+      return false
     })
   }
 

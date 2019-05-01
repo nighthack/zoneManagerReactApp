@@ -142,7 +142,7 @@ class DevelopmentWorksList extends Component {
             </View>
           </View>
           <View style={Styles.more}>
-            <Text style={Styles.postedOn}>Last Updated at: {item.updated_at ? format(new Date(item.updated_at), 'DD MMM YYYY') : 'NA'}</Text>
+            <Text style={Styles.postedOn}>Last Updated at: {item.updated_at ? format(new Date(item.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
           </View>
         </View>
       </TouchableOpacity>

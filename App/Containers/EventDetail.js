@@ -68,7 +68,7 @@ class EventDetail extends Component {
                 <Text style={Styles.msgText}>{data.remarks}</Text>
               </View>
               <View style={Styles.orderDetails}>
-                <Text style={Styles.orderText}>Updated at {data.updated_at ? format(new Date(data.updated_at), 'DD-MMM-YY') : 'NA'}</Text>
+                <Text style={Styles.orderText}>Updated at {data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
               </View>
             </View>
           </View>
