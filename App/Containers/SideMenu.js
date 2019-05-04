@@ -18,6 +18,18 @@ import { Images } from '../Themes'
 
 export const Menulist = [
   /** Transporter **/
+    {
+    name: 'Events',
+    icon: 'truck',
+    type: 'FontAwesome5',
+    route: 'EventsListScreen'
+  },
+    {
+    name: 'Feedback',
+    icon: 'envelope',
+    type: 'SimpleLineIcons',
+    route: 'FeedbackList'
+  },
   {
     name: 'Beneficiary Schemes',
     icon: 'dashboard',
@@ -29,18 +41,6 @@ export const Menulist = [
     icon: 'toolbox',
     type: 'FontAwesome5',
     route: 'DevelopmentWorksList'
-  },
-  {
-    name: 'Events',
-    icon: 'truck',
-    type: 'FontAwesome5',
-    route: 'EventsListScreen'
-  },
-  {
-    name: 'Feedback',
-    icon: 'envelope',
-    type: 'SimpleLineIcons',
-    route: 'FeedbackList'
   },
   {
     name: 'Profile',

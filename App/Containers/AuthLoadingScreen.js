@@ -38,13 +38,18 @@ class AuthLoadingScreen extends Component {
         source={Images.splashBackground}
         style={styles.image}
       />
-             <LoadingOverlay
+      <LoadingOverlay
           visible
           color="white"
           indicatorSize="large"
           messageFontSize={24}
           message="Loading..."
+        >
+        <Image
+          resizeMode="cover"
+          source={Images.bjpGif}
         />
+        </LoadingOverlay>
     </View>
     )
   }

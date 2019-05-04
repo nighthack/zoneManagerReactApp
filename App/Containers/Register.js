@@ -82,7 +82,7 @@ class Register extends Component {
     const { formObj } = this.state;
     const errorsObj = {};
     let errors = 0;
-    const requiredFields = ['user[name]','user[phone]', 'user[password]', 'user[password_confirmation]', 'user[gender]' ];
+    const requiredFields = ['user[name]','user[phone]', 'user[password]', 'user[password_confirmation]', 'user[gender]', 'user[place_id]'];
     requiredFields.map((key) => {
       if (formObj[key]) {
         if (key === 'user[name]') {
