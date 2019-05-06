@@ -16,7 +16,7 @@ const { Types, Creators } = createActions({
   verifyUserSuccess: ['payload'],
   verifyUserFail: ['payload'],
   // GET OTP Actions
-  otpRequest: ['phone'],
+  otpRequest: ['phone', 'shouldBeNewUser'],
   otpSuccess: ['response'],
   otpFailure: ['response'],
   // Verify OTP Actions
@@ -53,6 +53,7 @@ export const INITIAL_STATE = Immutable({
   error: null,
   verifyOtpResponse: {},
   placesList: [],
+  getOtpStatus: null,
 })
 
 /* ------------- Selectors ------------- */
@@ -77,15 +78,7 @@ export const failure = state =>
   state.merge({ fetching: false, error: true })
 
 export const changeStateOnNavigation = state =>
-  state.merge(
-    { 
-      fetching: null,
-      error: null, 
-      getOtpStatus: null, 
-      signupApiStatus: null, 
-      resetPasswordApiStatus: null,
-      resetPasswordError: null,
-    })
+  state.merge(INITIAL_STATE)
 
 // request the data from an api
 export const getOTPrequest = (state, { otp, phone }) => state.merge({ fetching: true, getOtpStatus: 0 })

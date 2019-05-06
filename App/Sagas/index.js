@@ -6,6 +6,7 @@ import DebugConfig from '../Config/DebugConfig'
 /* ------------- Types ------------- */
 
 import { LoginTypes } from '../Redux/LoginRedux'
+import { RootTypes } from '../Redux/RootRedux';
 import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
 import { DevWorkTypes } from '../Redux/DevelopmentWorkRedux';
 import { EventTypes } from '../Redux/EventRedux';
@@ -23,8 +24,8 @@ import {
     onResetPasswordAction, 
     onVerifyUser,
     getPlacesListForSearch,
-    logout,
 } from './LoginSaga'
+import { getUserDetails } from './RootSagas';
 import { getBeneficiaryList, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevWorksList, getDevWorkDetails } from './DevelopmentWorkSagas'
 import { getEventsList, getEventDetails } from './EventSagas';
@@ -42,6 +43,8 @@ import BeneficiaryActions from '../Redux/BeneficiaryRedux';
 /* ------------- Connect Types To Sagas ------------- */
 export default function* root() {
   yield all([
+
+
     // some sagas only receive an action
     takeLatest(LoginTypes.LOGIN_REQUEST, login),
     takeLatest(LoginTypes.OTP_REQUEST, getOTP),
@@ -51,6 +54,8 @@ export default function* root() {
     takeLatest(LoginTypes.VERIFY_USER, onVerifyUser),
     takeLatest(LoginTypes.GET_PRE_LOGIN_PLACES_LIST, getPlacesListForSearch),
     
+    // Root Redux
+    takeLatest(RootTypes.GET_USER_DETAILS, getUserDetails),
     // Beneficiary Module
     takeLatest(BeneficiaryTypes.BENEFICIARY_ON_LIST_REQUEST, getBeneficiaryList),
     takeLatest(BeneficiaryTypes.BENEFICIARY_ON_DETAIL_REQUEST, getBeneficiaryDetails),

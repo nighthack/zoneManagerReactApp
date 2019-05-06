@@ -5,7 +5,7 @@ import BeneficiaryActions from '../Redux/BeneficiaryRedux';
 import DevelopmentWorkActions from '../Redux/DevelopmentWorkRedux';
 import EventActions from '../Redux/EventRedux';
 import FeedbackActions from '../Redux/FeedbackRedux';
-
+import RootActions from '../Redux/RootRedux';
 
 import request from '../Services/request'
 import { ToastActionsCreators } from 'react-native-redux-toast';
@@ -53,7 +53,7 @@ export function* login({ phone, password }) {
   }
 }
 
-export function* getOTP({ phone }) {
+export function* getOTP({ phone, shouldBeNewUser }) {
   try {
     const headers = new Headers({
       'Content-Type': 'multipart/form-data',
@@ -70,21 +70,57 @@ export function* getOTP({ phone }) {
       contentType: false,
       credentials: 'same-origin'
     };
-    const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users/otp`, options);
-    if (status >= 200 && status < 300) {
-      const { message } = body;
-      yield put(ToastActionsCreators.displayInfo(message))
-      yield put(LoginActions.otpSuccess(body));
+
+    const verifyNumberOptions = {
+      method: 'GET',
+    };
+    const verifyNumberResponse = yield call(request, `${BASE_URL}${API_VERSION}/users/exists?app_token=${APP_TOKEN}&phone=${phone}`, verifyNumberOptions);
+    if (shouldBeNewUser) {
+      if (verifyNumberResponse.status === 404) {
+        const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users/otp`, options);
+        if (status >= 200 && status < 300) {
+          const { message } = body;
+          yield put(ToastActionsCreators.displayInfo(message))
+          yield put(LoginActions.otpSuccess(body));
+        } else {
+          yield put(ToastActionsCreators.displayInfo(message))
+          yield put(LoginActions.otpFailure(body))
+        }
+      } else if (verifyNumberResponse.status === 200) {
+        yield put(ToastActionsCreators.displayInfo('User already registered with this number Please Login or use forgot password option'));
+        yield put(NavigationActions.navigate({ routeName: 'Login' }));
+        yield put(LoginActions.resetStateOnNavigation());
+        yield put(LoginActions.otpFailure({}))
+      } else {
+        yield put(LoginActions.otpFailure({}))
+      }
     } else {
-      yield put(ToastActionsCreators.displayInfo(message))
-      yield put(LoginActions.otpFailure(body))
+      if (verifyNumberResponse.status === 404) {
+        yield put(ToastActionsCreators.displayInfo('This number is not registered. Please Check the number or use Sign Up Option'));
+        yield put(NavigationActions.navigate({ routeName: 'Login' }));
+        yield put(LoginActions.resetStateOnNavigation());
+        yield put(LoginActions.otpFailure({}))
+      } else if (verifyNumberResponse.status === 200) {
+        const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users/otp`, options);
+        if (status >= 200 && status < 300) {
+          const { message } = body;
+          yield put(ToastActionsCreators.displayInfo(message))
+          yield put(LoginActions.otpSuccess(body));
+        } else {
+          yield put(ToastActionsCreators.displayInfo(message))
+          yield put(LoginActions.otpFailure(body))
+        }
+      } else {
+        yield put(LoginActions.otpFailure({}))
+      }
     }
 
+
   } catch (e) {
+    console.log(e);
     const response = { message: "Oops Please try again" };
     yield put(ToastActionsCreators.displayInfo(response.message))
     yield put(LoginActions.otpFailure(response))
-    yield put(NavigationActions.navigate({ routeName: 'NetworkError' }))
     yield put(LoginActions.resetStateOnNavigation());
   }
 }
@@ -144,11 +180,12 @@ export function* singupRequest({ data }) {
     const { user, message, errors } = body;
     if ((status >= 200 && status < 300)) {
       if (user && user.access_token) {
+        AsyncStorage.setItem('accessToken', user.access_token);
         yield put(LoginActions.signupSuccess(user));
         yield put(NavigationActions.navigate({ routeName: 'Home' }))
         yield put(LoginActions.resetStateOnNavigation());
       } else {
-        yield put(LoginActions.signupFailure(errors))
+        yield put(LoginActions.signupFailure(errors));
       }
     } else {
       yield put(LoginActions.resetPasswordFailure({}))
@@ -175,11 +212,13 @@ export function* onLogout({ accessToken }) {
     yield put(DevelopmentWorkActions.devWorkOnListReset());
     yield put(EventActions.eventOnListReset());
     yield put(FeedbackActions.feedbackOnListReset());
+    // yield put(RootActions.onListReset());
+    console.log(RootActions);
   } catch (e) {
     console.log(e);
     yield put(ToastActionsCreators.displayWarning('Please Refresh the app'));
   }
-  
+
 }
 
 export function* onResetPasswordAction({ data }) {
@@ -202,6 +241,7 @@ export function* onResetPasswordAction({ data }) {
     if ((status >= 200 && status < 300)) {
       if (user && user.access_token) {
         yield put(LoginActions.resetPasswordSuccess(user));
+        AsyncStorage.setItem('accessToken', user.access_token);
         yield put(NavigationActions.navigate({ routeName: 'Home' }))
         yield put(LoginActions.resetStateOnNavigation());
       } else {
@@ -261,5 +301,3 @@ export function* getPlacesListForSearch({ searchParam }) {
     yield put(LoginActions.getPreLoginPlacesListFail())
   }
 }
-
-

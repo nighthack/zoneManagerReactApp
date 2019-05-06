@@ -10,18 +10,17 @@ import { connect } from 'react-redux'
 import Styles from './Styles/UserSettingsStyle'
 
 class UserSettings extends Component {
-  // constructor (props) {
-  //   super(props)
-  //   this.state = {}
-  // }
+
   constructor(props) {
     super(props);
     this.state = {
-      formObj: {
-        ...props.user,
-        // dob: props.user.dob ? new Date(props.user.dob) : '',
-      }
+      formObj: props.userObj ? props.userObj.user : {},
     }
+  }
+  componentWillReceiveProps(nextProps){
+    this.setState({
+      formObj: nextProps.userObj ? nextProps.userObj.user : {},
+    });
   }
   onFormChange = (value, key) => {
     const { formObj } = this.state;
@@ -29,6 +28,7 @@ class UserSettings extends Component {
       formObj: { ...formObj, [key]: value }
     })
   }
+
   render() {
     const { formObj } = this.state;
     const { fetching, user, navigation } = this.props;
@@ -149,7 +149,8 @@ class UserSettings extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.login.user,
+    userObj: state.root.userDetails,
+    fetching: state.root.fetching,
   }
 }
 

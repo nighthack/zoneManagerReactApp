@@ -30,7 +30,7 @@ export function* getEventsList({ accessToken, pageNo }) {
         break;
       }
       case 200: {
-        yield put(EventActions.eventOnListSuccess(body, pageNo))
+        yield put(EventActions.eventOnListSuccess(body, pageNo));
         if (!(body && body.length)) {
           yield put(ToastActionsCreators.displayInfo('End of List'));
         }

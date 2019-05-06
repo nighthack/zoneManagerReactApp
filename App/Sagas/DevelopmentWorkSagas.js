@@ -26,7 +26,6 @@ export function* getDevWorksList({ accessToken, pageNo }) {
         yield put(DevWorkActions.devWorkOnListFailure(status));
         yield put(ToastActionsCreators.displayWarning('Invalid Access'));
         yield put(LoginActions.logoutRequest(accessToken));
-        // TO DO ADD LOGOUT
         break;
       }
       case 200: {

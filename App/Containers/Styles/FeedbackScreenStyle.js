@@ -73,7 +73,8 @@ regForm: {
     backgroundColor: '#242A38',
     borderRadius: 3,
     paddingHorizontal: 15,
-    paddingVertical: 15
+    paddingVertical: 15,
+    width: '100%',
   },
   infoHeaderText: {
     // 
@@ -159,6 +160,19 @@ regForm: {
     marginHorizontal: 15,
     marginBottom: 15
   },
+
+  fBtnSmall: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#FF8901',
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 3,
+    // marginHorizontal: 15,
+    // marginBottom: 15
+  },
+
   fBtnText: {
       
     fontSize: 14,

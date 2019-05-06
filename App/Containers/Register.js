@@ -21,8 +21,25 @@ class Register extends Component {
         'user[phone]': phone,
       },
       errorsObj: {},
+      isErrorShown: false,
     }
   }
+  componentWillReceiveProps(nextProps) {
+    const { error } = nextProps;
+    const { isErrorShown } = this.state;
+    if (error && !isErrorShown) {
+      const errorKeys = Object.keys(error);
+      errorKeys.map((errorKey) => {
+        const errorMsgs = error[errorKey];
+        errorMsgs.map((errorMsg) => {
+          this.props.errorToast(`${errorKey} ${errorMsg}`);
+        });
+      });
+      this.setState({
+        isErrorShown: true,
+      });
+    }
+  };
 
   onFormChange = (value, key) => {
     const { formObj } = this.state;
@@ -33,7 +50,7 @@ class Register extends Component {
   handleNextClick = () => {
     this.dismissKeyboard();
     const isFormValid = this.validateForm();
-    if(isFormValid) {
+    if (isFormValid) {
       const { formObj } = this.state;
       this.props.getOTPForNumber(formObj['user[phone]']);
     } else {
@@ -50,6 +67,8 @@ class Register extends Component {
       errorsObj: {},
       showPassword: false,
       showPasswordConfirmation: false,
+      isErrorShown: false,
+
     });
   }
 
@@ -59,7 +78,7 @@ class Register extends Component {
       this.props.getPlantsForSearchParam(text);
     }
   }
-  
+
   togglePasswordShow = () => {
     const { showPassword } = this.state;
     this.setState({
@@ -82,10 +101,10 @@ class Register extends Component {
     const { formObj } = this.state;
     const errorsObj = {};
     let errors = 0;
-    const requiredFields = ['user[name]','user[phone]', 'user[password]', 'user[password_confirmation]', 'user[gender]', 'user[place_id]'];
+    const requiredFields = ['user[first_name]', 'user[last_name]', 'user[phone]', 'user[password]', 'user[password_confirmation]', 'user[gender]', 'user[place_id]'];
     requiredFields.map((key) => {
       if (formObj[key]) {
-        if (key === 'user[name]') {
+        if (key === 'user[last_name]' || key === 'user[first_name]') {
           const regex = /^[a-zA-Z ]*$/;
           if (!regex.test(formObj[key])) {
             errors += 1;
@@ -109,8 +128,8 @@ class Register extends Component {
           } else {
             errorsObj[key] = null;
           }
-        } else if(key === 'user[password]') {
-          const regexp = /^\S*$/; 
+        } else if (key === 'user[password]') {
+          const regexp = /^\S*$/;
           if ((!regexp.test(formObj[key]) || formObj[key].length < 6)) {
             errors += 1;
             errorsObj[key] = "Password length has to be more than 6";
@@ -145,36 +164,45 @@ class Register extends Component {
 
   onFormSubmit = () => {
     const isFormValid = this.validateForm();
-    if(isFormValid) {
+    if (isFormValid) {
       const { formObj } = this.state;
       if (formObj.otp && formObj.otp.length === 4) {
         let data = new FormData();
         for (let property in formObj) {
-          if(property === 'user[dob]') {
+          if (property === 'user[first_name]') {
+            const firstName = formObj[property];
+            const lastName = formObj['user[last_name]'];
+            data.append('user[name]', `${firstName} ${lastName}`);
+          }
+          if (property === 'user[dob]') {
             const date = ("0" + formObj[property].getDate()).slice(-2);
-            const month = ("0" + (formObj[property].getMonth()+1)).slice(-2);
+            const month = ("0" + (formObj[property].getMonth() + 1)).slice(-2);
             const year = formObj[property].getFullYear();
             data.append(property, `${year}-${month}-${date}`);
           } else if (property === 'user[place_id]') {
             data.append(property, formObj[property].id);
-          } else {
+          } else if (property !== 'user[last_name]') {
             data.append(property, formObj[property]);
           }
-        }  
+        }
         this.props.attempSingUp(data);
+        this.setState({
+          isErrorShown: false,
+        });
       } else {
         this.props.errorToast("OTP Can't be blank");
       }
-      
+
     }
   };
 
   renderFormSubmitButton() {
     const { otpStatus, fetching } = this.props;
-    switch(otpStatus) {
-      case 0:  {
-        return(
-          <TouchableOpacity
+    switch (otpStatus) {
+      case 0:
+        {
+          return (
+            <TouchableOpacity
             style={Styles.fBtn}
             onPress={this.handleNextClick}
             disabled={fetching}
@@ -182,11 +210,12 @@ class Register extends Component {
             <Text style={Styles.fBtnText}>Next</Text>
             <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
           </TouchableOpacity>
-        )
-      }
-      case 1:  {
-        return(
-          <TouchableOpacity
+          )
+        }
+      case 1:
+        {
+          return (
+            <TouchableOpacity
             style={Styles.fBtn}
             onPress={this.onFormSubmit}
             disabled={fetching}
@@ -194,11 +223,12 @@ class Register extends Component {
             <Text style={Styles.fBtnText}>Register</Text>
             <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
           </TouchableOpacity>
-        )
-      }
-      case 2:  {
-        return(
-          <TouchableOpacity
+          )
+        }
+      case 2:
+        {
+          return (
+            <TouchableOpacity
             style={Styles.fBtn}
             onPress={this.handleNextClick}
             disabled={fetching}
@@ -206,11 +236,12 @@ class Register extends Component {
             <Text style={Styles.fBtnText}>Resend OTP</Text>
             <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
           </TouchableOpacity>
-        )
-      }
-      default: {
-        return(
-          <TouchableOpacity
+          )
+        }
+      default:
+        {
+          return (
+            <TouchableOpacity
             style={Styles.fBtn}
             onPress={this.handleNextClick}
             disabled={fetching}
@@ -218,18 +249,18 @@ class Register extends Component {
             <Text style={Styles.fBtnText}>Next</Text>
             <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
           </TouchableOpacity>
-        )
-      }
+          )
+        }
     }
   }
   renderPickerOptions() {
     const { OS } = Platform;
     let options = [];
-    if(OS === 'ios') {
-      options = [ {name:'Male', value: 'male'},  {name:'Female', value: 'female'}, {name:'Others', value: 'others'}]
+    if (OS === 'ios') {
+      options = [{ name: 'Male-ಗಂಡು', value: 'male' }, { name: 'Female-ಹೆಣ್ಣು ', value: 'female' }, { name: 'Other- ಇತರೆ', value: 'others' }]
     } else {
-      options = [ {name:'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ/ Select Gender', value: null}, {name:'Male', value: 'male'},  {name:'Female', value: 'female'}, {name:'Others', value: 'others'}]
-    } 
+      options = [{ name: 'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ/ Select Gender', value: null }, { name: 'Male-ಗಂಡು', value: 'male' }, { name: 'Female-ಹೆಣ್ಣು ', value: 'female' }, { name: 'Other- ಇತರೆ', value: 'others' }]
+    }
     return options.map(({ value, name }, index) => <Picker.Item key={`gender_${index}`} label={name} value={value} />)
   }
   render() {
@@ -263,23 +294,36 @@ class Register extends Component {
             </View>
             <View style={Styles.regForm}>
               <View style={Styles.infoBox}>
-                <View style={(errorsObj && errorsObj['user[name]']) || error ? Styles.fRowError : Styles.fRow }>
+                <View style={(errorsObj && errorsObj['user[first_name]']) || error ? Styles.fRowError : Styles.fRow }>
                   <Icon name='account' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Name'
+                    placeholder='First Name/ಮೊದಲ ಹೆಸರು'
                     placeholderTextColor='rgba(36,42,56,0.4)'
-                    onChangeText={(text) => this.onFormChange(text, 'user[name]')}
+                    onChangeText={(text) => this.onFormChange(text, 'user[first_name]')}
                     keyboardType={'default'}
                     disabled={fetching}
                   />
-                  <Text style={Styles.fErrorLabel}>{errorsObj['user[name]']}</Text>
+                  <Text style={Styles.fErrorLabel}>{errorsObj['user[first_name]']}</Text>
+                </View>
+
+                <View style={(errorsObj && errorsObj['user[last_name]']) || error ? Styles.fRowError : Styles.fRow }>
+                  <Icon name='account' type="MaterialCommunityIcons" style={Styles.fIcon} />
+                  <TextInput
+                    style={Styles.fInput}
+                    placeholder='Last Name/ಕೊನೆಯ ಹೆಸರು'
+                    placeholderTextColor='rgba(36,42,56,0.4)'
+                    onChangeText={(text) => this.onFormChange(text, 'user[last_name]')}
+                    keyboardType={'default'}
+                    disabled={fetching}
+                  />
+                  <Text style={Styles.fErrorLabel}>{errorsObj['user[last_name]']}</Text>
                 </View>
                 <View style={(errorsObj && errorsObj['user[email]']) || error ? Styles.fRowError : Styles.fRow }>
                   <Icon name='email' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Email Address'
+                    placeholder='Email Address/ಇಮೇಲ್'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     keyboardType={'email-address'}
                     onChangeText={(text) => this.onFormChange(text, 'user[email]')}
@@ -291,7 +335,7 @@ class Register extends Component {
                   <Icon name='mobile' type="FontAwesome" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Mobile Number'
+                    placeholder='Mobile Number/ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     keyboardType={'phone-pad'}
                     onChangeText={(text) => this.onFormChange(text, 'user[phone]')}
@@ -310,7 +354,7 @@ class Register extends Component {
                     modalTransparent={false}
                     animationType={"fade"}
                     androidMode={"spinner"}
-                    placeHolderText="Date Of Birth"
+                    placeHolderText="Date Of Birth / ಹುಟ್ತಿದ ದಿನ"
                     textStyle={Styles.fInput}
                     placeHolderTextStyle={{ color: 'rgba(36,42,56,0.4)' }}
                     onDateChange={(date) => this.onFormChange(date, 'user[dob]')}
@@ -357,7 +401,7 @@ class Register extends Component {
                   <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Password'
+                    placeholder='Password/ಪಾಸ್ವರ್ಡ್'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     keyboardType={'default'}
                     secureTextEntry={!showPassword}
@@ -376,7 +420,7 @@ class Register extends Component {
                   <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Confirm Password'
+                    placeholder='Confirm Password/ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     secureTextEntry={!showPasswordConfirmation}
                     onChangeText={(text) => this.onFormChange(text, 'user[password_confirmation]')}
@@ -391,15 +435,16 @@ class Register extends Component {
                   <Text style={Styles.fErrorLabel}>{errorsObj['user[password_confirmation]']}</Text>
                 </View>
                 {
-                  otpStatus > 0 ?
+                  otpStatus === 1 ?
                     <View style={(errorsObj && errorsObj['user[otp]']) || error ? Styles.fRowError : Styles.fRow }>
                       <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
                       <TextInput
                         style={Styles.fInput}
-                        placeholder='OTP'
+                        placeholder='OTP/ಒ ಟಿ ಪಿ'
                         placeholderTextColor='rgba(36,42,56,0.4)'
                         onChangeText={(text) => this.onFormChange(text, 'otp')}
                         disabled={fetching}
+                        keyboardType={'number-pad'}
                       />
                       <Text style={Styles.fErrorLabel}>{errorsObj['otp']}</Text>
                     </View> : null
@@ -450,10 +495,10 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getOTPForNumber: (phone) => dispatch(LoginActions.otpRequest(phone)),
+    getOTPForNumber: (phone) => dispatch(LoginActions.otpRequest(phone, true)),
     errorToast: (msg) => dispatch(ToastActionsCreators.displayError(msg)),
     attempSingUp: (data) => dispatch(LoginActions.signupRequest(data)),
-    onNavigationResetState: () => dispatch(LoginActions.resetStateOnNavigation()),
+    onNavigationResetState: () => dispatch(LoginActions.logoutRequest()),
     getPlantsForSearchParam: (searchParam) =>
       dispatch(LoginActions.getPreLoginPlacesList(searchParam)),
   }

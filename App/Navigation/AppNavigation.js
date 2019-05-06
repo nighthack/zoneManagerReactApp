@@ -41,7 +41,7 @@ const MyDrawerNavigator = createDrawerNavigator({
   },
   BeneficiaryListingScreen: {
     screen: BeneficiaryListingScreen,
-  }
+  },
   BenfeciaryDetail: {
     screen: BeneficiaryDetailScreen,
   },
