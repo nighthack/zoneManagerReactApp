@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { AsyncStorage, StatusBar, TouchableOpacity, TextInput, Image, Platform, FlatList, Alert } from 'react-native';
 import { Container, Header, Content, Icon, Text, Picker, View, Textarea } from 'native-base';
 import { connect } from 'react-redux';
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+// import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import { Images } from '../Themes/'
@@ -14,8 +14,8 @@ import Styles from './Styles/FeedbackScreenStyle'
 
 
 const ImagePickerOptions = {
-  title: 'Select Avatar',
-  customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+  title: 'Select Photos For Feedback',
+  // customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
   storageOptions: {
     skipBackup: true,
     path: 'images',
@@ -31,6 +31,7 @@ class FeedbackScreen extends Component {
       documents: [],
       photos: [],
     }
+    this.renderRow = this.renderRow.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,8 +39,10 @@ class FeedbackScreen extends Component {
       this.setState({
         formObj: {},
         errorsObj: {},
+        documents: [],
+        photos: [],
       });
-      nextProps.navigation.navigate('FeedbackList');
+      this.goToPage();
     }
   }
 
@@ -49,24 +52,29 @@ class FeedbackScreen extends Component {
     this.setState({ documents });
   }
 
-  addDocument = () => {
-    const { documents } = this.state;
-    DocumentPicker.show({
-        filetype: [DocumentPickerUtil.allFiles()],
-        //All type of Files DocumentPickerUtil.allFiles()
-        //Only PDF DocumentPickerUtil.pdf()
-        //Audio DocumentPickerUtil.audio()
-        //Plain Text DocumentPickerUtil.plainText()
-      },
-      (error, res) => {
-        if (res.uri) {
-          this.setState({
-            documents: documents.concat([{ label: res.fileName, file: res.uri }]),
-          });
-        }
-      }
-    );
-  };
+  handlePhotoRemove(idx) {
+    const photos = this.state.photos.filter((s, sidx) => idx !== sidx);
+    this.setState({ photos });
+  }
+
+  // addDocument = () => {
+  //   const { documents } = this.state;
+  //   DocumentPicker.show({
+  //       filetype: [DocumentPickerUtil.allFiles()],
+  //       //All type of Files DocumentPickerUtil.allFiles()
+  //       //Only PDF DocumentPickerUtil.pdf()
+  //       //Audio DocumentPickerUtil.audio()
+  //       //Plain Text DocumentPickerUtil.plainText()
+  //     },
+  //     (error, res) => {
+  //       if (res.uri) {
+  //         this.setState({
+  //           documents: documents.concat([{ label: res.fileName, file: res.uri }]),
+  //         });
+  //       }
+  //     }
+  //   );
+  // };
 
   addPhoto = () => {
     const { photos } = this.state;
@@ -75,27 +83,31 @@ class FeedbackScreen extends Component {
         console.log('User cancelled image picker');
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
       } else {
+            this.setState({
+      imageLoading: true,
+    });
         this.resize(response);
       }
     });
   }
   resize = (response) => {
     const { photos } = this.state;
-    ImageResizer.createResizedImage(response.uri, 800, 600, 'JPEG', 100)
-    .then(({uri}) => {
-      let source = { uri, path: response.path };
-      console.log(uri);
-      this.setState({
-        photos: photos.concat([{ label: response.fileName, file: source }]),
-      });
-    }).catch((err) => {
-      console.log(err);
-      return Alert.alert('Unable to resize the photo',
-        'Check the console for full the error message');
+    this.setState({
+      imageLoading: false,
     });
+    ImageResizer.createResizedImage(response.uri, 800, 600, 'JPEG', 100)
+      .then(({ uri }) => {
+        let source = { uri, path: response.path };
+        this.setState({
+          photos: photos.concat([{ label: response.fileName, file: source }]),
+        });
+      }).catch((err) => {
+        console.log(err);
+        return Alert.alert('Unable to resize the photo',
+          'Check the console for full the error message');
+      });
+
   }
   validateForm = () => {
     const { formObj } = this.state;
@@ -178,10 +190,6 @@ class FeedbackScreen extends Component {
   goToPage = () => {
     const { navigation } = this.props;
     this.props.resetStateOnNavigation();
-    this.setState({
-      formObj: {},
-      errorsObj: {},
-    });
     navigation.navigate("FeedbackList");
   }
 
@@ -205,13 +213,25 @@ class FeedbackScreen extends Component {
       const tempDepartments = [{ index: null, name: 'Department/ಇಲಾಖೆ ಆರಿಸಿ' }, ...departments]
       return tempDepartments.map(({ id, name }, index) => <Picker.Item key={`status_${index}`} label={name} value={id} />);
     }
+  }
 
+  renderRow({ item, index }) {
+    return (
+      <TouchableOpacity onPress={() => this.handlePhotoRemove(index)}>
+        <View>
+          <Image source={item.file} style={Styles.truckImg} />
+          <View style={Styles.photoDelete}>
+          <Icon name='trash' type="FontAwesome" style={Styles.photoDeleteIcon} />
+          </View>
+        </View>
+      </TouchableOpacity>
+    )
   }
 
   renderComponent() {
     const { plantsList, errorCode } = this.props;
     const { OS } = Platform;
-    const { formObj, errorsObj, photos } = this.state;
+    const { formObj, errorsObj, photos, imageLoading } = this.state;
     if (errorCode) {
       return <ErrorPage status={errorCode} onButtonClick={() => this.refreshPage(1)} />
     }
@@ -237,6 +257,7 @@ class FeedbackScreen extends Component {
                   placeholder='Title/ವಿಷಯ'
                   placeholderTextColor='rgba(36,42,56,0.4)'
                   onChangeText={(text) => this.onFormChange(text, 'feedback[name]')}
+                  value={formObj['feedback[name]']}
                 />
                 <Icon name='id-card' type="FontAwesome" style={Styles.fIcon} />
               </View>
@@ -302,6 +323,8 @@ class FeedbackScreen extends Component {
                   onChangeText={(text) => this.onFormChange(text, 'feedback[details]')}
                   numberOfLines={10}
                   multiline
+                  value={formObj['feedback[details]']}
+
                 />
                 <Icon name='comment' type="FontAwesome" style={Styles.fIcon} />
               </View>
@@ -312,7 +335,7 @@ class FeedbackScreen extends Component {
               <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
                 <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center'}]}>Photos</Text>
                 <View style={{ alignSelf: 'flex-end', margin: 0 }}>
-                  <TouchableOpacity style={[Styles.fBtnSmall]} onPress={this.addPhoto}>
+                  <TouchableOpacity disabled={imageLoading} style={[Styles.fBtnSmall]} onPress={this.addPhoto}>
                     <Text style={Styles.fBtnText}>Add Photos</Text>
                   </TouchableOpacity>
                 </View>
@@ -322,14 +345,7 @@ class FeedbackScreen extends Component {
                   data={photos}
                   numColumns={3}
                   showsHorizontalScrollIndicator={false}
-                  renderItem={({ item, separators }) => (
-                  <View>
-                      <Image source={item.file} style={Styles.truckImg} />
-                      <View style={Styles.photoDelete}>
-                          <Icon name='trash' type="FontAwesome" style={Styles.photoDeleteIcon} />
-                      </View>
-                  </View>
-                  )}
+                  renderItem={this.renderRow}
                 />
               </View>
             </View>
@@ -346,6 +362,8 @@ class FeedbackScreen extends Component {
 
   render() {
     const { fetching, navigation } = this.props;
+    const { imageLoading } = this.state;
+    const isLoaderVsible = fetching || imageLoading ? true : false;
     return (
       <Container>
         <Header style={Styles.navigation}>
@@ -364,7 +382,7 @@ class FeedbackScreen extends Component {
         </Header>
         {this.renderComponent()}
         <LoadingOverlay
-          visible={fetching}
+          visible={isLoaderVsible}
           color="white"
           indicatorSize="large"
           messageFontSize={24}
@@ -397,6 +415,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(FeedbackActions.createFeedback(accessToken, data)),
     resetStateOnNavigation: () =>
       dispatch(FeedbackActions.resetStateOnNavigation())
+
   }
 }
 

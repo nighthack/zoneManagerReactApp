@@ -303,6 +303,7 @@ class Register extends Component {
                     onChangeText={(text) => this.onFormChange(text, 'user[first_name]')}
                     keyboardType={'default'}
                     disabled={fetching}
+                    value={formObj['user[first_name]']}
                   />
                   <Text style={Styles.fErrorLabel}>{errorsObj['user[first_name]']}</Text>
                 </View>
@@ -316,6 +317,7 @@ class Register extends Component {
                     onChangeText={(text) => this.onFormChange(text, 'user[last_name]')}
                     keyboardType={'default'}
                     disabled={fetching}
+                    value={formObj['user[last_name]']}
                   />
                   <Text style={Styles.fErrorLabel}>{errorsObj['user[last_name]']}</Text>
                 </View>
@@ -328,6 +330,8 @@ class Register extends Component {
                     keyboardType={'email-address'}
                     onChangeText={(text) => this.onFormChange(text, 'user[email]')}
                     disabled={fetching}
+                    value={formObj['user[email]']}
+
                   />
                   <Text style={Styles.fErrorLabel}>{errorsObj['user[email]']}</Text>
                 </View>
@@ -340,6 +344,7 @@ class Register extends Component {
                     keyboardType={'phone-pad'}
                     onChangeText={(text) => this.onFormChange(text, 'user[phone]')}
                     disabled={fetching}
+                    value={formObj['user[phone]']}
                   />
                   <Text style={Styles.fErrorLabel}>{errorsObj['user[phone]']}</Text>
                 </View>
@@ -407,6 +412,8 @@ class Register extends Component {
                     secureTextEntry={!showPassword}
                     onChangeText={(text) => this.onFormChange(text, 'user[password]')}
                     disabled={fetching}
+                    value={formObj['user[password]']}
+
                   />
                   <Icon
                     name={showPassword ? 'eye-off' :'eye'}
