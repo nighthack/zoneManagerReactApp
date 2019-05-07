@@ -40,7 +40,7 @@ export const Menulist = [
     name: 'Beneficiary Schemes',
     icon: 'dashboard',
     type: 'Octicons',
-    route: 'Home'
+    route: 'BeneficiaryListingScreen'
   },
   {
     name: 'Profile',
