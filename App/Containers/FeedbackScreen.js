@@ -296,25 +296,7 @@ class FeedbackScreen extends Component {
                   OS === 'ios' ? <Icon name='arrow-down' type="FontAwesome" style={Styles.fIcon} /> : null
                 }
               </View>
-              <View style={(errorsObj && errorsObj['feedback[department_id]']) ? Styles.fSelectError : Styles.fSelect}>
-                <View style={Styles.fPicker}>
-                  <Picker
-                    style={Styles.fPickerItem}
-                    textStyle={Styles.fInput}
-                    placeholder="Department/ಇಲಾಖೆ ಆರಿಸಿ"
-                    placeholderStyle={Styles.placeholderStyle}
-                    selectedValue={formObj['feedback[department_id]']}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.onFormChange(itemValue, 'feedback[department_id]')
-                    }
-                  >
-                    {this.renderDepartmentsDropdown()}
-                  </Picker>
-                </View>
-                {
-                  OS === 'ios' ? <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} /> : null
-                }
-              </View>
+
               <View style={(errorsObj && errorsObj['feedback[details]']) ? Styles.fRowError : Styles.fRow}>
                 <TextInput
                   style={Styles.fInput}
@@ -460,4 +442,23 @@ export default connect(mapStateToProps, mapDispatchToProps)(FeedbackScreen)
 //       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
 //     </View>                                                      
 // </View>
+// </View>
+// <View style={(errorsObj && errorsObj['feedback[department_id]']) ? Styles.fSelectError : Styles.fSelect}>
+//   <View style={Styles.fPicker}>
+//     <Picker
+//       style={Styles.fPickerItem}
+//       textStyle={Styles.fInput}
+//       placeholder="Department/ಇಲಾಖೆ ಆರಿಸಿ"
+//       placeholderStyle={Styles.placeholderStyle}
+//       selectedValue={formObj['feedback[department_id]']}
+//       onValueChange={(itemValue, itemIndex) =>
+//         this.onFormChange(itemValue, 'feedback[department_id]')
+//       }
+//     >
+//       {this.renderDepartmentsDropdown()}
+//     </Picker>
+//   </View>
+//   {
+//     OS === 'ios' ? <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} /> : null
+//   }
 // </View>
