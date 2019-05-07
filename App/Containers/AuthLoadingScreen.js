@@ -6,7 +6,6 @@ import RootActions from '../Redux/RootRedux'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import { Images } from '../Themes/'
 
-
 const styles = {
   image: {
     flex: 1,
@@ -25,15 +24,16 @@ const styles = {
   },
 };
 class AuthLoadingScreen extends Component {
-  constructor(props) {
-    super(props);
+
+  componentDidMount() {
     AsyncStorage.getItem('accessToken').then((userToken) => {
-      if(userToken) {
+      if (userToken) {
         this.props.getUserDetails(userToken);
       }
-      props.navigation.navigate(userToken ? 'App' : 'Auth');
+      this.props.navigation.navigate(userToken ? 'App' : 'Auth');
     });
   }
+
   render() {
     return (
       <View style={styles.imageContainer}>
@@ -60,8 +60,7 @@ class AuthLoadingScreen extends Component {
 }
 
 const mapStateToProps = (state) => {
-  return {
-  }
+  return {}
 }
 
 const mapDispatchToProps = (dispatch) => {

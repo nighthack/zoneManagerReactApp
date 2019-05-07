@@ -1,17 +1,26 @@
-import React, { Component } from 'react'
-import { AsyncStorage, StatusBar, TouchableOpacity, TextInput, Image, Platform } from 'react-native'
-import { Container, Header, Content, Icon, Text, Picker, View, Textarea } from 'native-base'
-import { connect } from 'react-redux'
+import React, { Component } from 'react';
+import { AsyncStorage, StatusBar, TouchableOpacity, TextInput, Image, Platform, FlatList, Alert } from 'react-native';
+import { Container, Header, Content, Icon, Text, Picker, View, Textarea } from 'native-base';
+import { connect } from 'react-redux';
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+import ImagePicker from 'react-native-image-picker';
+import ImageResizer from 'react-native-image-resizer';
 import { Images } from '../Themes/'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import ErrorPage from '../Components/NetworkErrorScreen';
-import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import SearchableDropdown from 'react-native-searchable-dropdown';
-// Add Actions - replace 'Your' with whatever your reducer is called :)
-import FeedbackActions from '../Redux/FeedbackRedux'
-
-// Styles
+import FeedbackActions from '../Redux/FeedbackRedux';
 import Styles from './Styles/FeedbackScreenStyle'
+
+
+const ImagePickerOptions = {
+  title: 'Select Avatar',
+  customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
+  storageOptions: {
+    skipBackup: true,
+    path: 'images',
+  },
+};
 
 class FeedbackScreen extends Component {
   constructor(props) {
@@ -19,6 +28,8 @@ class FeedbackScreen extends Component {
     this.state = {
       formObj: {},
       errorsObj: {},
+      documents: [],
+      photos: [],
     }
   }
 
@@ -31,20 +42,61 @@ class FeedbackScreen extends Component {
       nextProps.navigation.navigate('FeedbackList');
     }
   }
-  addPhoto = () => {
-    console.log('add Photos clicked');
+
+  handleDocumentRemove(e, idx) {
+    e.preventDefault();
+    const documents = this.state.documents.filter((s, sidx) => idx !== sidx);
+    this.setState({ documents });
+  }
+
+  addDocument = () => {
+    const { documents } = this.state;
     DocumentPicker.show({
-      filetype: [DocumentPickerUtil.images()],
-    },(error,res) => {
-      // Android
-      console.log(
-         res.uri,
-         res.type, // mime type
-         res.fileName,
-         res.fileSize
-      );
-    });
+        filetype: [DocumentPickerUtil.allFiles()],
+        //All type of Files DocumentPickerUtil.allFiles()
+        //Only PDF DocumentPickerUtil.pdf()
+        //Audio DocumentPickerUtil.audio()
+        //Plain Text DocumentPickerUtil.plainText()
+      },
+      (error, res) => {
+        if (res.uri) {
+          this.setState({
+            documents: documents.concat([{ label: res.fileName, file: res.uri }]),
+          });
+        }
+      }
+    );
   };
+
+  addPhoto = () => {
+    const { photos } = this.state;
+    ImagePicker.showImagePicker(ImagePickerOptions, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        this.resize(response);
+      }
+    });
+  }
+  resize = (response) => {
+    const { photos } = this.state;
+    ImageResizer.createResizedImage(response.uri, 800, 600, 'JPEG', 100)
+    .then(({uri}) => {
+      let source = { uri, path: response.path };
+      console.log(uri);
+      this.setState({
+        photos: photos.concat([{ label: response.fileName, file: source }]),
+      });
+    }).catch((err) => {
+      console.log(err);
+      return Alert.alert('Unable to resize the photo',
+        'Check the console for full the error message');
+    });
+  }
   validateForm = () => {
     const { formObj } = this.state;
     const errorsObj = {};
@@ -70,7 +122,7 @@ class FeedbackScreen extends Component {
   }
   onFormSubmit = () => {
     const isFormValid = this.validateForm();
-    const { formObj } = this.state;
+    const { formObj, photos } = this.state;
     if (isFormValid) {
       let data = new FormData();
       for (let property in formObj) {
@@ -80,10 +132,21 @@ class FeedbackScreen extends Component {
           data.append(property, formObj[property]);
         }
       }
+      if (photos && photos.length) {
+        photos.map((photoItem, index) => {
+          if (photoItem.file) {
+            data.append(`feedback[stored_images_attributes][${index}][image]`, {
+              uri: photoItem.file.uri,
+              type: 'image/jpeg',
+              name: 'image.jpg',
+            });
+          }
+          return photoItem;
+        });
+      }
       AsyncStorage.getItem('accessToken').then((accessToken) => {
         this.props.createFeedback(accessToken, data);
       });
-
     }
   }
   componentDidMount() {
@@ -148,7 +211,7 @@ class FeedbackScreen extends Component {
   renderComponent() {
     const { plantsList, errorCode } = this.props;
     const { OS } = Platform;
-    const { formObj, errorsObj } = this.state;
+    const { formObj, errorsObj, photos } = this.state;
     if (errorCode) {
       return <ErrorPage status={errorCode} onButtonClick={() => this.refreshPage(1)} />
     }
@@ -160,7 +223,7 @@ class FeedbackScreen extends Component {
             <Icon name='comment' type="FontAwesome" style={Styles.hImg} />
             <View style={Styles.hContent}>
               <Text style={Styles.hTopText}>Create Feedback</Text>
-              <Text style={Styles.hTopDesc}>Create Feedbacks and suggestions are very important for us</Text>
+              <Text style={Styles.hTopDesc}>Create Feedbacks and suggestions</Text>
             </View>
           </View>
           <View style={Styles.regForm}>
@@ -211,9 +274,26 @@ class FeedbackScreen extends Component {
                 {
                   OS === 'ios' ? <Icon name='arrow-down' type="FontAwesome" style={Styles.fIcon} /> : null
                 }
-
               </View>
-
+              <View style={(errorsObj && errorsObj['feedback[department_id]']) ? Styles.fSelectError : Styles.fSelect}>
+                <View style={Styles.fPicker}>
+                  <Picker
+                    style={Styles.fPickerItem}
+                    textStyle={Styles.fInput}
+                    placeholder="Department/ಇಲಾಖೆ ಆರಿಸಿ"
+                    placeholderStyle={Styles.placeholderStyle}
+                    selectedValue={formObj['feedback[department_id]']}
+                    onValueChange={(itemValue, itemIndex) =>
+                      this.onFormChange(itemValue, 'feedback[department_id]')
+                    }
+                  >
+                    {this.renderDepartmentsDropdown()}
+                  </Picker>
+                </View>
+                {
+                  OS === 'ios' ? <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} /> : null
+                }
+              </View>
               <View style={(errorsObj && errorsObj['feedback[details]']) ? Styles.fRowError : Styles.fRow}>
                 <TextInput
                   style={Styles.fInput}
@@ -227,21 +307,34 @@ class FeedbackScreen extends Component {
               </View>
             </View>
           </View>
-            <View style={Styles.regForm}>
-              <View style={Styles.infoBox}>
-                <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
-                  <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center'}]}>Photos</Text>
-                  <View style={{ alignSelf: 'flex-end', margin: 0 }}>
-                    <TouchableOpacity style={[Styles.fBtnSmall]} onPress={this.addPhoto}>
-                      <Text style={Styles.fBtnText}>Add Photos</Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-                <View style={Styles.photos}>
-
+          <View style={Styles.regForm}>
+            <View style={Styles.infoBox}>
+              <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+                <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center'}]}>Photos</Text>
+                <View style={{ alignSelf: 'flex-end', margin: 0 }}>
+                  <TouchableOpacity style={[Styles.fBtnSmall]} onPress={this.addPhoto}>
+                    <Text style={Styles.fBtnText}>Add Photos</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
+              <View style={Styles.photos}>
+                <FlatList
+                  data={photos}
+                  numColumns={3}
+                  showsHorizontalScrollIndicator={false}
+                  renderItem={({ item, separators }) => (
+                  <View>
+                      <Image source={item.file} style={Styles.truckImg} />
+                      <View style={Styles.photoDelete}>
+                          <Icon name='trash' type="FontAwesome" style={Styles.photoDeleteIcon} />
+                      </View>
+                  </View>
+                  )}
+                />
+              </View>
             </View>
+          </View>
+
           <TouchableOpacity style={Styles.fBtn} onPress={this.onFormSubmit}>
             <Text style={Styles.fBtnText}>Submit</Text>
             <Icon name='check' type="FontAwesome" style={Styles.fBtnIcon} />
@@ -338,38 +431,14 @@ export default connect(mapStateToProps, mapDispatchToProps)(FeedbackScreen)
 //   </View>
 // </View>
 
-//             <View style={(errorsObj && errorsObj['feedback[department_id]']) ? Styles.fSelectError : Styles.fSelect}>
-//   <View style={Styles.fPicker}>
-//     <Picker
-//       style={Styles.fPickerItem}
-//       textStyle={Styles.fInput}
-//       placeholder="Department/ಇಲಾಖೆ ಆರಿಸಿ"
-//       placeholderStyle={Styles.placeholderStyle}
-//       selectedValue={formObj['feedback[department_id]']}
-//       onValueChange={(itemValue, itemIndex) =>
-//         this.onFormChange(itemValue, 'feedback[department_id]')
-//       }
-//     >
-//       {this.renderDepartmentsDropdown()}
-//     </Picker>
-//   </View>
-//   {
-//     OS === 'ios' ? <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} /> : null
-//   }
+// <View style={Styles.regForm}>
+//   <View style={Styles.infoBox}>
+//     <View style={Styles.infoHeader}>
+//       <Text style={Styles.infoHeaderText}>Documents</Text>
+//     </View>
+//     <View style={Styles.fRow}>
+//       <TextInput style={Styles.fInput} placeholder='RC Book' placeholderTextColor='rgba(36,42,56,0.4)' />
+//       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
+//     </View>                                                      
 // </View>
-
-
-
-                                // <FlatList
-                                //     data={TRUCKS}
-                                //     numColumns={3}
-                                //     showsHorizontalScrollIndicator={false}
-                                //     renderItem={({ item, separators }) => (
-                                //         <View>
-                                //             <Image source={{ uri: 'https://39yg8a49fjdg1yo8qt272ix6-wpengine.netdna-ssl.com/wp-content/uploads/2017/01/cascadia.jpg' }} style={Styles.truckImg} />
-                                //             <View style={Styles.photoDelete}>
-                                //                 <Icon name='trash' type="FontAwesome" style={Styles.photoDeleteIcon} />
-                                //             </View>
-                                //         </View>
-                                //     )}
-                                // />
+// </View>
