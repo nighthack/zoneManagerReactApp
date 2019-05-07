@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { AsyncStorage, View, Image } from 'react-native'
 import { connect } from 'react-redux'
 import LoginActions from '../Redux/LoginRedux'
+import RootActions from '../Redux/RootRedux'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import { Images } from '../Themes/'
 
@@ -15,7 +16,7 @@ const styles = {
   imageContainer: {
     bottom: 0,
     flex: 1,
-    height: '135%',
+    height: '100%',
     left: 0,
     position: 'absolute',
     right: 0,
@@ -27,8 +28,11 @@ class AuthLoadingScreen extends Component {
   constructor(props) {
     super(props);
     AsyncStorage.getItem('accessToken').then((userToken) => {
+      if(userToken) {
+        this.props.getUserDetails(userToken);
+      }
       props.navigation.navigate(userToken ? 'App' : 'Auth');
-    })
+    });
   }
   render() {
     return (
@@ -38,13 +42,18 @@ class AuthLoadingScreen extends Component {
         source={Images.splashBackground}
         style={styles.image}
       />
-             <LoadingOverlay
+      <LoadingOverlay
           visible
           color="white"
           indicatorSize="large"
           messageFontSize={24}
           message="Loading..."
+        >
+        <Image
+          resizeMode="cover"
+          source={Images.bjpGif}
         />
+        </LoadingOverlay>
     </View>
     )
   }
@@ -58,6 +67,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     saveUserToken: (user) => dispatch(LoginActions.loginSuccess(user)),
+    getUserDetails: (accessToken) => dispatch(RootActions.getUserDetails(accessToken)),
   }
 }
 

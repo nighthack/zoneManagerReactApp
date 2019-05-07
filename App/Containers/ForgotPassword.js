@@ -114,7 +114,7 @@ class ForgotPassword extends Component {
                   <Text style={Styles.fErrorLabel}>{errorObj.phone}</Text>
                 </View>
                 {
-                  otpStatus > 0 ?
+                  otpStatus === 1 ?
                     <View style={(errorObj && errorObj.phone) ? Styles.fRowError : Styles.fRow }>
                       <Icon
                         name='message-circle'
@@ -133,7 +133,7 @@ class ForgotPassword extends Component {
                     </View> : null
                 }
                 {
-                  otpStatus > 0 ?
+                  otpStatus === 1 ?
                     <View style={resetPasswordError ? Styles.fRowError : Styles.fRow }>
                       <Icon name='textbox-password' type="MaterialCommunityIcons" style={Styles.fIcon} />
                       <TextInput
@@ -225,6 +225,7 @@ class ForgotPassword extends Component {
 }
 
 const mapStateToProps = (state) => {
+  console.log(state.login);
   return {
     otpStatus: state.login.getOtpStatus,
     fetching: state.login.fetching,
@@ -238,7 +239,7 @@ const mapDispatchToProps = (dispatch) => {
     getOTPForNumber: (phone) => dispatch(LoginActions.verifyUser(phone)),
     attempResetPassword: (data) => dispatch(LoginActions.resetPasswordRequest(data)),
     errorToast: (msg) => dispatch(ToastActionsCreators.displayError(msg)),
-    onNavigationResetState: () => dispatch(LoginActions.resetStateOnNavigation()),
+    onNavigationResetState: () => dispatch(LoginActions.logoutRequest()),
   }
 }
 

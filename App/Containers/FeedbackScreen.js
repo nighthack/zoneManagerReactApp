@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import { Images } from '../Themes/'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import ErrorPage from '../Components/NetworkErrorScreen';
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 // Add Actions - replace 'Your' with whatever your reducer is called :)
 import FeedbackActions from '../Redux/FeedbackRedux'
@@ -30,12 +31,26 @@ class FeedbackScreen extends Component {
       nextProps.navigation.navigate('FeedbackList');
     }
   }
-
+  addPhoto = () => {
+    console.log('add Photos clicked');
+    DocumentPicker.show({
+      filetype: [DocumentPickerUtil.images()],
+    },(error,res) => {
+      // Android
+      console.log(
+         res.uri,
+         res.type, // mime type
+         res.fileName,
+         res.fileSize
+      );
+    });
+  };
   validateForm = () => {
     const { formObj } = this.state;
     const errorsObj = {};
     let errors = 0;
-    const requiredFields = ['feedback[name]', 'feedback[details]', 'feedback[feedback_type]', 'feedback[place_id]', 'feedback[department_id]'];
+    // 'feedback[department_id]'
+    const requiredFields = ['feedback[name]', 'feedback[details]', 'feedback[feedback_type]', 'feedback[place_id]'];
     requiredFields.map((key) => {
       if (formObj[key]) {
         errorsObj[key] = null;
@@ -198,25 +213,7 @@ class FeedbackScreen extends Component {
                 }
 
               </View>
-              <View style={(errorsObj && errorsObj['feedback[department_id]']) ? Styles.fSelectError : Styles.fSelect}>
-                <View style={Styles.fPicker}>
-                  <Picker
-                    style={Styles.fPickerItem}
-                    textStyle={Styles.fInput}
-                    placeholder="Department/ಇಲಾಖೆ ಆರಿಸಿ"
-                    placeholderStyle={Styles.placeholderStyle}
-                    selectedValue={formObj['feedback[department_id]']}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.onFormChange(itemValue, 'feedback[department_id]')
-                    }
-                  >
-                    {this.renderDepartmentsDropdown()}
-                  </Picker>
-                </View>
-                {
-                  OS === 'ios' ? <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} /> : null
-                }
-              </View>
+
               <View style={(errorsObj && errorsObj['feedback[details]']) ? Styles.fRowError : Styles.fRow}>
                 <TextInput
                   style={Styles.fInput}
@@ -230,6 +227,21 @@ class FeedbackScreen extends Component {
               </View>
             </View>
           </View>
+            <View style={Styles.regForm}>
+              <View style={Styles.infoBox}>
+                <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+                  <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center'}]}>Photos</Text>
+                  <View style={{ alignSelf: 'flex-end', margin: 0 }}>
+                    <TouchableOpacity style={[Styles.fBtnSmall]} onPress={this.addPhoto}>
+                      <Text style={Styles.fBtnText}>Add Photos</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={Styles.photos}>
+
+                </View>
+              </View>
+            </View>
           <TouchableOpacity style={Styles.fBtn} onPress={this.onFormSubmit}>
             <Text style={Styles.fBtnText}>Submit</Text>
             <Icon name='check' type="FontAwesome" style={Styles.fBtnIcon} />
@@ -297,31 +309,67 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(FeedbackScreen)
 
-                // <View style={Styles.fDropdown}>
+// <View style={Styles.fDropdown}>
 
-                //   <Icon
-                //     name='message-text-outline'
-                //     type="MaterialCommunityIcons"
-                //     style={Styles.fDropdownIcon}
-                //   />
-                // </View>
+//   <Icon
+//     name='message-text-outline'
+//     type="MaterialCommunityIcons"
+//     style={Styles.fDropdownIcon}
+//   />
+// </View>
 
-            //     <View style={Styles.regForm}>
-            //   <View style={Styles.infoBox}>
-            //     <View style={Styles.infoHeader}>
-            //       <Text style={Styles.infoHeaderText}>Documents</Text>
-            //     </View>
-            //     <View style={Styles.fRow}>
-            //       <TextInput style={Styles.fInput} placeholder='RC Book' placeholderTextColor='rgba(36,42,56,0.4)' />
-            //       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
-            //     </View>
-            //     <View style={Styles.fRow}>
-            //       <TextInput style={Styles.fInput} placeholder='Insurance Document' placeholderTextColor='rgba(36,42,56,0.4)' />
-            //       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
-            //     </View>
-            //     <View style={Styles.fRow}>
-            //       <TextInput style={Styles.fInput} placeholder='Pollution Document' placeholderTextColor='rgba(36,42,56,0.4)' />
-            //       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
-            //     </View>
-            //   </View>
-            // </View>
+//     <View style={Styles.regForm}>
+//   <View style={Styles.infoBox}>
+//     <View style={Styles.infoHeader}>
+//       <Text style={Styles.infoHeaderText}>Documents</Text>
+//     </View>
+//     <View style={Styles.fRow}>
+//       <TextInput style={Styles.fInput} placeholder='RC Book' placeholderTextColor='rgba(36,42,56,0.4)' />
+//       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
+//     </View>
+//     <View style={Styles.fRow}>
+//       <TextInput style={Styles.fInput} placeholder='Insurance Document' placeholderTextColor='rgba(36,42,56,0.4)' />
+//       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
+//     </View>
+//     <View style={Styles.fRow}>
+//       <TextInput style={Styles.fInput} placeholder='Pollution Document' placeholderTextColor='rgba(36,42,56,0.4)' />
+//       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
+//     </View>
+//   </View>
+// </View>
+
+//             <View style={(errorsObj && errorsObj['feedback[department_id]']) ? Styles.fSelectError : Styles.fSelect}>
+//   <View style={Styles.fPicker}>
+//     <Picker
+//       style={Styles.fPickerItem}
+//       textStyle={Styles.fInput}
+//       placeholder="Department/ಇಲಾಖೆ ಆರಿಸಿ"
+//       placeholderStyle={Styles.placeholderStyle}
+//       selectedValue={formObj['feedback[department_id]']}
+//       onValueChange={(itemValue, itemIndex) =>
+//         this.onFormChange(itemValue, 'feedback[department_id]')
+//       }
+//     >
+//       {this.renderDepartmentsDropdown()}
+//     </Picker>
+//   </View>
+//   {
+//     OS === 'ios' ? <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} /> : null
+//   }
+// </View>
+
+
+
+                                // <FlatList
+                                //     data={TRUCKS}
+                                //     numColumns={3}
+                                //     showsHorizontalScrollIndicator={false}
+                                //     renderItem={({ item, separators }) => (
+                                //         <View>
+                                //             <Image source={{ uri: 'https://39yg8a49fjdg1yo8qt272ix6-wpengine.netdna-ssl.com/wp-content/uploads/2017/01/cascadia.jpg' }} style={Styles.truckImg} />
+                                //             <View style={Styles.photoDelete}>
+                                //                 <Icon name='trash' type="FontAwesome" style={Styles.photoDeleteIcon} />
+                                //             </View>
+                                //         </View>
+                                //     )}
+                                // />

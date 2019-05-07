@@ -18,11 +18,17 @@ import { Images } from '../Themes'
 
 export const Menulist = [
   /** Transporter **/
-  {
-    name: 'Beneficiary Schemes',
-    icon: 'dashboard',
-    type: 'Octicons',
-    route: 'Home'
+    {
+    name: 'Events',
+    icon: 'truck',
+    type: 'FontAwesome5',
+    route: 'EventsListScreen'
+  },
+    {
+    name: 'Feedback',
+    icon: 'envelope',
+    type: 'SimpleLineIcons',
+    route: 'FeedbackList'
   },
   {
     name: 'Development Works',
@@ -31,16 +37,10 @@ export const Menulist = [
     route: 'DevelopmentWorksList'
   },
   {
-    name: 'Events',
-    icon: 'truck',
-    type: 'FontAwesome5',
-    route: 'EventsListScreen'
-  },
-  {
-    name: 'Feedback',
-    icon: 'envelope',
-    type: 'SimpleLineIcons',
-    route: 'FeedbackList'
+    name: 'Beneficiary Schemes',
+    icon: 'dashboard',
+    type: 'Octicons',
+    route: 'Home'
   },
   {
     name: 'Profile',
@@ -77,14 +77,14 @@ class SideMenu extends Component {
   }
   async deleteToken() {
     try {
-      await AsyncStorage.removeItem('user')
+      await AsyncStorage.removeItem('accessToken')
     } catch (err) {
       console.log(`The error is: ${err}`)
     }
     this.props.navigation.navigate('Login')
   }
   onLogout = () => {
-    const { access_token } = this.props.user;
+    const { access_token } = this.props.userObj ? this.props.userObj.user : {};
     const accessToken = access_token;
     this.props.deleteToken(accessToken);
     const { navigate } = this.props.navigation;
@@ -117,7 +117,7 @@ class SideMenu extends Component {
     })
   }
   render() {
-    const { user } = this.props;
+    const user = this.props.userObj ? this.props.userObj.user : {};
     return (
       <Container>
         <Content
@@ -153,7 +153,7 @@ class SideMenu extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    user: state.login.user,
+    userObj: state.root.userDetails,
   }
 }
 

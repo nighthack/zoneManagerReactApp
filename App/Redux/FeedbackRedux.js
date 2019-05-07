@@ -107,12 +107,16 @@ export const OnDetailFetchFail = (state, { errorCode }) => {
   });
 }
 
-export const onPlacesListsFetch = (state, action) => state.merge({ fetching: true });
+export const onPlacesListsFetch = (state, action) => state;
 export const onPlacesListsSuccess = (state, { data }) => {
-  return state.merge({ plantsList: data, createFeedbackErrorCode: null, fetching: false });
+  return state.merge({ plantsList: data, createFeedbackErrorCode: null});
 }
-export const onPlacesListsFail = (state, { errorCode }) => state.merge({ plantsList: [], createFeedbackErrorCode: errorCode, fetching: false })
-export const onRequestDeptsLists = (state) => state.merge(({ fetching: true }));
+export const onPlacesListsFail = (state, { errorCode }) => state.merge({ 
+  plantsList: [], 
+  createFeedbackErrorCode: errorCode
+});
+
+export const onRequestDeptsLists = (state) => state.merge({ fetching: true });
 export const onRequestDeptsSuccess = (state, { data }) => {
   return state.merge({ fetching: false, ...data, createFeedbackErrorCode: null })
 }
