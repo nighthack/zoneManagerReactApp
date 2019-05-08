@@ -359,7 +359,7 @@ class Register extends Component {
                     modalTransparent={false}
                     animationType={"fade"}
                     androidMode={"spinner"}
-                    placeHolderText="Date Of Birth / ಹುಟ್ತಿದ ದಿನ"
+                    placeHolderText="Date Of Birth / ಹುಟ್ಟಿದ ದಿನಾಂಕ"
                     textStyle={Styles.fInput}
                     placeHolderTextStyle={{ color: 'rgba(36,42,56,0.4)' }}
                     onDateChange={(date) => this.onFormChange(date, 'user[dob]')}
