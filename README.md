@@ -66,3 +66,42 @@ The `.env` file is ignored by git keeping those secrets out of your repo.
 2. Add your config variables
 3. Follow instructions at [https://github.com/luggit/react-native-config#setup](https://github.com/luggit/react-native-config#setup)
 4. Done!
+
+
+### Build and Release
+
+#### Development build
+
+1. Generate the js bundle
+```
+react-native bundle --platform android --dev false --entry-file index.js --bundle-output android/app/src/main/assets/index.android.bundle --assets-dest android/app/src/main/res
+```
+
+2. enter android directory and assemble debug apk (unsigned)
+```
+cd android
+./gradlew assembleDebug
+```
+
+3. Send generated APK from `app/build/outputs/apk/debug/<version>.apk`
+
+#### Release build
+
+1. Ensure version upgrade
+```
+react-native-version --never-amend
+```
+This will update app version in IOS and Android Manifests
+
+2. Build app using gradle
+```
+cd android
+./gradlew assembleDebug
+```
+
+3. Build using android runner if build fails
+```
+react-native run-android --variant=release
+```
+
+4. Send generated APK from `app/build/outputs/apk/release/<version>.apk`
