@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { format } from 'date-fns';
 import { Images } from '../Themes/'
 import HeaderComponent from '../Components/HeaderComponent'
-import LoadingOverlay from '../Components/LoadingOverlay';
+import Spinner from 'react-native-loading-spinner-overlay';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import EventActions from '../Redux/EventRedux'
@@ -35,7 +35,7 @@ class EventsList extends Component {
       this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
     } else if (option === 'first') {
       this.onTableFetchRequest(1);
-    }else if(option === 'refresh') {
+    } else if (option === 'refresh') {
       this.onTableFetchRequest(lastCalledPage);
     }
   }
@@ -122,7 +122,7 @@ class EventsList extends Component {
             goToFirstPage={() => this.goToPage('first')}
             goToNextPage={() => this.goToPage('next')}
             goToPrevPage={() => this.goToPage('prev')}
-            refreshPage={()=> this.goToPage('refresh')}
+            refreshPage={() => this.goToPage('refresh')}
             data={data}
             currentPage={lastCalledPage}
           />
@@ -134,15 +134,12 @@ class EventsList extends Component {
     const { fetching } = this.props;
     return (
       <Container>
+        <Spinner
+          visible={fetching}
+          textContent={''}
+        />
         <HeaderComponent title={"Events"} {...this.props} />
         {this.renderContent()}
-        <LoadingOverlay
-          visible={fetching}
-          color="white"
-          indicatorSize="large"
-          messageFontSize={24}
-          message="Loading..."
-        />
       </Container>
 
     )

@@ -5,7 +5,7 @@ import LaunchScreen from '../Containers/LaunchScreen';
 // These are the Pre Authentication Screens
 
 import LoginScreen from '../Containers/LoginScreen';
-import SplashScreen from '../Components/SplashScreen';
+// import SplashScreen from '../Components/SplashScreen';
 import ForgotPasswordScreen from '../Containers/ForgotPassword';
 import NetworkError from '../Components/NetworkErrorScreen';
 import AuthLoadingScreen from '../Containers/AuthLoadingScreen';
@@ -46,10 +46,10 @@ const MyDrawerNavigator = createDrawerNavigator({
     screen: BeneficiaryDetailScreen,
   },
   DevelopmentWorksList: {
-    screen : DevelopmentWorksList
+    screen: DevelopmentWorksList
   },
   DevelopmentWorkDetail: {
-    screen : DevelopmentWorkDetail
+    screen: DevelopmentWorkDetail
   },
   EventsListScreen: {
     screen: EventsListScreen,
@@ -77,12 +77,6 @@ const MyDrawerNavigator = createDrawerNavigator({
     contentComponent: DrawerComponent
   });
 
-const AppStack = createStackNavigator({
-  DrawerStack: { screen: MyDrawerNavigator }
-},
-  {
-    headerMode: 'none',
-  });
 
 const AuthStack = createStackNavigator(
   {
@@ -104,22 +98,13 @@ const AuthStack = createStackNavigator(
 );
 
 
-const AppNavigator = createSwitchNavigator(
+export default createAppContainer(createSwitchNavigator(
   {
     AuthLoading: AuthLoadingScreen,
-    App: AppStack,
+    App: MyDrawerNavigator,
     Auth: AuthStack,
   },
   {
     initialRouteName: 'AuthLoading',
   }
-);
-const InitialNavigator = createSwitchNavigator({
-  Splash: SplashScreen,
-  App: AppNavigator
-});
-
-export default createAppContainer(InitialNavigator);
-
-
-// export default createAppContainer(AppNavigator);
+));

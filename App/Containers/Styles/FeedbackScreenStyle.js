@@ -252,6 +252,10 @@ regForm: {
     padding: 15
   },
 
+  documentsWrapper: {
+
+  },
+
 })
 
 

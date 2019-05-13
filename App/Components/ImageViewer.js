@@ -18,10 +18,6 @@ export default class ImageViewerComponent extends Component {
         };
     }
 
-    _renderItem ({item, index}) {
-        return <SliderEntry data={item} even={(index + 1) % 2 === 0} />;
-    }
-
     _renderItemWithParallax ({item, index}, parallaxProps) {
         return (
             <SliderEntry
@@ -33,15 +29,8 @@ export default class ImageViewerComponent extends Component {
         );
     }
 
-    _renderLightItem ({item, index}) {
-        return <SliderEntry data={item} even={false} />;
-    }
 
-    _renderDarkItem ({item, index}) {
-        return <SliderEntry data={item} even={true} />;
-    }
-
-    mainExample (number, title) {
+    renderCarousel (number, title) {
         const { slider1ActiveSlide } = this.state;
         const { data } = this.props;
         return (
@@ -86,7 +75,7 @@ export default class ImageViewerComponent extends Component {
 
 
     render () {
-        const carousel = this.mainExample(1, 'Default layout | Loop | Autoplay | Parallax | Scale | Opacity | Pagination with tappable dots');
+        const carousel = this.renderCarousel(1, 'Default layout | Loop | Autoplay | Parallax | Scale | Opacity | Pagination with tappable dots');
         const { data } = this.props;
         return (
             <SafeAreaView style={styles.safeArea}>

@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { AsyncStorage, StatusBar, TouchableOpacity, TextInput, Image, Platform, FlatList, Alert } from 'react-native';
 import { Container, Header, Content, Icon, Text, Picker, View, Textarea } from 'native-base';
 import { connect } from 'react-redux';
-// import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
+import debounce from 'lodash/debounce'
 import { Images } from '../Themes/'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import ErrorPage from '../Components/NetworkErrorScreen';
@@ -15,7 +16,6 @@ import Styles from './Styles/FeedbackScreenStyle'
 
 const ImagePickerOptions = {
   title: 'Select Photos For Feedback',
-  // customButtons: [{ name: 'fb', title: 'Choose Photo from Facebook' }],
   storageOptions: {
     skipBackup: true,
     path: 'images',
@@ -32,6 +32,17 @@ class FeedbackScreen extends Component {
       photos: [],
     }
     this.renderRow = this.renderRow.bind(this);
+    this.renderDocumentItem = this.renderDocumentItem.bind(this);
+    this.searchPlant = debounce((text) => this.props.getPlantsForSearchParam(text), 250);
+  }
+
+  componentDidMount() {
+    const { fetching } = this.props;
+    AsyncStorage.getItem('accessToken').then((accessToken) => {
+      if (!fetching) {
+        this.props.getDepartmentsStatus(accessToken);
+      }
+    });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -46,8 +57,7 @@ class FeedbackScreen extends Component {
     }
   }
 
-  handleDocumentRemove(e, idx) {
-    e.preventDefault();
+  handleDocumentRemove(idx) {
     const documents = this.state.documents.filter((s, sidx) => idx !== sidx);
     this.setState({ documents });
   }
@@ -57,24 +67,24 @@ class FeedbackScreen extends Component {
     this.setState({ photos });
   }
 
-  // addDocument = () => {
-  //   const { documents } = this.state;
-  //   DocumentPicker.show({
-  //       filetype: [DocumentPickerUtil.allFiles()],
-  //       //All type of Files DocumentPickerUtil.allFiles()
-  //       //Only PDF DocumentPickerUtil.pdf()
-  //       //Audio DocumentPickerUtil.audio()
-  //       //Plain Text DocumentPickerUtil.plainText()
-  //     },
-  //     (error, res) => {
-  //       if (res.uri) {
-  //         this.setState({
-  //           documents: documents.concat([{ label: res.fileName, file: res.uri }]),
-  //         });
-  //       }
-  //     }
-  //   );
-  // };
+  addDocument = () => {
+    const { documents } = this.state;
+    DocumentPicker.show({
+      filetype: [DocumentPickerUtil.allFiles()],
+      //All type of Files DocumentPickerUtil.allFiles()
+      //Only PDF DocumentPickerUtil.pdf()
+      //Audio DocumentPickerUtil.audio()
+      //Plain Text DocumentPickerUtil.plainText()
+    },
+      (error, res) => {
+        if (res.uri) {
+          this.setState({
+            documents: documents.concat([{ label: '', file: res }]),
+          });
+        }
+      }
+    );
+  };
 
   addPhoto = () => {
     const { photos } = this.state;
@@ -84,9 +94,9 @@ class FeedbackScreen extends Component {
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
       } else {
-            this.setState({
-      imageLoading: true,
-    });
+        this.setState({
+          imageLoading: true,
+        });
         this.resize(response);
       }
     });
@@ -107,8 +117,8 @@ class FeedbackScreen extends Component {
         return Alert.alert('Unable to resize the photo',
           'Check the console for full the error message');
       });
-
   }
+
   validateForm = () => {
     const { formObj } = this.state;
     const errorsObj = {};
@@ -132,9 +142,10 @@ class FeedbackScreen extends Component {
     }
     return true;
   }
+
   onFormSubmit = () => {
     const isFormValid = this.validateForm();
-    const { formObj, photos } = this.state;
+    const { formObj, photos, documents } = this.state;
     if (isFormValid) {
       let data = new FormData();
       for (let property in formObj) {
@@ -156,21 +167,36 @@ class FeedbackScreen extends Component {
           return photoItem;
         });
       }
+      if (documents && documents.length) {
+        documents.map(({ file, label}, index) => {
+          if (file && file.uri) {
+            alert(JSON.stringify(file));
+            data.append(`feedback[stored_files_attributes][${index}][document]`, {
+              uri: file.uri,
+              type: file.type,
+              name: file.fileName,
+            });
+            if(label) {
+              data.append(`feedback[stored_files_attributes][${index}][desc]`, label);
+            }
+          }
+          return label;
+        });
+      }
       AsyncStorage.getItem('accessToken').then((accessToken) => {
         this.props.createFeedback(accessToken, data);
       });
     }
   }
-  componentDidMount() {
-    const { fetching } = this.props;
-    AsyncStorage.getItem('accessToken').then((accessToken) => {
-      if (!fetching) {
-        this.props.getDepartmentsStatus(accessToken);
-      }
-    });
-  }
+
   refreshPage = () => {
     const { fetching } = this.props;
+    this.setState({
+      formObj: {},
+      errorsObj: {},
+      documents: [],
+      photos: [],
+    });
     AsyncStorage.getItem('accessToken').then((accessToken) => {
       if (!fetching) {
         this.props.getDepartmentsStatus(accessToken);
@@ -184,9 +210,23 @@ class FeedbackScreen extends Component {
       formObj: { ...formObj, [key]: value }
     });
   }
-  onPlantSearch = text => {
-    this.props.getPlantsForSearchParam(text);
+
+  onDocumentChange = (text, index) => {
+    const { documents } = this.state;
+    const tempData = documents;
+    tempData[index].label = text;
+    this.setState({
+      documents: tempData,
+    });
   }
+
+  onPlantSearch = text => {
+    if (text && text.length) {
+      this.searchPlant(text);
+    }
+  }
+
+
   goToPage = () => {
     const { navigation } = this.props;
     this.props.resetStateOnNavigation();
@@ -204,34 +244,45 @@ class FeedbackScreen extends Component {
     }
   }
 
-  renderDepartmentsDropdown = () => {
-    const { departments } = this.props;
-    const { OS } = Platform;
-    if (OS === 'ios') {
-      return departments.map(({ id, name }, index) => <Picker.Item key={`status_${index}`} label={name} value={id} />)
-    } else {
-      const tempDepartments = [{ index: null, name: 'Department/ಇಲಾಖೆ ಆರಿಸಿ' }, ...departments]
-      return tempDepartments.map(({ id, name }, index) => <Picker.Item key={`status_${index}`} label={name} value={id} />);
-    }
-  }
-
   renderRow({ item, index }) {
     return (
       <TouchableOpacity onPress={() => this.handlePhotoRemove(index)}>
         <View>
           <Image source={item.file} style={Styles.truckImg} />
           <View style={Styles.photoDelete}>
-          <Icon name='trash' type="FontAwesome" style={Styles.photoDeleteIcon} />
+            <Icon name='trash' type="FontAwesome" style={Styles.photoDeleteIcon} />
           </View>
         </View>
       </TouchableOpacity>
     )
   }
 
+  renderDocumentItem({ item, index }) {
+    return (
+      <TouchableOpacity>
+        <View style={Styles.fRow}>
+          <TextInput
+            style={Styles.fInput}
+            placeholder='Document Name'
+            placeholderTextColor='rgba(36,42,56,0.4)'
+            onChangeText={(text) => this.onDocumentChange(text, index)}
+          />
+          <Icon
+            name='delete'
+            type="MaterialCommunityIcons"
+            style={Styles.fIcon}
+            onPress={() => this.handleDocumentRemove(index)}
+          />
+        </View>
+      </TouchableOpacity>
+
+    )
+  }
+
   renderComponent() {
     const { plantsList, errorCode } = this.props;
     const { OS } = Platform;
-    const { formObj, errorsObj, photos, imageLoading } = this.state;
+    const { formObj, errorsObj, photos, imageLoading, documents } = this.state;
     if (errorCode) {
       return <ErrorPage status={errorCode} onButtonClick={() => this.refreshPage(1)} />
     }
@@ -271,7 +322,7 @@ class FeedbackScreen extends Component {
                   itemTextStyle={Styles.fSearchInput}
                   items={plantsList}
                   defaultIndex={0}
-                  placeholder="Select Place"
+                  placeholder="Select Place / ಸ್ಥಳವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ"
                   resetValue
                   underlineColorAndroid="transparent"
                 />
@@ -312,10 +363,11 @@ class FeedbackScreen extends Component {
               </View>
             </View>
           </View>
+
           <View style={Styles.regForm}>
             <View style={Styles.infoBox}>
               <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
-                <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center'}]}>Photos</Text>
+                <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center' }]}>Photos</Text>
                 <View style={{ alignSelf: 'flex-end', margin: 0 }}>
                   <TouchableOpacity disabled={imageLoading} style={[Styles.fBtnSmall]} onPress={this.addPhoto}>
                     <Text style={Styles.fBtnText}>Add Photos</Text>
@@ -332,7 +384,26 @@ class FeedbackScreen extends Component {
               </View>
             </View>
           </View>
-
+          <View style={Styles.regForm}>
+            <View style={Styles.infoBox}>
+              <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+                <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center' }]}>Documents</Text>
+                <View style={{ alignSelf: 'flex-end', margin: 0 }}>
+                  <TouchableOpacity disabled={imageLoading} style={[Styles.fBtnSmall]} onPress={this.addDocument}>
+                    <Text style={Styles.fBtnText}>Add Documents</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={Styles.photos}>
+                <FlatList
+                  data={documents}
+                  showsHorizontalScrollIndicator={false}
+                  removeClippedSubview
+                  renderItem={this.renderDocumentItem}
+                />
+              </View>
+            </View>
+          </View>
           <TouchableOpacity style={Styles.fBtn} onPress={this.onFormSubmit}>
             <Text style={Styles.fBtnText}>Submit</Text>
             <Icon name='check' type="FontAwesome" style={Styles.fBtnIcon} />
@@ -412,25 +483,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(FeedbackScreen)
 //   />
 // </View>
 
-//     <View style={Styles.regForm}>
-//   <View style={Styles.infoBox}>
-//     <View style={Styles.infoHeader}>
-//       <Text style={Styles.infoHeaderText}>Documents</Text>
-//     </View>
-//     <View style={Styles.fRow}>
-//       <TextInput style={Styles.fInput} placeholder='RC Book' placeholderTextColor='rgba(36,42,56,0.4)' />
-//       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
-//     </View>
-//     <View style={Styles.fRow}>
-//       <TextInput style={Styles.fInput} placeholder='Insurance Document' placeholderTextColor='rgba(36,42,56,0.4)' />
-//       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
-//     </View>
-//     <View style={Styles.fRow}>
-//       <TextInput style={Styles.fInput} placeholder='Pollution Document' placeholderTextColor='rgba(36,42,56,0.4)' />
-//       <Icon name='file-document' type="MaterialCommunityIcons" style={Styles.fIcon} />
-//     </View>
-//   </View>
-// </View>
+
 
 // <View style={Styles.regForm}>
 //   <View style={Styles.infoBox}>

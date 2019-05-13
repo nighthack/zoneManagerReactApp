@@ -61,8 +61,8 @@ class FeedbackList extends Component {
 						<View style={Styles.hTop}>
 							<Icon name='google-maps' type="MaterialCommunityIcons" style={Styles.hImg} />
 							<TouchableOpacity style={Styles.hContent} onPress={() => {
-                this.goToPage('first')
-              }}>
+								this.goToPage('first')
+							}}>
 								<Text style={Styles.hTopText}>Feedback</Text>
 								<Text style={Styles.hTopDesc}>View the Feedback</Text>
 							</TouchableOpacity>
@@ -127,7 +127,7 @@ class FeedbackList extends Component {
 					goToFirstPage={() => this.goToPage('first')}
 					goToNextPage={() => this.goToPage('next')}
 					goToPrevPage={() => this.goToPage('prev')}
-					refreshPage={()=> this.goToPage('refresh')}
+					refreshPage={() => this.goToPage('refresh')}
 					data={data}
 					currentPage={currentPage}
 				/>

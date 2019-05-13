@@ -3,6 +3,7 @@ import { AsyncStorage, View, Image } from 'react-native'
 import { connect } from 'react-redux'
 import LoginActions from '../Redux/LoginRedux'
 import RootActions from '../Redux/RootRedux'
+import Spinner from 'react-native-loading-spinner-overlay';
 import LoadingOverlay from '../Components/LoadingOverlay';
 import { Images } from '../Themes/'
 
