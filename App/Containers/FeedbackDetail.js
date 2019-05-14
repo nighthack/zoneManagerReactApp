@@ -34,7 +34,12 @@ class FeedbackDetailView extends Component {
 
   onFullScreenImage(){
     console.log("Data come .....");
-    alert("Full Screen");
+    //alert("Full Screen");
+    const { data } = this.props;
+    this.props.navigation.navigate("FullScreenImages", {
+                  data: data.images,
+                  backScreen: 'FeedbackDetailScreen'
+    });
   }
 
   renderContent() {

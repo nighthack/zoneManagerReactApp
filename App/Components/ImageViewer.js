@@ -120,8 +120,13 @@ export default class ImageViewerComponent extends Component {
     }
 
     render () {
-        const carousel = this.renderSlickSlider(); //this.mainExample(1, 'Default layout | Loop | Autoplay | Parallax | Scale | Opacity | Pagination with tappable dots');
-        const { data } = this.props;
+        var carousel;
+        const { data, onFullScreenEvent } = this.props;
+        if(onFullScreenEvent === undefined){
+            carousel = this.mainExample(1, 'Default layout | Loop | Autoplay | Parallax | Scale | Opacity | Pagination with tappable dots');
+        }else {
+            carousel  = this.renderSlickSlider(); 
+        }
         console.log("Data..... ", this.props);
         return (
             <SafeAreaView style={[styles.safeArea, { height: (ScreenWidth / 2) +  80 }]}>
