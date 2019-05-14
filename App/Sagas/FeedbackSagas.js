@@ -196,8 +196,10 @@ export function* createFeedback({ accessToken, data }) {
       credentials: 'same-origin'
     };
     
-
+    console.log("Send Data :- ", data);
     const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}feedbacks?access_token=${accessToken}`, options);
+    console.log("status :- ", status);
+    console.log("body :- ", body);
     switch (status) {
       case undefined: {
         yield put(FeedbackActions.createFeedbackFail(503));

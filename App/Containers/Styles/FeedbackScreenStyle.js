@@ -234,6 +234,7 @@ regForm: {
     borderRadius: 3,
     backgroundColor: '#FF0000'
   },
+
   photoDeleteIcon: {
     fontSize: 14,
     color: '#FFF'

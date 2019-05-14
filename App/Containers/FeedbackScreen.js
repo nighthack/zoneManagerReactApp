@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { AsyncStorage, StatusBar, TouchableOpacity, TextInput, Image, Platform, FlatList, Alert } from 'react-native';
 import { Container, Header, Content, Icon, Text, Picker, View, Textarea } from 'native-base';
 import { connect } from 'react-redux';
-// import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
+import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import { Images } from '../Themes/'
@@ -10,7 +10,8 @@ import LoadingOverlay from '../Components/LoadingOverlay';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import FeedbackActions from '../Redux/FeedbackRedux';
-import Styles from './Styles/FeedbackScreenStyle'
+import Styles from './Styles/FeedbackScreenStyle';
+import RNFetchBlob from 'react-native-fetch-blob';
 
 
 const ImagePickerOptions = {
@@ -32,6 +33,7 @@ class FeedbackScreen extends Component {
       photos: [],
     }
     this.renderRow = this.renderRow.bind(this);
+    this.renderRowDocument = this.renderRowDocument.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -46,8 +48,8 @@ class FeedbackScreen extends Component {
     }
   }
 
-  handleDocumentRemove(e, idx) {
-    e.preventDefault();
+  handleDocumentRemove(idx) {
+    //e.preventDefault();
     const documents = this.state.documents.filter((s, sidx) => idx !== sidx);
     this.setState({ documents });
   }
@@ -57,27 +59,41 @@ class FeedbackScreen extends Component {
     this.setState({ photos });
   }
 
-  // addDocument = () => {
-  //   const { documents } = this.state;
-  //   DocumentPicker.show({
-  //       filetype: [DocumentPickerUtil.allFiles()],
-  //       //All type of Files DocumentPickerUtil.allFiles()
-  //       //Only PDF DocumentPickerUtil.pdf()
-  //       //Audio DocumentPickerUtil.audio()
-  //       //Plain Text DocumentPickerUtil.plainText()
-  //     },
-  //     (error, res) => {
-  //       if (res.uri) {
-  //         this.setState({
-  //           documents: documents.concat([{ label: res.fileName, file: res.uri }]),
-  //         });
-  //       }
-  //     }
-  //   );
-  // };
+
+  addDocument = () => {
+    const { documents } = this.state;
+    DocumentPicker.show({
+        filetype: [DocumentPickerUtil.pdf()],
+        //All type of Files DocumentPickerUtil.allFiles()
+        //Only PDF DocumentPickerUtil.pdf()
+        //Audio DocumentPickerUtil.audio()
+        //Plain Text DocumentPickerUtil.plainText()
+      },
+      (error, res) => {
+        console.log("res :- ", res);
+        console.log("error :- ", error);
+        if (res !== null && res.uri !== null) {
+          RNFetchBlob.fs.stat(res.uri)
+          .then((stats) => {
+            console.log("stats :- ", stats);
+            this.setState({
+                documents: documents.concat([{ label: res.fileName, file: res.uri ,
+                                                filePath: stats.path}]),
+            });
+          })
+          .catch((err) => {
+            console.log("error :- ", err);
+            Alert.alert("Error", "Please Choose File for Internal Storage");
+          })
+          
+        }
+      }
+    );
+  };
 
   addPhoto = () => {
     const { photos } = this.state;
+    console.log("photos :- ", photos);
     ImagePicker.showImagePicker(ImagePickerOptions, (response) => {
       if (response.didCancel) {
         console.log('User cancelled image picker');
@@ -134,7 +150,7 @@ class FeedbackScreen extends Component {
   }
   onFormSubmit = () => {
     const isFormValid = this.validateForm();
-    const { formObj, photos } = this.state;
+    const { formObj, photos, documents } = this.state;
     if (isFormValid) {
       let data = new FormData();
       for (let property in formObj) {
@@ -156,6 +172,21 @@ class FeedbackScreen extends Component {
           return photoItem;
         });
       }
+
+      if(documents && documents.length){
+        documents.map((documentsItem, index) => {
+          if (documentsItem.filePath) {
+            data.append(`feedback[stored_files_attributes][${index}][document]`, {
+              uri: 'file://' + documentsItem.filePath,
+              type: 'application/pdf',
+              name: documentsItem.label,
+            });
+            data.append(`feedback[stored_files_attributes][${index}][desc]`, documentsItem.label);
+          }
+          return documentsItem;
+        });
+      }
+
       AsyncStorage.getItem('accessToken').then((accessToken) => {
         this.props.createFeedback(accessToken, data);
       });
@@ -228,10 +259,24 @@ class FeedbackScreen extends Component {
     )
   }
 
+  renderRowDocument({item, index}){
+    return (
+      <TouchableOpacity>
+        <View>
+          <Text>{item.label}</Text>
+          <TouchableOpacity style={Styles.photoDelete}
+            onPress={() => this.handleDocumentRemove(index)}>
+              <Icon name='trash' type="FontAwesome" style={Styles.photoDeleteIcon} />
+          </TouchableOpacity>
+        </View>
+      </TouchableOpacity>
+    )
+  }
+
   renderComponent() {
     const { plantsList, errorCode } = this.props;
     const { OS } = Platform;
-    const { formObj, errorsObj, photos, imageLoading } = this.state;
+    const { formObj, errorsObj, photos, imageLoading, documents } = this.state;
     if (errorCode) {
       return <ErrorPage status={errorCode} onButtonClick={() => this.refreshPage(1)} />
     }
@@ -328,6 +373,27 @@ class FeedbackScreen extends Component {
                   numColumns={3}
                   showsHorizontalScrollIndicator={false}
                   renderItem={this.renderRow}
+                />
+              </View>
+            </View>
+          </View>
+
+          <View style={Styles.regForm}>
+            <View style={Styles.infoBox}>
+              <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+                <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center'}]}>Document</Text>
+                <View style={{ alignSelf: 'flex-end', margin: 0 }}>
+                  <TouchableOpacity disabled={imageLoading} style={[Styles.fBtnSmall]} onPress={this.addDocument}>
+                    <Text style={Styles.fBtnText}>Add Document</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={Styles.photos}>
+                <FlatList
+                  data={documents}
+                  numColumns={1}
+                  showsHorizontalScrollIndicator={false}
+                  renderItem={this.renderRowDocument}
                 />
               </View>
             </View>
