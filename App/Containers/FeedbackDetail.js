@@ -14,6 +14,12 @@ import Styles from './Styles/BenefeciaryDetailViewStyle'
 
 class FeedbackDetailView extends Component {
 
+  constructor(props){
+    super(props);
+
+    this.onFullScreenImage = this.onFullScreenImage.bind(this);
+  }
+  
   refreshPage() {
     const { navigation, fetching } = this.props;
     const parentProps = navigation.getParam('selectedData', null);
@@ -26,11 +32,17 @@ class FeedbackDetailView extends Component {
     }
   }
 
+  onFullScreenImage(){
+    console.log("Data come .....");
+    alert("Full Screen");
+  }
+
   renderContent() {
     const { data, detailError } = this.props;
     if (detailError) {
       return <ErrorPage status={detailError} onButtonClick={() => this.refreshPage()} />
     }
+    console.log("data :- ", data);
     return (
       <Content contentContainerStyle={Styles.layoutDefault}>
         <Image source={Images.background} style={Styles.bgImg} />
@@ -78,7 +90,7 @@ class FeedbackDetailView extends Component {
           </View>
         </View>
         {
-          data.images && data.images.length ? <ImageViewerComponent data={data.images} /> : null
+          data.images && data.images.length ? <ImageViewerComponent data={data.images} onFullScreenEvent={this.onFullScreenImage} /> : null
         }
 
       </Content>
