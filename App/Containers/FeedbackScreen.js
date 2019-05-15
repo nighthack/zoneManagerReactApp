@@ -12,6 +12,7 @@ import SearchableDropdown from 'react-native-searchable-dropdown';
 import FeedbackActions from '../Redux/FeedbackRedux';
 import Styles from './Styles/FeedbackScreenStyle';
 import RNFetchBlob from 'react-native-fetch-blob';
+import RNFS from 'react-native-fs';
 
 
 const ImagePickerOptions = {
@@ -54,9 +55,21 @@ class FeedbackScreen extends Component {
     this.setState({ documents });
   }
 
+  handeDocumentOpen(documentItem){
+    alert("Hello");
+  }
+
   handlePhotoRemove(idx) {
     const photos = this.state.photos.filter((s, sidx) => idx !== sidx);
     this.setState({ photos });
+  }
+
+  isSize2MB(byte) {
+    var FileSize =  byte / 1024 / 1024; // in MB
+    if (FileSize > 2) {
+        return true;
+    } 
+    return false;
   }
 
 
@@ -73,18 +86,35 @@ class FeedbackScreen extends Component {
         console.log("res :- ", res);
         console.log("error :- ", error);
         if (res !== null && res.uri !== null) {
-          RNFetchBlob.fs.stat(res.uri)
-          .then((stats) => {
-            console.log("stats :- ", stats);
-            this.setState({
+          if(Platform.OS === 'android'){
+            RNFetchBlob.fs.stat(res.uri)
+            .then((stats) => {
+              console.log("stats :- ", stats);
+              if(!this.isSize2MB(stats.size)){
+                this.setState({
+                  documents: documents.concat([{ label: res.fileName, file: res.uri ,
+                                                  filePath: stats.path}]),
+                });
+              }else {
+                Alert.alert("Error", "File Size should be less than 2MB");
+              }
+              
+            })
+            .catch((err) => {
+              console.log("error :- ", err);
+              Alert.alert("Error", "Please Choose File for Internal Storage");
+            })
+          }else {
+            if(!this.isSize2MB(res.fileSize)){
+              this.setState({
                 documents: documents.concat([{ label: res.fileName, file: res.uri ,
-                                                filePath: stats.path}]),
-            });
-          })
-          .catch((err) => {
-            console.log("error :- ", err);
-            Alert.alert("Error", "Please Choose File for Internal Storage");
-          })
+                                                filePath: res.uri}]),
+              });
+            }else {
+              Alert.alert("Error", "File Size should be less than 2MB");
+            }
+          }
+          
           
         }
       }
@@ -126,20 +156,34 @@ class FeedbackScreen extends Component {
 
   }
   validateForm = () => {
-    const { formObj } = this.state;
+    const { formObj, documents } = this.state;
     const errorsObj = {};
     let errors = 0;
     // 'feedback[department_id]'
-    const requiredFields = ['feedback[name]', 'feedback[details]', 'feedback[feedback_type]', 'feedback[place_id]'];
+    var documentRequiredFields = [];
+    if(documents && documents.length){
+      documents.map((documentsItem, index) => {
+        documentRequiredFields[index] =  `feedback[stored_files_attributes][${index}][desc]`
+      });
+    }
+    console.log("documentRequiredFields :- ",  documentRequiredFields);
+    const allOtherFields = ['feedback[name]', 'feedback[details]', 'feedback[feedback_type]', 'feedback[place_id]'];
+    const requiredFields = allOtherFields.concat(documentRequiredFields);
+    console.log("requiredFields :- ", requiredFields);
     requiredFields.map((key) => {
+      console.log("key :- ", key);
       if (formObj[key]) {
+        console.log("formObj[key] :- ", formObj[key]);
         errorsObj[key] = null;
       } else {
         errors += 1;
         errorsObj[key] = `Please Fill ${key.replace("feedback[", "").slice(0, -1)}`;
+        console.log('Please :- ',  errorsObj[key])
       }
       return key;
     });
+    
+    console.log("errorsObj[key]  :- ", errorsObj );
     this.setState({
       errorsObj,
     });
@@ -151,6 +195,7 @@ class FeedbackScreen extends Component {
   onFormSubmit = () => {
     const isFormValid = this.validateForm();
     const { formObj, photos, documents } = this.state;
+    console.log("formObj :- ",   formObj);
     if (isFormValid) {
       let data = new FormData();
       for (let property in formObj) {
@@ -181,7 +226,9 @@ class FeedbackScreen extends Component {
               type: 'application/pdf',
               name: documentsItem.label,
             });
-            data.append(`feedback[stored_files_attributes][${index}][desc]`, documentsItem.label);
+            const desc = formObj[`feedback[stored_files_attributes][${index}][desc]`];
+            console.log("desc index :- " + index, desc);
+              data.append(`feedback[stored_files_attributes][${index}][desc]`, desc);
           }
           return documentsItem;
         });
@@ -260,14 +307,28 @@ class FeedbackScreen extends Component {
   }
 
   renderRowDocument({item, index}){
+    const { formObj, errorsObj } = this.state;
+    console.log("renderRowDocument errorsObj :- ", errorsObj);
     return (
       <TouchableOpacity>
-        <View>
-          <Text>{item.label}</Text>
-          <TouchableOpacity style={Styles.photoDelete}
-            onPress={() => this.handleDocumentRemove(index)}>
-              <Icon name='trash' type="FontAwesome" style={Styles.photoDeleteIcon} />
-          </TouchableOpacity>
+        <View style={{flex: 1, flexDirection: 'row', justifyContent:'center',
+                    alignItems:'center'}}>
+            <View style={(errorsObj && errorsObj['feedback[stored_files_attributes]['+index+'][desc]']) ? Styles.fDoucmentError : Styles.fDoucmentRow}>
+              <TextInput 
+              style={Styles.fInput}
+              placeholder='Document Title'
+              placeholderTextColor='rgba(36,42,56,0.4)'
+              onChangeText={(text) => this.onFormChange(text, 'feedback[stored_files_attributes]['+index+'][desc]')}
+              value={formObj[`feedback[stored_files_attributes][${index}][desc]`]}></TextInput>
+            </View>
+            <TouchableOpacity style={Styles.documentItem}
+                onPress={() => this.handleDocumentRemove(index)}>
+                  <Icon name='trash' type="FontAwesome" style={Styles.documentDeleteIcon} />
+            </TouchableOpacity>
+            <TouchableOpacity style={Styles.documentItem}
+                onPress={() => this.handeDocumentOpen(item)}>
+                  <Icon name='file-alt' type="FontAwesome5" style={Styles.documentShowIcon} />
+            </TouchableOpacity>
         </View>
       </TouchableOpacity>
     )
@@ -392,6 +453,7 @@ class FeedbackScreen extends Component {
                 <FlatList
                   data={documents}
                   numColumns={1}
+                  extraData={this.state.errorsObj} 
                   showsHorizontalScrollIndicator={false}
                   renderItem={this.renderRowDocument}
                 />

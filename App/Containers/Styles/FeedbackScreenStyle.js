@@ -113,6 +113,21 @@ regForm: {
     borderBottomWidth: 1,
     borderColor: 'rgba(36,42,56,0.05)'
   },
+
+  fDoucmentRow:{
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // paddingVertical: 5,
+    ...Platform.select({
+      ios: {
+        paddingVertical: 10,
+      },
+    }),
+    borderBottomWidth: 1,
+    borderColor: 'rgba(36,42,56,0.05)'
+  },
+
   fRowError: {
     flex: 1,
     flexDirection: 'row',
@@ -124,6 +139,21 @@ regForm: {
       },
     }),
     paddingHorizontal: 15,
+    borderBottomWidth: 1,
+    borderColor: '#bb0000',
+    backgroundColor: '#fff6f6',
+  },
+
+  fDoucmentError: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    // paddingVertical: 5,
+    ...Platform.select({
+      ios: {
+        paddingVertical: 10,
+      },
+    }),
     borderBottomWidth: 1,
     borderColor: '#bb0000',
     backgroundColor: '#fff6f6',
@@ -235,9 +265,32 @@ regForm: {
     backgroundColor: '#FF0000'
   },
 
+  documentItem:{
+    width: 30,
+    padding: 3,
+    borderRadius: 3,
+  },
+
+  documentShowItem:{
+    width: 30,
+    padding: 3,
+    borderRadius: 3,
+    backgroundColor: '#FF0000'
+  },
+
   photoDeleteIcon: {
     fontSize: 14,
     color: '#FFF'
+  },
+
+  documentDeleteIcon: {
+    fontSize: 24,
+    color: '#FF0000'
+  },
+
+  documentShowIcon:{
+    fontSize: 24,
+    color: 'gray'
   },
 
   truckImg: {
