@@ -27,6 +27,7 @@ import FeedbackScreen from '../Containers/FeedbackScreen';
 import FeedbackList from '../Containers/FeedbackList';
 import FeedbackDetailScreen from '../Containers/FeedbackDetail';
 import FullScreenImages from '../Containers/FullScreenImages';
+import DocumentViewer from '../Containers/DocumentViewer';
 
 import UserSettings from '../Containers/UserSettings';
 
@@ -69,6 +70,9 @@ const MyDrawerNavigator = createDrawerNavigator({
   },
   FullScreenImages:{
     screen: FullScreenImages,
+  },
+  DocumentViewer:{
+    screen: DocumentViewer,
   },
   UserSettings: {
     screen: UserSettings,

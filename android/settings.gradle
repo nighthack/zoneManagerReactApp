@@ -1,4 +1,10 @@
 rootProject.name = 'sunilNaik'
+include ':react-native-pdf'
+project(':react-native-pdf').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-pdf/android')
+include ':rn-fetch-blob'
+project(':rn-fetch-blob').projectDir = new File(rootProject.projectDir, '../node_modules/rn-fetch-blob/android')
+include ':react-native-doc-viewer'
+project(':react-native-doc-viewer').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-doc-viewer/android')
 include ':react-native-fs'
 project(':react-native-fs').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-fs/android')
 include ':react-native-fetch-blob'

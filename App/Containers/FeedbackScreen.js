@@ -13,6 +13,7 @@ import FeedbackActions from '../Redux/FeedbackRedux';
 import Styles from './Styles/FeedbackScreenStyle';
 import RNFetchBlob from 'react-native-fetch-blob';
 import RNFS from 'react-native-fs';
+import OpenFile from 'react-native-doc-viewer';
 
 
 const ImagePickerOptions = {
@@ -56,7 +57,13 @@ class FeedbackScreen extends Component {
   }
 
   handeDocumentOpen(documentItem){
-    alert("Hello");
+    //alert("Hello");
+    console.log("documentItem :- ", documentItem);
+    this.props.navigation.navigate("DocumentViewer", {
+      data: documentItem,
+      backScreen: 'FeedbackScreen'
+    });
+    
   }
 
   handlePhotoRemove(idx) {
