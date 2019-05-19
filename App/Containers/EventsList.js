@@ -3,6 +3,7 @@ import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBack
 import { Container, Header, Content, Button, Icon, Text, Title, TabHeading, ScrollableTab, Card, Left, Right, Body, Input, Tabs, Tab, Footer, View, FooterTab, Badge } from 'native-base'
 import { connect } from 'react-redux'
 import { format } from 'date-fns';
+import { NavigationEvents } from 'react-navigation';
 import { Images } from '../Themes/'
 import HeaderComponent from '../Components/HeaderComponent'
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -132,12 +133,15 @@ class EventsList extends Component {
   }
   render() {
     const { fetching } = this.props;
+    if (fetching) {
+      return (
+        <Container>
+          <HeaderComponent title={"Events"} {...this.props} />
+        </Container>
+      );
+    }
     return (
       <Container>
-        <Spinner
-          visible={fetching}
-          textContent={''}
-        />
         <HeaderComponent title={"Events"} {...this.props} />
         {this.renderContent()}
       </Container>

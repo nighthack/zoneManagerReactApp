@@ -3,16 +3,13 @@ import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackgro
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Picker, Input, Item, DatePicker, Footer, View, FooterTab, Badge } from 'native-base'
 import { Images } from '../Themes'
 import { connect } from 'react-redux'
-// Add Actions - replace 'Your' with whatever your reducer is called :)
-// import YourActions from '../Redux/YourRedux'
-
-// Styles
 import Styles from './Styles/UserSettingsStyle'
 
 class UserSettings extends Component {
 
   constructor(props) {
     super(props);
+    console.log(props.userObj);
     this.state = {
       formObj: props.userObj ? props.userObj.user : {},
     }

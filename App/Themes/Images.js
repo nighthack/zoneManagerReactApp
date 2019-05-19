@@ -23,7 +23,7 @@ const images = {
   closeButton: require('../Images/Icons/close-button.png'),
   navImage: require('../Images/nav-img.png'),
   menuIcon: require('../Images/menu.png'),
-  splashBackground: require('../Images/splash_blur.png'),
+  splashBackground: require('../Images/splash.jpeg'),
   bjpGif: require('../Images/bjp.gif'),
 }
 

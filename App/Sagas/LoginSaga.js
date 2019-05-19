@@ -38,6 +38,7 @@ export function* login({ phone, password }) {
       if (status >= 200 && status < 300) {
         AsyncStorage.setItem('accessToken', user.access_token);
         yield put(LoginActions.loginSuccess(user, message));
+        yield put(RootActions.getUserDetails(user.access_token));
         yield put(NavigationActions.navigate({ routeName: 'Home' }))
         yield put(LoginActions.resetStateOnNavigation());
       } else {
@@ -182,6 +183,7 @@ export function* singupRequest({ data }) {
       if (user && user.access_token) {
         AsyncStorage.setItem('accessToken', user.access_token);
         yield put(LoginActions.signupSuccess(user));
+        yield put(RootActions.getUserDetails(user.access_token));
         yield put(NavigationActions.navigate({ routeName: 'Home' }))
         yield put(LoginActions.resetStateOnNavigation());
       } else {
@@ -212,8 +214,7 @@ export function* onLogout({ accessToken }) {
     yield put(DevelopmentWorkActions.devWorkOnListReset());
     yield put(EventActions.eventOnListReset());
     yield put(FeedbackActions.feedbackOnListReset());
-    // yield put(RootActions.onListReset());
-    console.log(RootActions);
+
   } catch (e) {
     console.log(e);
     yield put(ToastActionsCreators.displayWarning('Please Refresh the app'));
@@ -242,7 +243,8 @@ export function* onResetPasswordAction({ data }) {
       if (user && user.access_token) {
         yield put(LoginActions.resetPasswordSuccess(user));
         AsyncStorage.setItem('accessToken', user.access_token);
-        yield put(NavigationActions.navigate({ routeName: 'Home' }))
+        yield put(RootActions.getUserDetails(user.access_token));
+        yield put(NavigationActions.navigate({ routeName: 'Home' }));
         yield put(LoginActions.resetStateOnNavigation());
       } else {
         yield put(LoginActions.resetPasswordFailure(errors))
