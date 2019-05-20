@@ -48,12 +48,12 @@ export const Menulist = [
     type: 'FontAwesome',
     route: 'UserSettings'
   },
-  // {
-  //   name: 'Settings',
-  //   icon: 'settings',
-  //   type: 'SimpleLineIcons',
-  //   route: 'TransporterSettings'
-  // }
+  {
+    name: 'Appointments',
+    icon: 'settings',
+    type: 'SimpleLineIcons',
+    route: 'AppointmentList'
+  }
 ]
 import { connect } from 'react-redux'
 

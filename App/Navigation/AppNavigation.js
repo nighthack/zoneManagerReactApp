@@ -33,6 +33,11 @@ import UserSettings from '../Containers/UserSettings';
 import DevelopmentWorksList from '../Containers/DevelopmentWorksList'
 import DevelopmentWorkDetail from '../Containers/DevelopmentWorkDetail'
 
+// These Are the post authencation Screens
+import AppointmentList from '../Containers/AppointmentListScreen';
+import AppointmentDetail from '../Containers/AppointmentDetailScreen';
+import AppointmentCreate from '../Containers/AppointmentCreateScreen';
+
 import DrawerComponent from '../Containers/SideMenu';
 
 const MyDrawerNavigator = createDrawerNavigator({
@@ -65,6 +70,15 @@ const MyDrawerNavigator = createDrawerNavigator({
   },
   FeedbackDetailScreen: {
     screen: FeedbackDetailScreen,
+  },
+  AppointmentList: {
+    screen: AppointmentList,
+  },
+  AppointmentDetail: {
+    screen: AppointmentDetail,
+  },
+  AppointmentCreate: {
+    screen: AppointmentCreate,
   },
   UserSettings: {
     screen: UserSettings,

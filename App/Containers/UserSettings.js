@@ -9,7 +9,6 @@ class UserSettings extends Component {
 
   constructor(props) {
     super(props);
-    console.log(props.userObj);
     this.state = {
       formObj: props.userObj ? props.userObj.user : {},
     }
@@ -28,7 +27,7 @@ class UserSettings extends Component {
 
   render() {
     const { formObj } = this.state;
-    const { fetching, user, navigation } = this.props;
+    const { fetching, user, navigation, userObj } = this.props;
     return (
       <Container>
         <Header style={Styles.navigation}>
@@ -55,7 +54,7 @@ class UserSettings extends Component {
                 <Icon name='user' type="FontAwesome5" style={Styles.hUserIcon} />
               </View>
               <View style={{ justifyContent: 'center', marginLeft: 10 }}>
-                <Text style={Styles.hTopText}>Hey {formObj.name}</Text>
+                <Text style={Styles.hTopText}>Hey {userObj.user.name}</Text>
                 <Text style={Styles.hTopDesc}>Manage your profile</Text>
               </View>
             </View>
@@ -68,9 +67,18 @@ class UserSettings extends Component {
                 <View style={Styles.fRow}>
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Name'
+                    placeholder='First Name/ಮೊದಲ ಹೆಸರು'
                     placeholderTextColor='rgba(36,42,56,0.4)'
-                    value={formObj.name}
+                    value={formObj.first_name}
+                    editable={false}
+                  />
+                </View>
+                <View style={Styles.fRow}>
+                  <TextInput
+                    style={Styles.fInput}
+                    placeholder='Last Name/ಕೊನೆಯ ಹೆಸರು'
+                    placeholderTextColor='rgba(36,42,56,0.4)'
+                    value={formObj.last_name}
                     editable={false}
                   />
                 </View>
@@ -137,6 +145,7 @@ class UserSettings extends Component {
                 </View>
               </View>
             </View>
+          
           </View>
         </Content>
       </Container>

@@ -11,6 +11,7 @@ import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
 import { DevWorkTypes } from '../Redux/DevelopmentWorkRedux';
 import { EventTypes } from '../Redux/EventRedux';
 import { FeedbackTypes } from '../Redux/FeedbackRedux';
+import { AppointmentTypes } from '../Redux/AppointmentRedux';
 import { ModuleTypes } from '../Redux/ModuleRedux';
 /* ------------- Sagas ------------- */
 
@@ -30,6 +31,7 @@ import { getBeneficiaryList, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevWorksList, getDevWorkDetails } from './DevelopmentWorkSagas'
 import { getEventsList, getEventDetails } from './EventSagas';
 import { getPlacesListForSearchParam, getDepartmentsList, getFeedbackList, getFeedbackDetails, createFeedback } from './FeedbackSagas';
+import { getAppointmentList, getAppointmentDetails } from './AppointmentSagas';
 // import { getModuleList, getModuleDetails } from './ModuleSagas';
 // import { getAllPositions,  } from './VerifiedSignUpSagas'
 
@@ -43,8 +45,6 @@ import BeneficiaryActions from '../Redux/BeneficiaryRedux';
 /* ------------- Connect Types To Sagas ------------- */
 export default function* root() {
   yield all([
-
-
     // some sagas only receive an action
     takeLatest(LoginTypes.LOGIN_REQUEST, login),
     takeLatest(LoginTypes.OTP_REQUEST, getOTP),
@@ -75,6 +75,10 @@ export default function* root() {
     // Events
     takeLatest(EventTypes.EVENT_ON_LIST_REQUEST, getEventsList),
     takeLatest(EventTypes.EVENT_ON_DETAIL_REQUEST, getEventDetails),
+
+    // Appointments
+    takeLatest(AppointmentTypes.APPOINTMENT_ON_LIST_REQUEST, getAppointmentList),
+    takeLatest(AppointmentTypes.APPOINTMENT_ON_DETAIL_REQUEST, getAppointmentDetails),
 
     // // Generic Module 
     // takeLatest(ModuleTypes.MODULE_ON_LIST_REQUEST, getModuleList),

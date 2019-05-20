@@ -13,7 +13,6 @@ import SearchableDropdown from 'react-native-searchable-dropdown';
 import FeedbackActions from '../Redux/FeedbackRedux';
 import Styles from './Styles/FeedbackScreenStyle'
 
-
 const ImagePickerOptions = {
   title: 'Select Photos For Feedback',
   storageOptions: {
@@ -39,6 +38,7 @@ class FeedbackScreen extends Component {
   componentDidMount() {
     const { fetching } = this.props;
     AsyncStorage.getItem('accessToken').then((accessToken) => {
+      console.log(accessToken);
       if (!fetching) {
         this.props.getDepartmentsStatus(accessToken);
       }
@@ -384,26 +384,7 @@ class FeedbackScreen extends Component {
               </View>
             </View>
           </View>
-          <View style={Styles.regForm}>
-            <View style={Styles.infoBox}>
-              <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
-                <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center' }]}>Documents</Text>
-                <View style={{ alignSelf: 'flex-end', margin: 0 }}>
-                  <TouchableOpacity disabled={imageLoading} style={[Styles.fBtnSmall]} onPress={this.addDocument}>
-                    <Text style={Styles.fBtnText}>Add Documents</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={Styles.photos}>
-                <FlatList
-                  data={documents}
-                  showsHorizontalScrollIndicator={false}
-                  removeClippedSubview
-                  renderItem={this.renderDocumentItem}
-                />
-              </View>
-            </View>
-          </View>
+
           <TouchableOpacity style={Styles.fBtn} onPress={this.onFormSubmit}>
             <Text style={Styles.fBtnText}>Submit</Text>
             <Icon name='check' type="FontAwesome" style={Styles.fBtnIcon} />
@@ -515,3 +496,24 @@ export default connect(mapStateToProps, mapDispatchToProps)(FeedbackScreen)
 //     OS === 'ios' ? <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} /> : null
 //   }
 // </View>
+
+// {/* <View style={Styles.regForm}>
+// <View style={Styles.infoBox}>
+//   <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+//     <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center' }]}>Documents</Text>
+//     <View style={{ alignSelf: 'flex-end', margin: 0 }}>
+//       <TouchableOpacity disabled={imageLoading} style={[Styles.fBtnSmall]} onPress={this.addDocument}>
+//         <Text style={Styles.fBtnText}>Add Documents</Text>
+//       </TouchableOpacity>
+//     </View>
+//   </View>
+//   <View style={Styles.photos}>
+//     <FlatList
+//       data={documents}
+//       showsHorizontalScrollIndicator={false}
+//       removeClippedSubview
+//       renderItem={this.renderDocumentItem}
+//     />
+//   </View>
+// </View>
+// </View> */}
