@@ -134,10 +134,6 @@ class EventsList extends Component {
     const { fetching } = this.props;
     return (
       <Container>
-        <Spinner
-          visible={fetching}
-          textContent={''}
-        />
         <HeaderComponent title={"Events"} {...this.props} />
         {this.renderContent()}
       </Container>
