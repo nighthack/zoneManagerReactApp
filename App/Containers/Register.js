@@ -24,6 +24,11 @@ class Register extends Component {
       isErrorShown: false,
     }
   }
+
+  componentDidMount() {
+    this.props.getPositionsList();
+  }
+
   componentWillReceiveProps(nextProps) {
     const { error } = nextProps;
     const { isErrorShown } = this.state;
@@ -45,8 +50,9 @@ class Register extends Component {
     const { formObj } = this.state;
     this.setState({
       formObj: { ...formObj, [key]: value }
-    })
+    });
   }
+
   handleNextClick = () => {
     this.dismissKeyboard();
     const isFormValid = this.validateForm();
@@ -54,7 +60,7 @@ class Register extends Component {
       const { formObj } = this.state;
       this.props.getOTPForNumber(formObj['user[phone]']);
     } else {
-      this.props.errorToast('Please Fill all the mandatory fields');
+      this.props.errorToast('ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಕಡ್ಡಾಯ ಕ್ಷೇತ್ರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ');
     }
   }
 
@@ -68,7 +74,6 @@ class Register extends Component {
       showPassword: false,
       showPasswordConfirmation: false,
       isErrorShown: false,
-
     });
   }
 
@@ -101,14 +106,14 @@ class Register extends Component {
     const { formObj } = this.state;
     const errorsObj = {};
     let errors = 0;
-    const requiredFields = ['user[first_name]', 'user[last_name]', 'user[phone]', 'user[password]', 'user[password_confirmation]', 'user[gender]', 'user[place_id]'];
+    const requiredFields = ['user[first_name]', 'user[last_name]', 'user[phone]', 'user[password]', 'user[password_confirmation]', 'user[gender]', 'user[place_id]', 'user[position_id]'];
     requiredFields.map((key) => {
       if (formObj[key]) {
         if (key === 'user[last_name]' || key === 'user[first_name]') {
           const regex = /^[a-zA-Z ]*$/;
           if (!regex.test(formObj[key])) {
             errors += 1;
-            errorsObj[key] = "Name can't have numbers and special characters";
+            errorsObj[key] = "ಹೆಸರಿಗೆ ಸಂಖ್ಯೆಗಳು ಮತ್ತು ವಿಶೇಷ ಅಕ್ಷರಗಳು ಇರಬಾರದು";
           } else {
             errorsObj[key] = null;
           }
@@ -116,7 +121,7 @@ class Register extends Component {
           const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/; //eslint-disable-line
           if (!regex.test(formObj[key])) {
             errors += 1;
-            errorsObj[key] = "Email ID isn't Valid";
+            errorsObj[key] = "ಇಮೇಲ್ ಮಾನ್ಯವಾಗಿಲ್ಲ";
           } else {
             errorsObj[key] = null;
           }
@@ -124,7 +129,7 @@ class Register extends Component {
           const regex = /^[6-9]\d{9}$/; //eslint-disable-line
           if (!regex.test(formObj[key])) {
             errors += 1;
-            errorsObj[key] = "Phone Number isn't Valid";
+            errorsObj[key] = "ಫೋನ್ ಸಂಖ್ಯೆ ಮಾನ್ಯವಾಗಿಲ್ಲ";
           } else {
             errorsObj[key] = null;
           }
@@ -132,14 +137,21 @@ class Register extends Component {
           const regexp = /^\S*$/;
           if ((!regexp.test(formObj[key]) || formObj[key].length < 6)) {
             errors += 1;
-            errorsObj[key] = "Password length has to be more than 6";
+            errorsObj[key] = "ಪಾಸ್ವರ್ಡ್ ಉದ್ದವು 6 ಕ್ಕಿಂತ ಹೆಚ್ಚಿರಬೇಕು";
           } else {
             errorsObj[key] = null;
           }
         } else if (key === 'user[password_confirmation]') {
           if (formObj[key] !== formObj['user[password]']) {
             errors += 1;
-            errorsObj[key] = "Confirmation Password Doesn't match";
+            errorsObj[key] = "ದೃಢೀಕರಣ ಪಾಸ್ವರ್ಡ್ ಹೊಂದಿಕೆಯಾಗುವುದಿಲ್ಲ";
+          } else {
+            errorsObj[key] = null;
+          }
+        } else if (key === 'user[position_id]') {
+          if (formObj[key]) {
+            errors += 1;
+            errorsObj[key] = "ಉದ್ಯೋಗ/ಹುದ್ದೆ ಆಯ್ಕೆ ಮಾಡಿ";
           } else {
             errorsObj[key] = null;
           }
@@ -148,7 +160,7 @@ class Register extends Component {
         }
       } else {
         errors += 1;
-        errorsObj[key] = `Please Fill ${key.replace("user[", "").slice(0, -1)}`;
+        errorsObj[key] = `ದಯವಿಟ್ಟು ${key.replace("user[", "").slice(0, -1)} ಭರ್ತಿ ಮಾಡಿ`;
       }
       return key;
     });
@@ -207,7 +219,7 @@ class Register extends Component {
             onPress={this.handleNextClick}
             disabled={fetching}
           >
-            <Text style={Styles.fBtnText}>Next</Text>
+            <Text style={Styles.fBtnText}>ಮುಂದೆ</Text>
             <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
           </TouchableOpacity>
           )
@@ -220,7 +232,7 @@ class Register extends Component {
             onPress={this.onFormSubmit}
             disabled={fetching}
           >
-            <Text style={Styles.fBtnText}>Register</Text>
+            <Text style={Styles.fBtnText}>ನೋಂದಣಿ</Text>
             <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
           </TouchableOpacity>
           )
@@ -233,7 +245,7 @@ class Register extends Component {
             onPress={this.handleNextClick}
             disabled={fetching}
           >
-            <Text style={Styles.fBtnText}>Resend OTP</Text>
+            <Text style={Styles.fBtnText}>ಒಟಿಪಿಯನ್ನು ಮರುಹೊಂದಿಸಿ</Text>
             <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
           </TouchableOpacity>
           )
@@ -246,7 +258,7 @@ class Register extends Component {
             onPress={this.handleNextClick}
             disabled={fetching}
           >
-            <Text style={Styles.fBtnText}>Next</Text>
+            <Text style={Styles.fBtnText}>ಮುಂದೆ</Text>
             <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
           </TouchableOpacity>
           )
@@ -257,11 +269,20 @@ class Register extends Component {
     const { OS } = Platform;
     let options = [];
     if (OS === 'ios') {
-      options = [{ name: 'Male-ಗಂಡು', value: 'male' }, { name: 'Female-ಹೆಣ್ಣು ', value: 'female' }, { name: 'Other- ಇತರೆ', value: 'others' }]
+      options = [{ name: 'ಗಂಡು', value: 'ಗಂಡು' }, { name: 'ಹೆಣ್ಣು ', value: 'ಹೆಣ್ಣು' }, { name: 'ಇತರೆ', value: 'ಇತರೆ' }]
     } else {
-      options = [{ name: 'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ/ Select Gender', value: null }, { name: 'Male-ಗಂಡು', value: 'male' }, { name: 'Female-ಹೆಣ್ಣು ', value: 'female' }, { name: 'Other- ಇತರೆ', value: 'others' }]
+      options = [{ name: 'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ', value: null }, { name: 'ಗಂಡು', value: 'ಗಂಡು' }, { name: 'ಹೆಣ್ಣು', value: 'ಹೆಣ್ಣು' }, { name: 'ಇತರೆ', value: 'ಇತರೆ' }]
     }
     return options.map(({ value, name }, index) => <Picker.Item key={`gender_${index}`} label={name} value={value} />)
+  }
+  renderPostionOptions() {
+    const { OS } = Platform;
+    const { positions } = this.props;
+    let options = positions.map(({ name, id }) => ({name, value:id }));
+    if (OS !== 'ios') {
+      options.unshift({ name: 'ಉದ್ಯೋಗ/ಹುದ್ದೆ ಆಯ್ಕೆ ಮಾಡಿ', value: null });
+    }
+    return options.map(({ value, name }, index) => <Picker.Item key={`position_${index}`} label={name} value={value} />)
   }
   render() {
     const { navigate } = this.props.navigation;
@@ -278,7 +299,7 @@ class Register extends Component {
               </TouchableOpacity>
             </View>
             <View style={Styles.navMiddle} >
-              <Text style={Styles.logo}>Register</Text></View>
+              <Text style={Styles.logo}>ನೋಂದಣಿ</Text></View>
             <View style={Styles.navRight} />
           </View>
         </Header>
@@ -289,8 +310,8 @@ class Register extends Component {
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
               <Image source={Images.sunil} style={[Styles.hImg]} />
-              <Text style={Styles.hTopText}>Sign Up!</Text>
-              <Text style={Styles.hTopDesc}>Create a new account</Text>
+              <Text style={Styles.hTopText}>ಸೈನ್ ಅಪ್!</Text>
+              <Text style={Styles.hTopDesc}>ಹೊಸ ಖಾತೆಯನ್ನು ತೆರೆ</Text>
             </View>
             <View style={Styles.regForm}>
               <View style={Styles.infoBox}>
@@ -298,7 +319,7 @@ class Register extends Component {
                   <Icon name='account' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='First Name/ಮೊದಲ ಹೆಸರು'
+                    placeholder='ಮೊದಲ ಹೆಸರು'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     onChangeText={(text) => this.onFormChange(text, 'user[first_name]')}
                     keyboardType={'default'}
@@ -312,7 +333,7 @@ class Register extends Component {
                   <Icon name='account' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Last Name/ಕೊನೆಯ ಹೆಸರು'
+                    placeholder='ಕೊನೆಯ ಹೆಸರು'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     onChangeText={(text) => this.onFormChange(text, 'user[last_name]')}
                     keyboardType={'default'}
@@ -325,7 +346,7 @@ class Register extends Component {
                   <Icon name='email' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Email Address/ಇಮೇಲ್'
+                    placeholder='ಇಮೇಲ್'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     keyboardType={'email-address'}
                     onChangeText={(text) => this.onFormChange(text, 'user[email]')}
@@ -339,7 +360,7 @@ class Register extends Component {
                   <Icon name='mobile' type="FontAwesome" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Mobile Number/ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ'
+                    placeholder='ಮೊಬೈಲ್ ಸಂಖ್ಯೆ'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     keyboardType={'phone-pad'}
                     onChangeText={(text) => this.onFormChange(text, 'user[phone]')}
@@ -359,7 +380,7 @@ class Register extends Component {
                     modalTransparent={false}
                     animationType={"fade"}
                     androidMode={"spinner"}
-                    placeHolderText="Date Of Birth / ಹುಟ್ಟಿದ ದಿನಾಂಕ"
+                    placeHolderText="ಹುಟ್ಟಿದ ದಿನಾಂಕ"
                     textStyle={Styles.fInput}
                     placeHolderTextStyle={{ color: 'rgba(36,42,56,0.4)' }}
                     onDateChange={(date) => this.onFormChange(date, 'user[dob]')}
@@ -374,7 +395,7 @@ class Register extends Component {
                       style={Styles.fPickerItem}
                       disabled={fetching}
                       textStyle={Styles.fInput}
-                      placeholder={'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ/ Select Gender'}
+                      placeholder={'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ'}
                       placeholderStyle={{ color: 'rgba(36,42,56,0.4)', fontSize: 12 }}
                       selectedValue={formObj['user[gender]']}
                       onValueChange={(itemValue, itemIndex) =>
@@ -385,6 +406,25 @@ class Register extends Component {
                     </Picker>
                   </View>
                   <Text style={Styles.fErrorLabel}>{errorsObj['user[gender]']}</Text>
+                </View>
+                <View style={[Styles.fSelect, ((errorsObj && errorsObj['user[position_id]']) || error) ? Styles.errorField : {} ]}>
+                  <Icon name='account-card-details' type="MaterialCommunityIcons" style={Styles.fIcon} />
+                  <View style={Styles.fPicker}>
+                    <Picker
+                      style={Styles.fPickerItem}
+                      disabled={fetching}
+                      textStyle={Styles.fInput}
+                      placeholder={'ಉದ್ಯೋಗ/ಹುದ್ದೆ ಆಯ್ಕೆ ಮಾಡಿ'}
+                      placeholderStyle={{ color: 'rgba(36,42,56,0.4)', fontSize: 12 }}
+                      selectedValue={formObj['user[position_id]']}
+                      onValueChange={(itemValue, itemIndex) =>
+                        this.onFormChange(itemValue, 'user[position_id]')
+                      }
+                    >
+                    {this.renderPostionOptions()}
+                    </Picker>
+                  </View>
+                  <Text style={Styles.fErrorLabel}>{errorsObj['user[position_id]']}</Text>
                 </View>
                 <View style={Styles.fSelect}>
                   <Icon name='map-marker' type="FontAwesome" style={Styles.fIcon} />
@@ -397,7 +437,7 @@ class Register extends Component {
                       itemTextStyle={Styles.fSearchInput}
                       items={placesList}
                       defaultIndex={0}
-                      placeholder="Select Place/ಸ್ಥಳ ಆರಿಸಿ"
+                      placeholder="ಸ್ಥಳ ಆರಿಸಿ"
                       resetValue={false}
                       underlineColorAndroid="transparent"
                     />
@@ -406,7 +446,7 @@ class Register extends Component {
                   <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Password/ಪಾಸ್ವರ್ಡ್'
+                    placeholder='ಪಾಸ್ವರ್ಡ್'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     keyboardType={'default'}
                     secureTextEntry={!showPassword}
@@ -427,7 +467,7 @@ class Register extends Component {
                   <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Confirm Password/ ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ'
+                    placeholder='ಪಾಸ್ವರ್ಡ್ ದೃಢೀಕರಣ'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     secureTextEntry={!showPasswordConfirmation}
                     onChangeText={(text) => this.onFormChange(text, 'user[password_confirmation]')}
@@ -447,7 +487,7 @@ class Register extends Component {
                       <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
                       <TextInput
                         style={Styles.fInput}
-                        placeholder='OTP/ಒ ಟಿ ಪಿ'
+                        placeholder='ಒ ಟಿ ಪಿ'
                         placeholderTextColor='rgba(36,42,56,0.4)'
                         onChangeText={(text) => this.onFormChange(text, 'otp')}
                         disabled={fetching}
@@ -460,7 +500,7 @@ class Register extends Component {
                   otpStatus ?
                   <View style={Styles.account}>
                     <TouchableOpacity style={Styles.accountBtn} onPress={this.handleNextClick}>
-                      <Text style={Styles.accountBtnText}>Resend OTP</Text>
+                      <Text style={Styles.accountBtnText}>ಒಟಿಪಿಯನ್ನು ಮರುಹೊಂದಿಸಿ</Text>
                     </TouchableOpacity>
                   </View> : null
                 }
@@ -469,9 +509,9 @@ class Register extends Component {
               </View>
             </View>
             <View style={Styles.account}>
-              <Text style={Styles.accountText}>Already have an account?</Text>
+              <Text style={Styles.accountText}>ಈಗಾಗಲೇ ಖಾತೆ ಹೊಂದಿದ್ದೀರ?</Text>
               <TouchableOpacity style={Styles.accountBtn} onPress={() => this.goToPage('Login')}>
-                <Text style={Styles.accountBtnText}>Sign in</Text>
+                <Text style={Styles.accountBtnText}>ಸೈನ್ ಇನ್</Text>
               </TouchableOpacity>
             </View>
 
@@ -497,6 +537,7 @@ const mapStateToProps = (state) => {
     error: state.login.signUpErrors,
     placesList: state.login.placesList,
     fetchingPlaces: state.login.fetchingPlaces,
+    positions: state.login.positionsList,
   }
 }
 
@@ -506,6 +547,7 @@ const mapDispatchToProps = (dispatch) => {
     errorToast: (msg) => dispatch(ToastActionsCreators.displayError(msg)),
     attempSingUp: (data) => dispatch(LoginActions.signupRequest(data)),
     onNavigationResetState: () => dispatch(LoginActions.logoutRequest()),
+    getPositionsList: () => dispatch(LoginActions.getPositionsList()),
     getPlantsForSearchParam: (searchParam) =>
       dispatch(LoginActions.getPreLoginPlacesList(searchParam)),
   }
@@ -513,8 +555,3 @@ const mapDispatchToProps = (dispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register)
 
-
-// <TouchableOpacity style={Styles.fBtn} onPress={this.onFormSubmit}>
-//                   <Text style={Styles.fBtnText}>Sign Up!</Text>
-//                   <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
-//                 </TouchableOpacity>

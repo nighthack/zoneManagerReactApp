@@ -60,13 +60,13 @@ class LoginScreen extends Component {
     const errorObj = {};
     if(!regex.test(phone)) {
       errorCount += 1;
-      errorObj.phone = 'Please Enter a valid Phone Number'
+      errorObj.phone = 'ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ'
     } else {
       errorObj.phone = null;
     }
     if(!passwordRegx.test(password) || !password) {
       errorCount += 1;
-      errorObj.password = "Please check your password"
+      errorObj.password = "ದಯವಿಟ್ಟು ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಪರಿಶೀಲಿಸಿ"
     } else {
        errorObj.password = null;
     }
@@ -77,7 +77,7 @@ class LoginScreen extends Component {
       this.isAttempting = true
       this.props.attemptLogin(phone, password);
     } else {
-      this.props.warningToast('Please check your input');
+      this.props.warningToast('ದಯವಿಟ್ಟು ನಿಮ್ಮ ಇನ್ಪುಟ್ ಪರಿಶೀಲಿಸಿ');
     }
   };
   render() {
@@ -100,8 +100,8 @@ class LoginScreen extends Component {
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
             <Image source={Images.sunil} style={[Styles.hImg]}/>
-              <Text style={Styles.hTopText}>Login</Text>
-              <Text style={Styles.hTopDesc}>Login to see development in Bhatkal</Text>
+              <Text style={Styles.hTopText}>ಲಾಗಿನ್</Text>
+              <Text style={Styles.hTopDesc}>ಭಟ್ಕಲ್ ಕ್ಷೇತ್ರದಲ್ಲಿ ಅಭಿವೃದ್ಧಿಯನ್ನು ನೋಡಲು ಲಾಗಿನ್ ಮಾಡಿ</Text>
             </View>
             <View style={Styles.regForm}>
               <View style={Styles.infoBox}>
@@ -111,7 +111,7 @@ class LoginScreen extends Component {
                     keyboardType="phone-pad" 
                     onChangeText={(text) => this.onFormChange(text, 'phone')}
                     style={Styles.fInput}
-                    placeholder='Mobile Number'
+                    placeholder='ಮೊಬೈಲ್ ನಂಬರ'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     textContentType="telephoneNumber"
                     value={formObj.phone}
@@ -125,7 +125,7 @@ class LoginScreen extends Component {
                     secureTextEntry={!showPassword}
                     onChangeText={(text) => this.onFormChange(text, 'password')}
                     style={Styles.fInput}
-                    placeholder='Password'
+                    placeholder='ಪಾಸ್ವರ್ಡ್'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     textContentType="password"
                     value={formObj.password}
@@ -141,26 +141,26 @@ class LoginScreen extends Component {
                
                 <View>
                   <TouchableOpacity style={Styles.accountBtn} onPress={() => this.goToPage('ForgotPassword')}>
-                    <Text style={Styles.forgotPassword}>Forgot your password?</Text>
+                    <Text style={Styles.forgotPassword}>ನಿಮ್ಮ ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರುವಿರಾ?</Text>
                   </TouchableOpacity>
                 </View>
                 {
-                  error ? <Text style={Styles.errorText}>Invalid Credentials</Text> : null
+                  error ? <Text style={Styles.errorText}>ಅಮಾನ್ಯ ರುಜುವಾತುಗಳು</Text> : null
                 }
                 <TouchableOpacity
                   style={Styles.fBtn}
                   onPress={this.onFormSubmit}
                   disabled={fetching}
                 >
-                  <Text style={Styles.fBtnText}>Sign in</Text>
+                  <Text style={Styles.fBtnText}>ಸೈನ್ ಇನ್</Text>
                   <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
                 </TouchableOpacity>
               </View>
             </View>
             <View style={Styles.account}>
-              <Text style={Styles.accountText}>Don't you have an account?</Text>
+              <Text style={Styles.accountText}>ನಿಮಗೆ ಖಾತೆ ಇಲ್ಲವೇ?</Text>
               <TouchableOpacity style={Styles.accountBtn} onPress={() => this.goToPage("RegisterScreen")}>
-                <Text style={Styles.accountBtnText}>Sign up now!</Text>
+                <Text style={Styles.accountBtnText}>ಸೈನ್ ಅಪ್ ಮಾಡಿ!</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { AsyncStorage, StatusBar, TouchableOpacity, TextInput, Image, Platform, FlatList, Alert } from 'react-native';
-import { Container, Header, Content, Icon, Text, Picker, View, Textarea } from 'native-base';
+import { Container, Header, Content, Icon, Text, Picker, View, DatePicker } from 'native-base';
 import { connect } from 'react-redux';
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import debounce from 'lodash/debounce'
+import DateTimePicker from "react-native-modal-datetime-picker";
 import { Images } from '../Themes/'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import ErrorPage from '../Components/NetworkErrorScreen';
-import SearchableDropdown from 'react-native-searchable-dropdown';
 import FeedbackActions from '../Redux/FeedbackRedux';
 import Styles from './Styles/FeedbackScreenStyle'
 
@@ -123,7 +123,7 @@ class FeedbackScreen extends Component {
     const { formObj } = this.state;
     const errorsObj = {};
     let errors = 0;
-    // 'feedback[department_id]'
+
     const requiredFields = ['feedback[name]', 'feedback[details]', 'feedback[feedback_type]', 'feedback[place_id]'];
     requiredFields.map((key) => {
       if (formObj[key]) {
@@ -280,7 +280,7 @@ class FeedbackScreen extends Component {
   }
 
   renderComponent() {
-    const { plantsList, errorCode } = this.props;
+    const { fetching, errorCode } = this.props;
     const { OS } = Platform;
     const { formObj, errorsObj, photos, imageLoading, documents } = this.state;
     if (errorCode) {
@@ -293,8 +293,8 @@ class FeedbackScreen extends Component {
           <View style={Styles.hTop}>
             <Icon name='comment' type="FontAwesome" style={Styles.hImg} />
             <View style={Styles.hContent}>
-              <Text style={Styles.hTopText}>Create Feedback</Text>
-              <Text style={Styles.hTopDesc}>Create Feedbacks and suggestions</Text>
+              <Text style={Styles.hTopText}>Request Appointment</Text>
+              <Text style={Styles.hTopDesc}>Request Appointments for Sunil Naik</Text>
             </View>
           </View>
           <View style={Styles.regForm}>
@@ -302,65 +302,91 @@ class FeedbackScreen extends Component {
               <View style={Styles.infoHeader}>
                 <Text style={Styles.infoHeaderText}>Details</Text>
               </View>
-              <View style={(errorsObj && errorsObj['feedback[name]']) ? Styles.fRowError : Styles.fRow}>
+              <View style={(errorsObj && errorsObj['appointment[event_name]']) ? Styles.fRowError : Styles.fRow}>
                 <TextInput
                   style={Styles.fInput}
-                  placeholder='Title/ವಿಷಯ'
+                  placeholder='Event Name'
                   placeholderTextColor='rgba(36,42,56,0.4)'
-                  onChangeText={(text) => this.onFormChange(text, 'feedback[name]')}
-                  value={formObj['feedback[name]']}
+                  onChangeText={(text) => this.onFormChange(text, 'appointment[event_name]')}
+                  value={formObj['appointment[event_name]']}
                 />
                 <Icon name='id-card' type="FontAwesome" style={Styles.fIcon} />
               </View>
-              <View style={(errorsObj && errorsObj['feedback[place_id]']) ? Styles.fSelectError : Styles.fSelect}>
-                <SearchableDropdown
-                  onTextChange={(text) => this.onPlantSearch(text)}
-                  onItemSelect={item => this.onFormChange(item, 'feedback[place_id]')}
-                  textInputStyle={(errorsObj && errorsObj['feedback[place_id]']) ? Styles.fSearchInputError : Styles.fSearchInput}
-                  containerStyle={Styles.fPicker}
-                  itemStyle={Styles.pickerItem}
-                  itemTextStyle={Styles.fSearchInput}
-                  items={plantsList}
-                  defaultIndex={0}
-                  placeholder="Select Place / ಸ್ಥಳವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ"
-                  resetValue
-                  underlineColorAndroid="transparent"
-                />
-                <Icon name='google-maps' type="MaterialCommunityIcons" style={Styles.fIcon} />
-              </View>
-              <View style={(errorsObj && errorsObj['feedback[feedback_type]']) ? Styles.fSelectError : Styles.fSelect}>
-                <View style={Styles.fPicker}>
-                  <Picker
-                    style={Styles.fPickerItem}
-                    textStyle={Styles.fInput}
-                    placeholder="Select ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ"
-                    placeholderStyle={Styles.placeholderStyle}
-                    selectedValue={formObj['feedback[feedback_type]']}
-                    onValueChange={(itemValue, itemIndex) =>
-                      this.onFormChange(itemValue, 'feedback[feedback_type]')
-                    }
-                  >
-                    {this.renderStatusesDropDown()}
-                  </Picker>
-                </View>
-                {
-                  OS === 'ios' ? <Icon name='arrow-down' type="FontAwesome" style={Styles.fIcon} /> : null
-                }
-              </View>
-
-              <View style={(errorsObj && errorsObj['feedback[details]']) ? Styles.fRowError : Styles.fRow}>
+              <View style={(errorsObj && errorsObj['appointment[org_name]']) ? Styles.fRowError : Styles.fRow}>
                 <TextInput
                   style={Styles.fInput}
-                  placeholder='Details/ವಿವರ'
+                  placeholder='Organisation Name'
                   placeholderTextColor='rgba(36,42,56,0.4)'
-                  onChangeText={(text) => this.onFormChange(text, 'feedback[details]')}
-                  numberOfLines={10}
-                  multiline
-                  value={formObj['feedback[details]']}
+                  onChangeText={(text) => this.onFormChange(text, 'appointment[org_name]')}
+                  value={formObj['appointment[org_name]']}
 
                 />
                 <Icon name='comment' type="FontAwesome" style={Styles.fIcon} />
               </View>
+              <View style={(errorsObj && errorsObj['appointment[venue]']) ? Styles.fRowError : Styles.fRow}>
+                <TextInput
+                  style={Styles.fInput}
+                  placeholder='Venue'
+                  placeholderTextColor='rgba(36,42,56,0.4)'
+                  onChangeText={(text) => this.onFormChange(text, 'appointment[venue]')}
+                  value={formObj['appointment[venue]']}
+                />
+                <Icon name='comment' type="FontAwesome" style={Styles.fIcon} />
+              </View>
+              <View style={(errorsObj && errorsObj['appointment[details]']) ? Styles.fRowError : Styles.fRow}>
+                <TextInput
+                  style={Styles.fInput}
+                  placeholder='Details'
+                  placeholderTextColor='rgba(36,42,56,0.4)'
+                  onChangeText={(text) => this.onFormChange(text, 'appointment[details]')}
+                  value={formObj['appointment[details]']}
+                  multiline
+                  numberOfLines={10}
+                />
+                <Icon name='comment' type="FontAwesome" style={Styles.fIcon} />
+              </View>
+              <View style={Styles.fRow}>
+                  <Icon name='calendar-today' type="MaterialCommunityIcons" style={Styles.fIcon} />
+                  <DatePicker
+                    defaultDate={new Date()}
+                    minimumDate={new Date()}
+                    locale={"en"}
+                    timeZoneOffsetInMinutes={undefined}
+                    modalTransparent={false}
+                    animationType={"fade"}
+                    androidMode={"spinner"}
+                    placeHolderText="Request Date"
+                    textStyle={Styles.fInput}
+                    placeHolderTextStyle={{ color: 'rgba(36,42,56,0.4)' }}
+                    onDateChange={(date) => this.onFormChange(date, 'appointment[req_date]')}
+                    disabled={fetching}
+                  />
+                  <Text style={Styles.fErrorLabel}>{errorsObj['appointment[req_date]']}</Text>
+                </View>
+              <View style={Styles.fRow}>
+                  <Icon name='calendar-today' type="MaterialCommunityIcons" style={Styles.fIcon} />
+                  <DatePicker
+                    defaultDate={new Date()}
+                    minimumDate={new Date()}
+                    locale={"en"}
+                    timeZoneOffsetInMinutes={undefined}
+                    modalTransparent={false}
+                    animationType={"fade"}
+                    androidMode={"spinner"}
+                    placeHolderText="Optional Date"
+                    textStyle={Styles.fInput}
+                    placeHolderTextStyle={{ color: 'rgba(36,42,56,0.4)' }}
+                    onDateChange={(date) => this.onFormChange(date, 'appointment[opt_date]')}
+                    disabled={fetching}
+                  />
+                  <Text style={Styles.fErrorLabel}>{errorsObj['appointment[opt_date]']}</Text>
+                </View>
+                <Button title="Show DatePicker" onPress={this.showDateTimePicker} />
+        <DateTimePicker
+          isVisible={this.state.isDateTimePickerVisible}
+          onConfirm={this.handleDatePicked}
+          onCancel={this.hideDateTimePicker}
+        />
             </View>
           </View>
 

@@ -301,3 +301,22 @@ export function* getPlacesListForSearch({ searchParam }) {
     yield put(LoginActions.getPreLoginPlacesListFail())
   }
 }
+
+export function* getPositionsList({ searchParam }) {
+  try {
+    const options = {
+      method: 'GET',
+    };
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}users/positions?app_token=${APP_TOKEN}`, options);
+    if (status >= 200 && status < 300) {
+      yield put(LoginActions.getPositionsListSuccess(body))
+    } else if (status === 401) {
+      yield put(NavigationActions.navigate({ routeName: 'Login' }))
+      yield put(ToastActionsCreators.displayWarning('Invalid Session Please Login'))
+    } else {
+      yield put(LoginActions.getPositionsListFail())
+    }
+  } catch (e) {
+    yield put(LoginActions.getPositionsListFail())
+  }
+}

@@ -30,8 +30,8 @@ class ForgotPassword extends Component {
     const errorObj = {};
     const regex = /^[6-9]\d{9}$/; //eslint-disable-line
     if (!regex.test(formObj['phone'])) {
-      this.props.errorToast("Enter Valid Phone Number'");
-      errorObj.phone = "Please Enter a valid Phone Number";
+      this.props.errorToast("ಮಾನ್ಯ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ");
+      errorObj.phone = "ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಫೋನ್ ಸಂಖ್ಯೆಯನ್ನು ನಮೂದಿಸಿ";
     } else {
       const phone = formObj['phone'];
       this.props.getOTPForNumber(phone)
@@ -96,8 +96,8 @@ class ForgotPassword extends Component {
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
               <Icon name='lock' type="MaterialCommunityIcons" style={Styles.hImg} />
-              <Text style={Styles.hTopText}>Forgot password?</Text>
-              <Text style={Styles.hTopDesc}>We just need your registered mobile number to reset password </Text>
+              <Text style={Styles.hTopText}>ಪಾಸ್ವರ್ಡ್ ಮರೆತಿರಾ?</Text>
+              <Text style={Styles.hTopDesc}>ಪಾಸ್ವರ್ಡ್ ಅನ್ನು ಮರುಹೊಂದಿಸಲು ನಿಮ್ಮ ನೋಂದಾಯಿತ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ನಮಗೆ ಅಗತ್ಯವಿದೆ </Text>
             </View>
             <View style={Styles.regForm}>
               <View style={Styles.infoBox}>
@@ -105,7 +105,7 @@ class ForgotPassword extends Component {
                   <Icon name='cellphone-android' type="MaterialCommunityIcons" style={Styles.fIcon} />
                   <TextInput
                     style={Styles.fInput}
-                    placeholder='Mobile Number'
+                    placeholder='ಮೊಬೈಲ್ ನಂಬರ'
                     placeholderTextColor='rgba(36,42,56,0.4)'
                     keyboardType={'phone-pad'}
                     onChangeText={(text) => this.onFormChange(text, 'phone')}
@@ -123,7 +123,7 @@ class ForgotPassword extends Component {
                       />
                       <TextInput
                         style={Styles.fInput}
-                        placeholder='OTP'
+                        placeholder='ಒಟಿಪಿ'
                         placeholderTextColor='rgba(36,42,56,0.4)'
                         keyboardType={'phone-pad'}
                         onChangeText={(text) => this.onFormChange(text, 'otp')}
@@ -140,7 +140,7 @@ class ForgotPassword extends Component {
                         style={Styles.fInput}
                         secureTextEntry={!showPassword}
                         textContentType="password"
-                        placeholder='New Password'
+                        placeholder='ಹೊಸ ಪಾಸ್‌ವರ್ಡ್'
                         placeholderTextColor='rgba(36,42,56,0.4)'
                         onChangeText={(text) => this.onFormChange(text, 'password')}
                         disabled={fetching}
@@ -160,7 +160,7 @@ class ForgotPassword extends Component {
                   otpStatus ?
                   <View style={Styles.account}>
                     <TouchableOpacity style={Styles.accountBtn} onPress={this.handleNextClick}>
-                      <Text style={Styles.accountBtnText}>Resend OTP</Text>
+                      <Text style={Styles.accountBtnText}>ಒಟಿಪಿಯನ್ನು ಮರುಹೊಂದಿಸಿ</Text>
                     </TouchableOpacity>
                   </View> : null
                 }
@@ -171,7 +171,7 @@ class ForgotPassword extends Component {
                       onPress={this.handleNextClick}
                       disabled={fetching}
                     >
-                    <Text style={Styles.fBtnText}>Get OTP</Text>
+                    <Text style={Styles.fBtnText}>ಒಟಿಪಿ ಪಡೆಯಿರಿ</Text>
                     <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
                   </TouchableOpacity>
                   : null
@@ -183,7 +183,7 @@ class ForgotPassword extends Component {
                       onPress={this.onFormSubmit}
                       disabled={fetching}
                     >
-                    <Text style={Styles.fBtnText}>Reset Password</Text>
+                    <Text style={Styles.fBtnText}>ಪಾಸ್ವರ್ಡ್ ಮರುಹೊಂದಿಸಿ</Text>
                     <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
                   </TouchableOpacity>
                   : null
@@ -195,7 +195,7 @@ class ForgotPassword extends Component {
                       onPress={this.handleNextClick}
                       disabled={fetching}
                     >
-                    <Text style={Styles.fBtnText}>Resend OTP</Text>
+                    <Text style={Styles.fBtnText}>ಒಟಿಪಿಯನ್ನು ಮರುಹೊಂದಿಸಿ</Text>
                     <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
                   </TouchableOpacity>
                   : null
@@ -204,9 +204,9 @@ class ForgotPassword extends Component {
             </View>
 
             <View style={Styles.account}>
-              <Text style={Styles.accountText}>Don't have an account?</Text>
+              <Text style={Styles.accountText}>ಖಾತೆ ಇಲ್ಲವೇ?</Text>
               <TouchableOpacity style={Styles.accountBtn} onPress={() => this.goToPage('RegisterScreen')}>
-                <Text style={Styles.accountBtnText}>Sign up now!</Text>
+                <Text style={Styles.accountBtnText}>ಸೈನ್ ಅಪ್ ಮಾಡಿ!</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -225,13 +225,11 @@ class ForgotPassword extends Component {
 }
 
 const mapStateToProps = (state) => {
-  console.log(state.login);
   return {
     otpStatus: state.login.getOtpStatus,
     fetching: state.login.fetching,
     resetPasswordError: state.login.resetPasswordError,
   }
-
 }
 
 const mapDispatchToProps = (dispatch) => {

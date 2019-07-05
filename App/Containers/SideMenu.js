@@ -19,41 +19,41 @@ import { Images } from '../Themes'
 export const Menulist = [
   /** Transporter **/
     {
-    name: 'Events',
-    icon: 'truck',
-    type: 'FontAwesome5',
+    name: 'ದಿನಂಪ್ರತಿ ಕಾರ್ಯಕ್ರಮಗಳು',
+    icon: 'calendar',
+    type: 'AntDesign',
     route: 'EventsListScreen'
   },
     {
-    name: 'Feedback',
+    name: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ',
     icon: 'envelope',
     type: 'SimpleLineIcons',
     route: 'FeedbackList'
   },
   {
-    name: 'Development Works',
+    name: 'ಅಭಿವೃಧ್ಧಿ ಕಾಮಗಾರಿ',
     icon: 'toolbox',
     type: 'FontAwesome5',
     route: 'DevelopmentWorksList'
   },
   {
-    name: 'Beneficiary Schemes',
+    name: 'ಫಲಾನುಭವಿಗಳು',
     icon: 'dashboard',
     type: 'Octicons',
     route: 'BeneficiaryListingScreen'
   },
   {
-    name: 'Profile',
+    name: 'ಪ್ರೊಫೈಲ್',
     icon: 'user',
     type: 'FontAwesome',
     route: 'UserSettings'
   },
-  // {
-  //   name: 'Settings',
-  //   icon: 'settings',
-  //   type: 'SimpleLineIcons',
-  //   route: 'TransporterSettings'
-  // }
+  {
+    name: 'ಸಮಯಾವಕಾಶ ಕೋರಿಕೆ',
+    icon: 'settings',
+    type: 'SimpleLineIcons',
+    route: 'AppointmentListScreen'
+  }
 ]
 import { connect } from 'react-redux'
 
@@ -137,14 +137,15 @@ class SideMenu extends Component {
             <View style={Styles.navMenu}>
               <ScrollView>
                 {this.renderMenuList(Menulist)}
+                <TouchableOpacity style={Styles.acceptBtn} onPress={this.onLogout}>
+                  <Text style={Styles.btnText}>ಲಾಗ್‌ ಔಟ</Text>
+                </TouchableOpacity>
               </ScrollView>
 
             </View>
 
           </View>
-          <TouchableOpacity style={Styles.acceptBtn} onPress={this.onLogout}>
-            <Text style={Styles.btnText}>Logout</Text>
-          </TouchableOpacity>
+
         </Content>
       </Container>
     )

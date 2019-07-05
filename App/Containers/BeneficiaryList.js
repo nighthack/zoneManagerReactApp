@@ -25,10 +25,6 @@ class BeneficiaryList extends Component {
     this.renderRow = this.renderRow.bind(this);
   }
 
-  componentDidMount() {
-    this.onTableFetchRequest(1);
-  }
-
   goToPage = (option) => {
     const { lastCalledPage } = this.props;
     if (option === 'next') {
@@ -62,18 +58,18 @@ class BeneficiaryList extends Component {
         <View style={Styles.tripItem}>
           <View style={Styles.truckInfo}>
             <View>
-              <Text style={Styles.infoLabel}>ಹೆಸರು/Name</Text>
+              <Text style={Styles.infoLabel}>ಹೆಸರು</Text>
               <Text style={Styles.truckData}>{item.beneficiary_name}</Text>
               <View>
                 <View>
-                  <Text style={Styles.infoLabel}>ಸ್ಥಳ/Place</Text>
+                  <Text style={Styles.infoLabel}>ಸ್ಥಳ</Text>
                 </View>
                 <View style={Styles.tripPlaces}>
                   <Icon name='map-marker' type="FontAwesome" style={Styles.tripIcon} />
                   <Text style={Styles.placeText}>{item.place}</Text>
                 </View>
                 <View>
-                  <Text style={Styles.infoLabel}>ಯೋಜನೆ/Scheme</Text>
+                  <Text style={Styles.infoLabel}>ಯೋಜನೆ</Text>
                   <Text style={Styles.truckData}>{item.scheme_type}</Text>
                 </View>
               </View>
@@ -81,17 +77,17 @@ class BeneficiaryList extends Component {
           </View>
           <View style={Styles.tripInfo}>
             <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginVertical: 5 }}>
-              <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ/Status </Text>
+              <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ </Text>
               <Text style={Styles.truckData}>{item.status}</Text>
             </View>
             <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginVertical: 5 }}>
-              <Text style={Styles.infoLabel}>ಮಂಜುರಿ ವಿವರ/Granted Relief</Text>
+              <Text style={Styles.infoLabel}>ಮಂಜುರಿ ವಿವರ</Text>
               <Text style={Styles.truckData}>{item.granted_relief}</Text>
             </View>
 
           </View>
           <View style={Styles.more}>
-            <Text style={Styles.postedOn}>Applied on: {item.application_date ? format(new Date(item.application_date), 'DD-MM-YYYY') : 'NA'}</Text>
+            <Text style={Styles.postedOn}>ಅರ್ಜಿ ದಿನಾಂಕ: {item.application_date ? format(new Date(item.application_date), 'DD-MM-YYYY') : 'NA'}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -115,8 +111,8 @@ class BeneficiaryList extends Component {
               <TouchableOpacity style={Styles.hContent} onPress={() => {
                 this.goToPage('first')
               }}>
-                <Text style={Styles.hTopText}>Beneficiary Schemes</Text>
-                <Text style={Styles.hTopDesc}>View all the beneficiary schemes</Text>
+                <Text style={Styles.hTopText}>ಫಲಾನುಭವಿಗಳು</Text>
+                <Text style={Styles.hTopDesc}>ಎಲ್ಲಾ ಫಲಾನುಭವಿ ಯೋಜನೆಗಳನ್ನು ವೀಕ್ಷಿಸಿ</Text>
               </TouchableOpacity>
             </View>
             <FlatList
@@ -145,6 +141,9 @@ class BeneficiaryList extends Component {
     const { fetching } = this.props;
     return (
       <Container>
+        <NavigationEvents
+					onDidFocus={() => this.goToPage('first')}
+				/>
         <HeaderComponent title={''} {...this.props} />
         {this.renderContent()}
         <LoadingOverlay

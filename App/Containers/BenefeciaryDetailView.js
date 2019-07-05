@@ -45,30 +45,30 @@ class BenefeciaryDetailView extends Component {
               <View style={Styles.hContent}>
                 <Text style={[Styles.infoLabel, { color: '#FFD328' }]}>{data.place}</Text>
               </View>
-              <Text style={Styles.hTopDesc}>Applied on: {data.application_date ? format(new Date(data.application_date), 'DD-MM-YYYY') : 'NA'}</Text>
+              <Text style={Styles.hTopDesc}>ಅರ್ಜಿ ದಿನಾಂಕ: {data.application_date ? format(new Date(data.application_date), 'DD-MM-YYYY') : 'NA'}</Text>
             </View>
 
           </View>
           <View style={[Styles.tripItem, Styles.marginTopSmall]}>
             <View style={[Styles.truckInfo, { flexDirection: 'column' }]}>
               <View>
-                <Text style={Styles.infoLabel}>ಯೋಜನೆ/Scheme</Text>
+                <Text style={Styles.infoLabel}>ಯೋಜನೆ</Text>
                 <Text style={Styles.truckData}>{data.scheme_type}</Text>
               </View>
               <View>
-                <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ/Status</Text>
+                <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ</Text>
                 <Text style={Styles.truckData}>{data.status}</Text>
               </View>
             </View>
             <View style={Styles.truckInfo}>
               <View>
-                <Text style={Styles.infoLabel}>ಮಂಜುರಿ ವಿವರ/Granted Relief</Text>
+                <Text style={Styles.infoLabel}>ಮಂಜುರಿ ವಿವರ</Text>
                 <Text style={Styles.truckData}>{data.granted_relief}</Text>
               </View>
             </View>
             <View style={Styles.msgBox}>
-              <Text style={Styles.infoLabel}>ಷರಾ/Remarks</Text>
-              <Text style={Styles.msgText}>{data.remarks || 'No Remarks'}</Text>
+              <Text style={Styles.infoLabel}>ಷರಾ</Text>
+              <Text style={Styles.msgText}>{data.remarks || 'ಯಾವುದೇ ಟೀಕೆಗಳಿಲ್ಲ'}</Text>
             </View>
           </View>
         </View>
@@ -83,29 +83,24 @@ class BenefeciaryDetailView extends Component {
   render() {
 
     const { data, navigation, fetching } = this.props;
-    const parentProps = navigation.getParam('selectedData', null);
-    if (parentProps && data && (parentProps.id !== data.id)) {
-      const { fetching } = this.props;
-      AsyncStorage.getItem('accessToken').then((accessToken) => {
-        if (!fetching) {
-          this.props.getDetailsForSelection(accessToken, parentProps.id);
-        }
-      });
-    }
     return (
       <Container>
+        <NavigationEvents
+          onDidFocus={() => this.refreshPage()}
+        />
+
         <Header style={Styles.navigation}>
           <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
           <View style={Styles.nav}>
             <View style={Styles.navLeft}>
               <TouchableOpacity style={Styles.navLeft} onPress={() => {
-                navigation.navigate("Home")
+                navigation.navigate("BeneficiaryListingScreen")
               }}>
                 <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
               </TouchableOpacity>
             </View>
             <View style={Styles.navMiddle}>
-              <Text style={Styles.logo}>Beneficiary Details</Text>
+              <Text style={Styles.logo}>ಫಲಾನುಭವಿ ವಿವರಗಳು</Text>
             </View>
             <View style={Styles.navRight} />
           </View>

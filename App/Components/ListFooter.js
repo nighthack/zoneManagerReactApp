@@ -23,7 +23,7 @@ export default class ListFooter extends Component {
           <TouchableOpacity style={[styles.smnBtn, { backgroundColor: '#ffd328' }]} onPress={() => {
             refreshPage()
           }}>
-            <Text style={[styles.smnText, { color: '#393f4a', fontWeight: 'bold', fontSize: 14 }]}>Page {currentPage}</Text>
+            <Text style={[styles.smnText, { color: '#393f4a', fontWeight: 'bold', fontSize: 14 }]}>ಪುಟ {currentPage}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={data.length < 10 ? [styles.smnBtn, { opacity: 0.3 }] : styles.smnBtn}

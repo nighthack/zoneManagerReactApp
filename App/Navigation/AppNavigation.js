@@ -1,4 +1,4 @@
-import { createStackNavigator, createAppContainer, createSwitchNavigator, createDrawerNavigator } from 'react-navigation'
+import { createStackNavigator, createAppContainer, createSwitchNavigator, createDrawerNavigator, createBottomTabNavigator } from 'react-navigation'
 
 import RegisterScreen from '../Containers/Register';
 import LaunchScreen from '../Containers/LaunchScreen';
@@ -26,6 +26,11 @@ import EventDetailScreen from '../Containers/EventDetail';
 import FeedbackScreen from '../Containers/FeedbackScreen';
 import FeedbackList from '../Containers/FeedbackList';
 import FeedbackDetailScreen from '../Containers/FeedbackDetail';
+
+// Appointment Screen
+import CreateAppointmentScreen from '../Containers/AppointmentCreateScreen';
+import AppointmentListScreen from '../Containers/AppointmentsList';
+// import FeedbackDetailScreen from '../Containers/FeedbackDetail';
 
 import UserSettings from '../Containers/UserSettings';
 
@@ -72,6 +77,12 @@ const MyDrawerNavigator = createDrawerNavigator({
   Notifications: {
     screen: LaunchScreen,
   },
+  AppointmentListScreen: {
+    screen: AppointmentListScreen,
+  },
+  CreateAppointmentScreen: {
+    screen: CreateAppointmentScreen,
+  }
 },
   {
     contentComponent: DrawerComponent

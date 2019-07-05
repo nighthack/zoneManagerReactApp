@@ -32,12 +32,6 @@ export default StyleSheet.create({
     justifyContent: 'center',
     marginLeft: 10
   },
-  hTopText: {
-    fontSize: 20,
-    // 
-    color: '#FFF',
-    marginBottom: 5
-  },
   hTopDesc: {
     fontSize: 11,
     // 
@@ -136,7 +130,7 @@ export default StyleSheet.create({
   tripPlaces: {
     flex: 5,
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   tripIcon: {
     fontSize: 12,

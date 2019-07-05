@@ -1,4 +1,4 @@
-import { takeLatest, all } from 'redux-saga/effects'
+import { takeLatest, all, take } from 'redux-saga/effects'
 import API from '../Services/Api'
 import FixtureAPI from '../Services/FixtureApi'
 import DebugConfig from '../Config/DebugConfig'
@@ -11,6 +11,7 @@ import { BeneficiaryTypes } from '../Redux/BeneficiaryRedux'
 import { DevWorkTypes } from '../Redux/DevelopmentWorkRedux';
 import { EventTypes } from '../Redux/EventRedux';
 import { FeedbackTypes } from '../Redux/FeedbackRedux';
+import { AppointmentTypes } from '../Redux/AppointmentRedux';
 import { ModuleTypes } from '../Redux/ModuleRedux';
 /* ------------- Sagas ------------- */
 
@@ -24,12 +25,14 @@ import {
     onResetPasswordAction, 
     onVerifyUser,
     getPlacesListForSearch,
+    getPositionsList,
 } from './LoginSaga'
 import { getUserDetails } from './RootSagas';
 import { getBeneficiaryList, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevWorksList, getDevWorkDetails } from './DevelopmentWorkSagas'
 import { getEventsList, getEventDetails } from './EventSagas';
 import { getPlacesListForSearchParam, getDepartmentsList, getFeedbackList, getFeedbackDetails, createFeedback } from './FeedbackSagas';
+import { getAppointmentsList, getAppointmentDetails } from './appointmentSagas';
 // import { getModuleList, getModuleDetails } from './ModuleSagas';
 // import { getAllPositions,  } from './VerifiedSignUpSagas'
 
@@ -52,6 +55,7 @@ export default function* root() {
     takeLatest(LoginTypes.LOGOUT_REQUEST, onLogout),
     takeLatest(LoginTypes.RESET_PASSWORD_REQUEST, onResetPasswordAction),
     takeLatest(LoginTypes.VERIFY_USER, onVerifyUser),
+    takeLatest(LoginTypes.GET_POSITIONS_LIST, getPositionsList),
     takeLatest(LoginTypes.GET_PRE_LOGIN_PLACES_LIST, getPlacesListForSearch),
     
     // Root Redux
@@ -71,7 +75,9 @@ export default function* root() {
     takeLatest(FeedbackTypes.FEEDBACK_ON_DETAIL_REQUEST,getFeedbackDetails),
     takeLatest(FeedbackTypes.CREATE_FEEDBACK, createFeedback),
     
-    
+    // // Appointment Module
+    takeLatest(AppointmentTypes.APPOINTMENT_ON_LIST_REQUEST, getAppointmentsList),
+    takeLatest(AppointmentTypes.APPOINTMENT_ON_DETAIL_REQUEST, getAppointmentDetails),
     // Events
     takeLatest(EventTypes.EVENT_ON_LIST_REQUEST, getEventsList),
     takeLatest(EventTypes.EVENT_ON_DETAIL_REQUEST, getEventDetails),

@@ -37,11 +37,11 @@ class DevelopmentWorkDetail extends Component {
           <View style={[Styles.tripItem, Styles.marginTopSmall]}>
             <View style={[Styles.truckInfo, { flexDirection: 'column'}]}>
             <View>
-                <Text style={Styles.infoLabel}>ವಿವರಗಳು/Details</Text>
+                <Text style={Styles.infoLabel}>ವಿವರಗಳು</Text>
                 <Text style={Styles.truckData}>{data.desc}</Text>
               </View>
               <View>
-                <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ/Status</Text>
+                <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ</Text>
                 <Text style={Styles.truckData}>{data.status}</Text>
               </View>
             </View>
@@ -53,7 +53,7 @@ class DevelopmentWorkDetail extends Component {
                 type="FontAwesome"
                 style={Styles.tripIcon}
               />
-              <Text style={Styles.placeText}>ಅಡಿಗಲ್ಲು ದಿನಾಂಕ / Foundation date</Text>
+              <Text style={Styles.placeText}>ಅಡಿಗಲ್ಲು ದಿನಾಂಕ</Text>
             </View>
             <View style={[Styles.tripPlaces, { flex: 2 }]}>
               <Icon
@@ -72,7 +72,7 @@ class DevelopmentWorkDetail extends Component {
                 type="FontAwesome"
                 style={Styles.tripIcon}
               />
-              <Text style={Styles.placeText}>ಉದ್ಘಾಟನೆ ದಿನಾಂಕ/Inauguration Date</Text>
+              <Text style={Styles.placeText}>ಉದ್ಘಾಟನೆ ದಿನಾಂಕ</Text>
             </View>
             <View style={[Styles.tripPlaces, { flex: 2 }]}>
               <Icon
@@ -86,13 +86,13 @@ class DevelopmentWorkDetail extends Component {
         </View>
             <View style={Styles.truckInfo}>
               <View>
-                <Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
+                <Text style={Styles.infoLabel}>ಇಲಾಖೆ</Text>
                 <Text style={Styles.truckData}>{data.department}</Text>
               </View>
             </View>
             <View style={Styles.msgBox}>
-              <Text style={Styles.infoLabel}>ಷರಾ/Remarks</Text>
-              <Text style={Styles.msgText}>{data.remarks || 'No Remarks'}</Text>
+              <Text style={Styles.infoLabel}>ಷರಾ</Text>
+              <Text style={Styles.msgText}>{data.remarks || 'ಯಾವುದೇ ಟೀಕೆಗಳಿಲ್ಲ'}</Text>
             </View>
           </View>
         </View>

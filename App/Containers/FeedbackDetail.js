@@ -43,37 +43,37 @@ class FeedbackDetailView extends Component {
               <View style={Styles.hContent}>
                 <Text style={[Styles.infoLabel, { color: '#FFD328' }]}>{data.place}</Text>
               </View>
-              <Text style={Styles.hTopDesc}>Created on: {data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA'}</Text>
+              <Text style={Styles.hTopDesc}>ಸೃಷ್ಟಿಯ ದಿನಾಂಕ: {data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA'}</Text>
             </View>
 
           </View>
           <View style={[Styles.tripItem, Styles.marginTopSmall]}>
             <View style={[Styles.truckInfo, { flexDirection: 'column' }]}>
               <View>
-                <Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
+                <Text style={Styles.infoLabel}>ಇಲಾಖೆ</Text>
                 <Text style={Styles.truckData}>{data.department}</Text>
               </View>
               <View>
-                <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ/Status</Text>
+                <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ</Text>
                 <Text style={Styles.truckData}>{data.status}</Text>
               </View>
               <View>
-                <Text style={Styles.infoLabel}> Type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ</Text>
+                <Text style={Styles.infoLabel}> ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ</Text>
                 <Text style={Styles.truckData}>{data.feedback_type}</Text>
               </View>
             </View>
             <View style={Styles.truckInfo}>
               <View>
-                <Text style={Styles.infoLabel}>ಕ್ರಿಯೆ/Action</Text>
+                <Text style={Styles.infoLabel}>ಕ್ರಿಯೆ</Text>
                 <Text style={Styles.truckData}>{data.action_taken || 'NA'}</Text>
               </View>
             </View>
             <View style={Styles.msgBox}>
-              <Text style={Styles.infoLabel}>ಷರಾ/Remarks</Text>
-              <Text style={Styles.truckData}>{data.remarks || 'No Remarks'}</Text>
+              <Text style={Styles.infoLabel}>ಷರಾ</Text>
+              <Text style={Styles.truckData}>{data.remarks || 'ಯಾವುದೇ ಟೀಕೆಗಳಿಲ್ಲ'}</Text>
             </View>
             <View style={[Styles.msgBox, { paddingVertical: 4 }]}>
-                <Text style={Styles.postedOn}>Last Updated at: {data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
+                <Text style={Styles.postedOn}>ಕೊನೆಯ ನವೀಕರಿಸಿದ ದಿನಾಂಕ: {data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
               </View>
           </View>
         </View>

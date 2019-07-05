@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { format } from 'date-fns';
 import { Images } from '../Themes/'
 import HeaderComponent from '../Components/HeaderComponent'
-import Spinner from 'react-native-loading-spinner-overlay';
+import { NavigationEvents } from 'react-navigation';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import EventActions from '../Redux/EventRedux'
@@ -21,10 +21,6 @@ class EventsList extends Component {
   constructor(props) {
     super(props);
     this.renderRow = this.renderRow.bind(this);
-  }
-
-  componentDidMount() {
-    this.onTableFetchRequest(1);
   }
 
   goToPage = (option) => {
@@ -103,8 +99,7 @@ class EventsList extends Component {
                 <TouchableOpacity style={Styles.hContent} onPress={() => {
                   this.goToPage('first')
                 }}>
-                  <Text style={Styles.hTopText}>Events</Text>
-                  <Text style={Styles.hTopDesc}>List of All Public Meetings and Events of our MLA</Text>
+                  <Text style={Styles.hTopText}>ಮುಂದಿನ ಕಾರ್ಯಕ್ರಮಗಳು</Text>
                 </TouchableOpacity>
               </View>
               <FlatList
@@ -134,7 +129,10 @@ class EventsList extends Component {
     const { fetching } = this.props;
     return (
       <Container>
-        <HeaderComponent title={"Events"} {...this.props} />
+        <NavigationEvents
+					onDidFocus={() => this.goToPage('first')}
+				/>
+        <HeaderComponent title={""} {...this.props} />
         {this.renderContent()}
       </Container>
 

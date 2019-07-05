@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Images } from '../Themes/'
+import { Images } from '../Themes'
 import { AsyncStorage, TouchableOpacity, Image, FlatList  } from 'react-native'
 import { Container,  Content,  Icon, Text, View } from 'native-base'
 import { format } from 'date-fns';
@@ -8,7 +8,7 @@ import HeaderComponent from '../Components/HeaderComponent'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
-import FeedbackActions from '../Redux/FeedbackRedux';
+import AppointmentActions from '../Redux/AppointmentRedux';
 import Styles from './Styles/BenefeciaryDetailViewStyle';
 import { NavigationEvents } from 'react-navigation';
 
@@ -17,15 +17,11 @@ function randomString(length, chars) {
 	for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
 	return result;
 }
-class FeedbackList extends Component {
-
-	componentDidMount() {
-		this.onTableFetchRequest(1);
-	}
+class AppointmentList extends Component {
 
 	onTableFetchRequest = (pageNo) => {
 		AsyncStorage.getItem('accessToken').then((accessToken) => {
-			this.props.getFeedbackList(accessToken, pageNo);
+			this.props.getAppointmentsList(accessToken, pageNo);
 		});
 	}
 
@@ -55,10 +51,7 @@ class FeedbackList extends Component {
 		return (
 			<View style={{ flex: 1 }}>
 				<NavigationEvents
-					onWillFocus={payload => console.log('will focus', payload)}
-					onDidFocus={payload => console.log('did focus', payload)}
-					onWillBlur={payload => console.log('will blur', payload)}
-					onDidBlur={payload => console.log('did blur', payload)}
+					onDidFocus={() => this.goToPage('first')}
 				/>
 				<Content
 					contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
@@ -70,15 +63,14 @@ class FeedbackList extends Component {
 							<TouchableOpacity style={Styles.hContent} onPress={() => {
 								this.goToPage('first')
 							}}>
-								<Text style={Styles.hTopText}>ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ</Text>
-								<Text style={Styles.hTopDesc}>ಎಲ್ಲಾ ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ ವೀಕ್ಷಿಸಿ</Text>
+								<Text style={Styles.hTopText}>Appointments</Text>
 							</TouchableOpacity>
 						</View>
 						<View style={[Styles.decisionBox, { paddingHorizontal: 15 }]}>
 							<TouchableOpacity style={Styles.acceptBtn} onPress={() => {
-								navigation.navigate("FeedbackScreen")
+								navigation.navigate("CreateAppointmentScreen")
 							}}>
-								<Text style={Styles.btnText}>ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ ನೀಡಿ</Text>
+								<Text style={Styles.btnText}>Request Appointment</Text>
 							</TouchableOpacity>
 						</View>
 
@@ -144,7 +136,7 @@ class FeedbackList extends Component {
 	}
 
 	render() {
-		const { fetching } = this.props;
+    const { fetching } = this.props;
 		return (
 			<Container>
 				<HeaderComponent title={''} {...this.props} />
@@ -163,37 +155,18 @@ class FeedbackList extends Component {
 
 const mapStateToProps = (state) => {
 	return {
-		data: state.feedback.listData,
-		fetching: state.feedback.fetching,
-		currentPage: state.feedback.lastCalledPage,
-		listError: state.feedback.listError,
+		data: state.appointment.listData,
+		fetching: state.appointment.fetching,
+		currentPage: state.appointment.lastCalledPage,
+		listError: state.appointment.listError,
 	}
 }
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		getFeedbackList: (accessToken, pageNo) =>
-			dispatch(FeedbackActions.feedbackOnListRequest(accessToken, pageNo))
+		getAppointmentsList: (accessToken, pageNo) =>
+			dispatch(AppointmentActions.appointmentOnListRequest(accessToken, pageNo))
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(FeedbackList)
-
-
-// onPress={() => {
-// 											navigation.navigate("FeedbackDetailScreen", { selectedItem: item })
-// 										}}
-
-
-
-
-
-// {/* <View>
-// 											<Text style={Styles.infoLabel}>ವಿಷಯ</Text>
-// 											<Text style={Styles.truckData}>{item.name}</Text>
-// 										</View>
-// 										<View>
-// 											<Text style={Styles.infoLabel}>ಇಲಾಖೆ</Text>
-// 											<Text style={Styles.truckData}>{item.department}</Text>
-// 										</View>
-// 										 */}
+export default connect(mapStateToProps, mapDispatchToProps)(AppointmentList)

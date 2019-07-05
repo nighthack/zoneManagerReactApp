@@ -286,7 +286,6 @@ const ApplicationStyles = {
   },
   editText: {
     fontSize: 10,
-    // fontFamily: 'Montserrat-Regular',
     paddingHorizontal: 5,
     color: 'rgba(36,42,56,0.9)'
   },
@@ -298,19 +297,17 @@ const ApplicationStyles = {
   },
   msgText: {
     fontSize: 11,
-    // fontFamily: 'Montserrat-Regular',
     color: 'rgba(36,42,56,0.7)',
     lineHeight: 16
   },
-    hTopText: {
+  hTopText: {
     fontSize: 20,
-     
     color: '#FFF',
-    marginBottom: 10
+    marginBottom: 5,
+    width: '95%',
   },
   hTopDesc: {
     fontSize: 12,
-     
     color: 'rgba(255,255,255,0.6)',
     marginBottom: 10
   },

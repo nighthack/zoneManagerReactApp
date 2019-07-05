@@ -3,6 +3,7 @@ import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBack
 import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
 import { connect } from "react-redux";
 import { format } from 'date-fns';
+import { NavigationEvents } from 'react-navigation';
 import HeaderComponent from "../Components/HeaderComponent";
 import DevelopmentWorksActions from "../Redux/DevelopmentWorkRedux";
 import LoadingOverlay from '../Components/LoadingOverlay';
@@ -26,10 +27,6 @@ class DevelopmentWorksList extends Component {
     this.renderRow = this.renderRow.bind(this);
   }
 
-
-  componentDidMount() {
-    this.onTableFetchRequest(1);
-  }
   goToPage = (option) => {
     const { lastCalledPage } = this.props;
     if (option === 'next') {
@@ -38,7 +35,7 @@ class DevelopmentWorksList extends Component {
       this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
     } else if (option === 'first') {
       this.onTableFetchRequest(1);
-    } else if(option === 'refresh') {
+    } else if (option === 'refresh') {
       this.onTableFetchRequest(lastCalledPage);
     }
   }
@@ -64,23 +61,23 @@ class DevelopmentWorksList extends Component {
     return (
       <TouchableOpacity onPress={() => this.goToDetailView(item)}>
         <View style={Styles.tripItem}>
-          <View style={[Styles.truckInfo, { flexDirection: 'column'}]}>
+          <View style={[Styles.truckInfo, { flexDirection: 'column' }]}>
             <View>
-              <Text style={Styles.infoLabel}> ಸ್ಥಳ/Place</Text>
+              <Text style={Styles.infoLabel}> ಸ್ಥಳ</Text>
               <Text style={Styles.truckData}>{item.place}</Text>
             </View>
             <View>
-              <Text style={Styles.infoLabel}>ಕಾಮಗಾರಿ/Work</Text>
+              <Text style={Styles.infoLabel}>ಕಾಮಗಾರಿ</Text>
               <Text style={Styles.truckTrip}>{item.name}</Text>
             </View>
             <View>
-              <Text style={Styles.infoLabel}>ವಿವರಗಳು/Details</Text>
+              <Text style={Styles.infoLabel}>ವಿವರಗಳು</Text>
               <Text style={Styles.truckTrip}>{item.desc}</Text>
             </View>
           </View>
           <View style={Styles.tripInfo}>
             <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-              <Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
+              <Text style={Styles.infoLabel}>ಇಲಾಖೆ</Text>
               <Text style={Styles.truckData}>{item.department}</Text>
             </View>
             <View style={[Styles.rowSpaceAlignment, { marginTop: 10 }]}>
@@ -90,7 +87,7 @@ class DevelopmentWorksList extends Component {
                   type="FontAwesome"
                   style={Styles.tripIcon}
                 />
-                <Text style={Styles.placeText}>ಮಂಜೂರಾದ ಮೊತ್ತ / Sanctioned</Text>
+                <Text style={Styles.placeText}>ಮಂಜೂರಾದ ಮೊತ್ತ</Text>
               </View>
               <View style={[Styles.tripPlaces, { flex: 2 }]}>
                 <Icon
@@ -110,9 +107,9 @@ class DevelopmentWorksList extends Component {
                   type="FontAwesome"
                   style={Styles.tripIcon}
                 />
-                <Text style={Styles.placeText}>ಅಡಿಗಲ್ಲು ದಿನಾಂಕ / Foundation date</Text>
+                <Text style={Styles.placeText}>ಅಡಿಗಲ್ಲು ದಿನಾಂಕ</Text>
               </View>
-              <View style={[Styles.tripPlaces, { flex: 2 }]}>
+              <View style={[Styles.tripPlaces, { justifyContent: 'flex-end'}]}>
                 <Icon
                   name="calendar-clock"
                   type="MaterialCommunityIcons"
@@ -121,17 +118,16 @@ class DevelopmentWorksList extends Component {
                 <Text style={Styles.placeText}>{item.foundation_date || 'NA'}</Text>
               </View>
             </View>
-            <Text style={Styles.lineTracker}>|</Text>
-            <View style={Styles.rowSpaceAlignment}>
+            <View style={[Styles.rowSpaceAlignment, {  justifyContent: 'space-around'}]}>
               <View style={Styles.tripPlaces}>
                 <Icon
                   name="circle-o"
                   type="FontAwesome"
                   style={Styles.tripIcon}
                 />
-                <Text style={Styles.placeText}>ಉದ್ಘಾಟನೆ ದಿನಾಂಕ/Inauguration Date</Text>
+                <Text style={Styles.placeText}>ಉದ್ಘಾಟನೆ ದಿನಾಂಕ</Text>
               </View>
-              <View style={[Styles.tripPlaces, { flex: 2 }]}>
+              <View style={[Styles.tripPlaces, { justifyContent: 'flex-end'}]}>
                 <Icon
                   name="calendar-clock"
                   type="MaterialCommunityIcons"
@@ -142,7 +138,7 @@ class DevelopmentWorksList extends Component {
             </View>
           </View>
           <View style={Styles.more}>
-            <Text style={Styles.postedOn}>Last Updated at: {item.updated_at ? format(new Date(item.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
+            <Text style={Styles.postedOn}>ಕೊನೆಯ ನವೀಕರಿಸಿದ ದಿನಾಂಕ: {item.updated_at ? format(new Date(item.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -186,7 +182,7 @@ class DevelopmentWorksList extends Component {
             goToFirstPage={() => this.goToPage('first')}
             goToNextPage={() => this.goToPage('next')}
             goToPrevPage={() => this.goToPage('prev')}
-            refreshPage={()=> this.goToPage('refresh')}
+            refreshPage={() => this.goToPage('refresh')}
             data={data}
             currentPage={lastCalledPage}
           />
@@ -198,6 +194,9 @@ class DevelopmentWorksList extends Component {
     const { data, fetching } = this.props;
     return (
       <Container>
+        <NavigationEvents
+          onDidFocus={() => this.goToPage('first')}
+        />
         <HeaderComponent title={''} {...this.props} />
         {this.renderContent()}
         <LoadingOverlay

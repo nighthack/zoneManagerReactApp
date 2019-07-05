@@ -7,6 +7,7 @@ import { Images } from '../Themes/'
 import ErrorPage from '../Components/NetworkErrorScreen';
 import LoadingOverlay from '../Components/LoadingOverlay';
 import ImageViewerComponent from '../Components/ImageViewer';
+import { NavigationEvents } from 'react-navigation';
 // import EventActions from '../Redux/EventRedux'
 import EventActions from '../Redux/EventRedux'
 // Styles
@@ -25,6 +26,7 @@ class EventDetail extends Component {
       });
     }
   }
+
   renderContent() {
     const { data, detailError } = this.props;
     if (detailError) {
@@ -60,11 +62,11 @@ class EventDetail extends Component {
               </View>
 
               <View style={Styles.msgBox}>
-                <Text style={[Styles.placeText, { marginBottom: 10 }]}>ವಿವರಗಳು/Details</Text>
+                <Text style={[Styles.placeText, { marginBottom: 10 }]}>ವಿವರಗಳು</Text>
                 <Text style={Styles.msgText}>{data.details}</Text>
               </View>
               <View style={Styles.msgBox}>
-                <Text style={[Styles.placeText, { marginBottom: 10 }]}>ಷರಾ/Remarks</Text>
+                <Text style={[Styles.placeText, { marginBottom: 10 }]}>ಷರಾ</Text>
                 <Text style={Styles.msgText}>{data.remarks}</Text>
               </View>
               <View style={Styles.orderDetails}>
@@ -100,18 +102,12 @@ class EventDetail extends Component {
     )
   }
   render() {
-    const { data, navigation, fetching } = this.props;
-    const parentProps = navigation.getParam('selectedData', null);
-    if (parentProps && data && (parentProps.id !== data.id)) {
-      const { fetching } = this.props;
-      AsyncStorage.getItem('accessToken').then((accessToken) => {
-        if (!fetching) {
-          this.props.getDetailsForSelection(accessToken, parentProps.id);
-        }
-      });
-    }
+    const { fetching } = this.props;
     return (
       <Container>
+        <NavigationEvents
+					onDidFocus={() => this.refreshPage()}
+				/>
         {this.renderHeader()}
         {this.renderContent()}
         <LoadingOverlay
