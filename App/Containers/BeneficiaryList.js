@@ -10,7 +10,8 @@ import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import { NavigationEvents } from 'react-navigation';
 import { Images } from '../Themes/'
-import Styles from './Styles/BenefeciaryDetailViewStyle'
+import Styles from './Styles/BenefeciaryDetailViewStyle';
+import ListCardComponent from '../Components/ListCardComponent';
 
 
 function randomString(length, chars) {
@@ -19,12 +20,7 @@ function randomString(length, chars) {
   return result;
 }
 class BeneficiaryList extends Component {
-
-  constructor(props) {
-    super(props);
-    this.renderRow = this.renderRow.bind(this);
-  }
-
+  
   goToPage = (option) => {
     const { lastCalledPage } = this.props;
     if (option === 'next') {
@@ -52,45 +48,22 @@ class BeneficiaryList extends Component {
     navigate('BenfeciaryDetail', { selectedData });
   }
 
-  renderRow({ item, index }) {
-    return (
-      <TouchableOpacity onPress={() => this.goToBeneficiaryDetailView(item)}>
-        <View style={Styles.tripItem}>
-          <View style={Styles.truckInfo}>
-            <View>
-              <Text style={Styles.infoLabel}>ಹೆಸರು</Text>
-              <Text style={Styles.truckData}>{item.beneficiary_name}</Text>
-              <View>
-                <View>
-                  <Text style={Styles.infoLabel}>ಸ್ಥಳ</Text>
-                </View>
-                <View style={Styles.tripPlaces}>
-                  <Icon name='map-marker' type="FontAwesome" style={Styles.tripIcon} />
-                  <Text style={Styles.placeText}>{item.place}</Text>
-                </View>
-                <View>
-                  <Text style={Styles.infoLabel}>ಯೋಜನೆ</Text>
-                  <Text style={Styles.truckData}>{item.scheme_type}</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-          <View style={Styles.tripInfo}>
-            <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginVertical: 5 }}>
-              <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ </Text>
-              <Text style={Styles.truckData}>{item.status}</Text>
-            </View>
-            <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginVertical: 5 }}>
-              <Text style={Styles.infoLabel}>ಮಂಜುರಿ ವಿವರ</Text>
-              <Text style={Styles.truckData}>{item.granted_relief}</Text>
-            </View>
-
-          </View>
-          <View style={Styles.more}>
-            <Text style={Styles.postedOn}>ಅರ್ಜಿ ದಿನಾಂಕ: {item.application_date ? format(new Date(item.application_date), 'DD-MM-YYYY') : 'NA'}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
+  formatData(data) {
+    return(
+      {
+        title: data.beneficiary_name,
+        image: data.image,
+        subTitle: data.scheme_type,
+        desc: data.granted_relief,
+        createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+        lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+        metaData: [ 
+          {title: 'ಸ್ಥಳ', description: data.place},
+          {title: 'ಅರ್ಜಿ ದಿನಾಂಕ', description: data.application_date},
+          {title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status},
+          {title: 'ಷರಾ', description: data.remarks},
+        ]
+      }
     )
   }
 
@@ -120,7 +93,13 @@ class BeneficiaryList extends Component {
               contentContainerStyle={Styles.listContent}
               keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
               data={data}
-              renderItem={this.renderRow}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => this.goToDetailView(item)}>
+                  <ListCardComponent
+                    {...this.formatData(item)}
+                  />
+                </TouchableOpacity>
+              )}
               removeClippedSubview
             />
           </View>

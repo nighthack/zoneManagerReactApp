@@ -38,11 +38,13 @@ import UserSettings from '../Containers/UserSettings';
 import DevelopmentWorksList from '../Containers/DevelopmentWorksList'
 import DevelopmentWorkDetail from '../Containers/DevelopmentWorkDetail'
 
+import HomeScreen from '../Containers/HomeScreen';
+
 import DrawerComponent from '../Containers/SideMenu';
 
 const MyDrawerNavigator = createDrawerNavigator({
   Home: {
-    screen: EventsListScreen,
+    screen: HomeScreen,
   },
   BeneficiaryListingScreen: {
     screen: BeneficiaryListingScreen,

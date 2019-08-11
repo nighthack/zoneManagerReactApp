@@ -10,6 +10,7 @@ import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import EventActions from '../Redux/EventRedux'
 import Styles from './Styles/EventsListStyle'
+import ListCardComponent from '../Components/ListCardComponent';
 
 function randomString(length, chars) {
   var result = '';
@@ -17,11 +18,6 @@ function randomString(length, chars) {
   return result;
 }
 class EventsList extends Component {
-
-  constructor(props) {
-    super(props);
-    this.renderRow = this.renderRow.bind(this);
-  }
 
   goToPage = (option) => {
     const { lastCalledPage } = this.props;
@@ -50,38 +46,23 @@ class EventsList extends Component {
     navigate("EventDetailScreen", { selectedData });
   }
 
-  renderRow = ({ item, index }) => {
-    return (
-      <TouchableOpacity onPress={() => this.goToDetailView(item)}>
-        <View style={Styles.bookingItem}>
-          <View style={Styles.tripTo}>
-            <Text style={Styles.productText}>{item.name}</Text>
-          </View>
-          <View style={Styles.truckInfo}>
-            <View style={{ flexDirection: 'row' }}>
-              <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-              <Text style={Styles.truckText}>{item.date} {item.start_time ? format(new Date(item.start_time), 'hh:mm A') : ''} - {item.end_time ? format(new Date(item.end_time), 'hh:mm A') : ''}</Text>
-            </View>
-          </View>
-          <View style={Styles.tripDest}>
-            <View style={Styles.locations}>
-              <View style={{ flexDirection: 'row' }}>
-                <Icon name="location-pin" type="Entypo" style={[Styles.locationIcon, Styles.colorGreen]} />
-                <Text style={Styles.placeText}>{item.venue}</Text>
-              </View>
-            </View>
-          </View>
-
-          <View style={Styles.msgBox}>
-            <Text style={Styles.msgText}>{item.details}
-            </Text>
-          </View>
-          <View style={Styles.orderDetails}>
-            <Text style={Styles.orderText}>Updated at {item.updated_at ? format(new Date(item.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>)
+  formatData(data) {
+    return(
+      {
+        title: data.name,
+        images: data.images,
+        subTitle: data.venue,
+        desc: data.details,
+        createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+        lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+        metaData: [ 
+          {title: 'ಸಮಯಾವಕಾಶದ ವೇಳೆ', description: `${data.date} ${data.start_time ? format(new Date(data.start_time), 'hh:mm A') : ''} - ${data.end_time ? format(new Date(data.end_time), 'hh:mm A') : ''}`, iconName: 'calendar', hasIcon: true},
+          {title: 'ಷರಾ', description: data.remarks},
+        ]
+      }
+    )
   }
+  
   renderContent = () => {
     const { listError, lastCalledPage, data, fetching } = this.props;
     if (listError) {
@@ -109,7 +90,13 @@ class EventsList extends Component {
                 keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
                 showsHorizontalScrollIndicator={false}
                 removeClippedSubview
-                renderItem={this.renderRow}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => this.goToDetailView(item)}>
+                    <ListCardComponent
+                      {...this.formatData(item)}
+                    />
+                  </TouchableOpacity>
+                )}
               />
             </View>
           </Content>

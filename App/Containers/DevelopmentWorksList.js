@@ -6,12 +6,13 @@ import { format } from 'date-fns';
 import { NavigationEvents } from 'react-navigation';
 import HeaderComponent from "../Components/HeaderComponent";
 import DevelopmentWorksActions from "../Redux/DevelopmentWorkRedux";
-import LoadingOverlay from '../Components/LoadingOverlay';
+import { CustomActivityIndicator } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import { Images } from '../Themes/'
 // Styles
-import Styles from './Styles/BenefeciaryDetailViewStyle'
+import Styles from './Styles/BenefeciaryDetailViewStyle';
+import ListCardComponent from '../Components/ListCardComponent';
 
 
 function randomString(length, chars) {
@@ -21,11 +22,6 @@ function randomString(length, chars) {
 }
 
 class DevelopmentWorksList extends Component {
-
-  constructor(props) {
-    super(props);
-    this.renderRow = this.renderRow.bind(this);
-  }
 
   goToPage = (option) => {
     const { lastCalledPage } = this.props;
@@ -52,98 +48,34 @@ class DevelopmentWorksList extends Component {
   onRefresh = () => {
     this.onTableFetchRequest();
   }
+
   goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
     navigate("DevelopmentWorkDetail", { selectedData });
   }
 
-  renderRow({ item, index }) {
-    return (
-      <TouchableOpacity onPress={() => this.goToDetailView(item)}>
-        <View style={Styles.tripItem}>
-          <View style={[Styles.truckInfo, { flexDirection: 'column' }]}>
-            <View>
-              <Text style={Styles.infoLabel}> ಸ್ಥಳ</Text>
-              <Text style={Styles.truckData}>{item.place}</Text>
-            </View>
-            <View>
-              <Text style={Styles.infoLabel}>ಕಾಮಗಾರಿ</Text>
-              <Text style={Styles.truckTrip}>{item.name}</Text>
-            </View>
-            <View>
-              <Text style={Styles.infoLabel}>ವಿವರಗಳು</Text>
-              <Text style={Styles.truckTrip}>{item.desc}</Text>
-            </View>
-          </View>
-          <View style={Styles.tripInfo}>
-            <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-              <Text style={Styles.infoLabel}>ಇಲಾಖೆ</Text>
-              <Text style={Styles.truckData}>{item.department}</Text>
-            </View>
-            <View style={[Styles.rowSpaceAlignment, { marginTop: 10 }]}>
-              <View style={Styles.tripPlaces}>
-                <Icon
-                  name="circle-o"
-                  type="FontAwesome"
-                  style={Styles.tripIcon}
-                />
-                <Text style={Styles.placeText}>ಮಂಜೂರಾದ ಮೊತ್ತ</Text>
-              </View>
-              <View style={[Styles.tripPlaces, { flex: 2 }]}>
-                <Icon
-                  name="cash-multiple"
-                  type="MaterialCommunityIcons"
-                  style={Styles.checkIcon}
-                />
-                <Text style={[Styles.placeText]}>₹ {item.sanctioned_amount}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={Styles.tripInfo}>
-            <View style={Styles.rowSpaceAlignment}>
-              <View style={Styles.tripPlaces}>
-                <Icon
-                  name="circle-o"
-                  type="FontAwesome"
-                  style={Styles.tripIcon}
-                />
-                <Text style={Styles.placeText}>ಅಡಿಗಲ್ಲು ದಿನಾಂಕ</Text>
-              </View>
-              <View style={[Styles.tripPlaces, { justifyContent: 'flex-end'}]}>
-                <Icon
-                  name="calendar-clock"
-                  type="MaterialCommunityIcons"
-                  style={Styles.checkIcon}
-                />
-                <Text style={Styles.placeText}>{item.foundation_date || 'NA'}</Text>
-              </View>
-            </View>
-            <View style={[Styles.rowSpaceAlignment, {  justifyContent: 'space-around'}]}>
-              <View style={Styles.tripPlaces}>
-                <Icon
-                  name="circle-o"
-                  type="FontAwesome"
-                  style={Styles.tripIcon}
-                />
-                <Text style={Styles.placeText}>ಉದ್ಘಾಟನೆ ದಿನಾಂಕ</Text>
-              </View>
-              <View style={[Styles.tripPlaces, { justifyContent: 'flex-end'}]}>
-                <Icon
-                  name="calendar-clock"
-                  type="MaterialCommunityIcons"
-                  style={Styles.checkIcon}
-                />
-                <Text style={Styles.placeText}>{item.inaugration_date || 'NA'}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={Styles.more}>
-            <Text style={Styles.postedOn}>ಕೊನೆಯ ನವೀಕರಿಸಿದ ದಿನಾಂಕ: {item.updated_at ? format(new Date(item.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
+  formatData(data) {
+    return(
+      {
+        title: data.name,
+        image: data.image,
+        subTitle: data.department,
+        desc: data.desc,
+        createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+        lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+        metaData: [ 
+          {title: 'ಸ್ಥಳ', description: data.place},
+          {title: 'ಮಂಜೂರಾದ ಮೊತ್ತ', description: data.sanctioned_amount, hasIcon: true, iconName: 'cash-multiple', isCash: true, },
+          {title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status},
+          {title: 'ಅಡಿಗಲ್ಲು ದಿನಾಂಕ', description: data.foundation_date, iconName: 'calendar', hasIcon: true},
+          {title: 'ಉದ್ಘಾಟನೆ ದಿನಾಂಕ', description: data.inaugration_date, iconName: 'calendar', hasIcon: true},
+          {title: 'ಷರಾ', description: data.remarks},
+        ]
+      }
+    )
   }
+
+
   renderContent = () => {
     const { listError, lastCalledPage, data, fetching } = this.props;
     if (listError) {
@@ -161,7 +93,7 @@ class DevelopmentWorksList extends Component {
                 <TouchableOpacity style={Styles.hContent} onPress={() => {
                   this.goToPage('first')
                 }}>
-                  <Text style={Styles.hTopText}>Development Works</Text>
+                  <Text style={Styles.hTopText}>Test</Text>
 
                   <Text style={Styles.hTopDesc}>View all the development works</Text>
                 </TouchableOpacity>
@@ -172,7 +104,13 @@ class DevelopmentWorksList extends Component {
                 keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
                 data={data}
                 removeClippedSubview
-                renderItem={this.renderRow}
+                renderItem={({ item }) => (
+                  <TouchableOpacity onPress={() => this.goToDetailView(item)}>
+                    <ListCardComponent
+                      {...this.formatData(item)}
+                    />
+                  </TouchableOpacity>
+                )}
               />
 
             </View>
@@ -191,7 +129,7 @@ class DevelopmentWorksList extends Component {
     }
   }
   render() {
-    const { data, fetching } = this.props;
+    const { fetching } = this.props;
     return (
       <Container>
         <NavigationEvents
@@ -199,13 +137,9 @@ class DevelopmentWorksList extends Component {
         />
         <HeaderComponent title={''} {...this.props} />
         {this.renderContent()}
-        <LoadingOverlay
-          visible={fetching}
-          color="white"
-          indicatorSize="large"
-          messageFontSize={24}
-          message="Loading..."
-        />
+        {
+          fetching ? <CustomActivityIndicator /> : null
+        }
       </Container>
     );
   }

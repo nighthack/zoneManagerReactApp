@@ -3,7 +3,7 @@ import { StatusBar, TouchableOpacity, AsyncStorage, StyleSheet, Image, ImageBack
 import { Container, Header, Content, Button, Icon, Text, TabHeading, ScrollableTab, Card, Left, Right, Body, Input, Tabs, Tab, Footer, View, FooterTab, Badge } from 'native-base'
 import { connect } from 'react-redux'
 import { format } from 'date-fns';
-import { Images } from '../Themes/'
+import DetailView from '../Components/DevDetail';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import LoadingOverlay from '../Components/LoadingOverlay';
 import ImageViewerComponent from '../Components/ImageViewer';
@@ -29,56 +29,23 @@ class EventDetail extends Component {
 
   renderContent() {
     const { data, detailError } = this.props;
+    const componentPayload = {
+      title: data.name,
+      images: data.images,
+      subTitle: data.venue,
+      desc: data.details,
+      createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+      lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+      metaData: [ 
+        {title: 'ಸಮಯಾವಕಾಶದ ವೇಳೆ', description: `${data.date} ${data.start_time ? format(new Date(data.start_time), 'hh:mm A') : ''} - ${data.end_time ? format(new Date(data.end_time), 'hh:mm A') : ''}`, iconName: 'calendar', hasIcon: true},
+        {title: 'ಷರಾ', description: data.remarks},
+      ]
+    };
     if (detailError) {
       return <ErrorPage status={detailError} onButtonClick={() => this.refreshPage()} />
     }
     return (
-      <Content contentContainerStyle={Styles.layoutDefault}>
-        <Image source={Images.background} style={Styles.bgImg} />
-        <View style={Styles.bgLayout}>
-          <View style={Styles.hTop}>
-            <Icon name='calendar-check-o' type="FontAwesome" style={Styles.hImg} />
-            <View style={Styles.hContent}>
-              <Text style={Styles.hTopText}>{data.name}</Text>
-            </View>
-          </View>
-          <View style={Styles.infoBox}>
-            <View style={Styles.bookingItem}>
-              <View style={Styles.tripTo} />
-              <View style={Styles.truckInfo}>
-                <View style={{ flexDirection: 'row' }}>
-                  <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-                  <Text style={Styles.truckText}>{data.date} {data.start_time ? format(new Date(data.start_time), 'hh:mm A'): ''} - {data.end_time ? format(new Date(data.end_time), 'hh:mm A'): ''}</Text>
-                </View>
-
-              </View>
-              <View style={Styles.tripDest}>
-                <View style={Styles.locations}>
-                  <View style={{ flexDirection: 'row' }}>
-                    <Icon name="location-pin" type="Entypo" style={[Styles.locationIcon, Styles.colorGreen]} />
-                    <Text style={Styles.placeText}>{data.venue}</Text>
-                  </View>
-                </View>
-              </View>
-
-              <View style={Styles.msgBox}>
-                <Text style={[Styles.placeText, { marginBottom: 10 }]}>ವಿವರಗಳು</Text>
-                <Text style={Styles.msgText}>{data.details}</Text>
-              </View>
-              <View style={Styles.msgBox}>
-                <Text style={[Styles.placeText, { marginBottom: 10 }]}>ಷರಾ</Text>
-                <Text style={Styles.msgText}>{data.remarks}</Text>
-              </View>
-              <View style={Styles.orderDetails}>
-                <Text style={Styles.orderText}>Updated at {data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-        {
-          data.images && data.images.length ? <ImageViewerComponent data={data.images}/> : null
-        }
-      </Content>
+      <DetailView data={componentPayload} />
     )
   }
 
@@ -110,13 +77,6 @@ class EventDetail extends Component {
 				/>
         {this.renderHeader()}
         {this.renderContent()}
-        <LoadingOverlay
-          visible={fetching}
-          color="white"
-          indicatorSize="large"
-          messageFontSize={24}
-          message="Loading..."
-        />
       </Container>
     )
   }

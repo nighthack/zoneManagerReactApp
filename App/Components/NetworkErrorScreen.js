@@ -6,16 +6,6 @@ import { Images } from '../Themes/'
 import Styles from './Styles/NetworkErrorScreenStyle'
 
 export default class NetworkErrorScreen extends Component {
-  // // Prop type warnings
-  // static propTypes = {
-  //   someProperty: PropTypes.object,
-  //   someSetting: PropTypes.bool.isRequired,
-  // }
-  //
-  // // Defaults for props
-  // static defaultProps = {
-  //   someSetting: false
-  // }
 
   render() {
     const { onButtonClick, status } = this.props;
@@ -45,7 +35,6 @@ export default class NetworkErrorScreen extends Component {
           </View>
         </View>
       </Content>
-
     )
   }
 }

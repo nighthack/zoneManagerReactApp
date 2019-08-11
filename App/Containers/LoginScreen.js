@@ -93,9 +93,7 @@ class LoginScreen extends Component {
             <View style={Styles.navRight} />
           </View>
         </Header>
-
         <Content contentContainerStyle={Styles.layoutDefault}>
-
           <Image source={Images.background} style={Styles.bgImg} />
           <View style={Styles.bgLayout}>
             <View style={Styles.hTop}>
@@ -173,7 +171,6 @@ class LoginScreen extends Component {
           message="Loading..."
         />
       </Container>
-
     )
   }
 }

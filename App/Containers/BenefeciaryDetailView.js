@@ -3,12 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { StatusBar, TouchableOpacity, Image, AsyncStorage } from 'react-native';
 import { NavigationEvents } from "react-navigation";
+import { CustomActivityIndicator } from '../Components/ui';
 import { format } from 'date-fns';
 import { Container, Header, Content, Icon, Text, View } from 'native-base';
-import { Images } from '../Themes/';
 import ErrorPage from '../Components/NetworkErrorScreen';
-import LoadingOverlay from '../Components/LoadingOverlay';
-import ImageViewerComponent from '../Components/ImageViewer';
+import DetailView from '../Components/DevDetail';
 import BeneficiaryActions from '../Redux/BeneficiaryRedux';
 
 // Styles
@@ -30,65 +29,34 @@ class BenefeciaryDetailView extends Component {
 
   renderContent() {
     const { data, detailError } = this.props;
+    const componentPayload = {
+      title: data.beneficiary_name,
+      images: data.images,
+      subTitle: data.scheme_type,
+      desc: data.granted_relief,
+      createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+      lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+      metaData: [ 
+        {title: 'ಸ್ಥಳ', description: data.place},
+        {title: 'ಅರ್ಜಿ ದಿನಾಂಕ', description: data.application_date},
+        {title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status},
+        {title: 'ಷರಾ', description: data.remarks},
+      ]
+    };
     if (detailError) {
       return <ErrorPage status={detailError} onButtonClick={() => this.refreshPage()} />
     }
     return (
-      <Content contentContainerStyle={Styles.layoutDefault}>
-        <Image source={Images.background} style={Styles.bgImg} />
-        <View style={[Styles.bgLayout, Styles.marginTopSmall]}>
-          <View style={Styles.hTop}>
-            <Icon name='user-o' type='FontAwesome' style={Styles.hImg} />
-            <View style={Styles.hContent}>
-              <Text style={Styles.hTopText}>{data.beneficiary_name}</Text>
-
-              <View style={Styles.hContent}>
-                <Text style={[Styles.infoLabel, { color: '#FFD328' }]}>{data.place}</Text>
-              </View>
-              <Text style={Styles.hTopDesc}>ಅರ್ಜಿ ದಿನಾಂಕ: {data.application_date ? format(new Date(data.application_date), 'DD-MM-YYYY') : 'NA'}</Text>
-            </View>
-
-          </View>
-          <View style={[Styles.tripItem, Styles.marginTopSmall]}>
-            <View style={[Styles.truckInfo, { flexDirection: 'column' }]}>
-              <View>
-                <Text style={Styles.infoLabel}>ಯೋಜನೆ</Text>
-                <Text style={Styles.truckData}>{data.scheme_type}</Text>
-              </View>
-              <View>
-                <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ</Text>
-                <Text style={Styles.truckData}>{data.status}</Text>
-              </View>
-            </View>
-            <View style={Styles.truckInfo}>
-              <View>
-                <Text style={Styles.infoLabel}>ಮಂಜುರಿ ವಿವರ</Text>
-                <Text style={Styles.truckData}>{data.granted_relief}</Text>
-              </View>
-            </View>
-            <View style={Styles.msgBox}>
-              <Text style={Styles.infoLabel}>ಷರಾ</Text>
-              <Text style={Styles.msgText}>{data.remarks || 'ಯಾವುದೇ ಟೀಕೆಗಳಿಲ್ಲ'}</Text>
-            </View>
-          </View>
-        </View>
-        {
-          data.images && data.images.length ? <ImageViewerComponent data={data.images} /> : null
-        }
-
-      </Content>
-
+      <DetailView data={componentPayload} />
     )
   }
   render() {
-
-    const { data, navigation, fetching } = this.props;
+    const { navigation, fetching } = this.props;
     return (
       <Container>
         <NavigationEvents
           onDidFocus={() => this.refreshPage()}
         />
-
         <Header style={Styles.navigation}>
           <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
           <View style={Styles.nav}>
@@ -106,13 +74,7 @@ class BenefeciaryDetailView extends Component {
           </View>
         </Header>
         {this.renderContent()}
-        <LoadingOverlay
-          visible={fetching}
-          color="white"
-          indicatorSize="large"
-          messageFontSize={24}
-          message="Loading..."
-        />
+        {fetching ? <CustomActivityIndicator /> : null}
       </Container>
     )
   }
