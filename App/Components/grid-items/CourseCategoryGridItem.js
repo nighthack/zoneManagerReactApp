@@ -33,7 +33,7 @@ export default function CourseCategoryGridItem({ icon, title, onPress, type }) {
     <Wrapper>
       <IconWrapper onPress={() => onPress()}>
         <Icon name={icon} type={type || 'FontAwesome'} style={{
-          fontSize: 30,
+          fontSize: 22,
           color: '#84d5b1'
         }} />
       </IconWrapper>

@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Card } from 'native-base'
+import { Card, Icon } from 'native-base'
 // import { Ionicons } from '@expo/vector-icons'
 import styled from 'styled-components/native'
 import Separator from './Separator'
@@ -48,12 +48,15 @@ export default function ProfileMenuOption({
   return (
     <Wrapper onPress={() => onPress()}>
       <IconWrapper>
+        <Icon name={iconName} style={{color: iconColor,  fontSize: 20 }} />
       </IconWrapper>
-
       <Right>
         <LabelWrapper>
           <Label>{text}</Label>
-          <Ionicons name="ios-arrow-forward" color="#8a8a8f" size={20} />
+          <Icon 
+            name="ios-arrow-forward" 
+            style={{color: '#8a8a8f',  fontSize: 20 }} 
+          />
         </LabelWrapper>
         {showDivider && <Separator />}
       </Right>

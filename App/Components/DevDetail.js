@@ -113,11 +113,11 @@ export default class DevelopmentDetailsScreen extends React.Component {
               <Content>
                 {
                   images && images.length ?
-                  <ImageProgressComponent
-                    photoURL={images[0]}
-                    resizeMode="cover"
-                    style={{ flex: 1, width: null, height: 200 }}
-                  /> : null
+                    <ImageProgressComponent
+                      photoURL={images[0]}
+                      resizeMode="cover"
+                      style={{ flex: 1, width: null, height: 200 }}
+                    /> : null
                 }
                 <CourseContentWrapper>
                   <CourseTitle>{title}</CourseTitle>
@@ -130,19 +130,22 @@ export default class DevelopmentDetailsScreen extends React.Component {
                   <StatsWrapper>
                     <StatItemWrapper>
                       <Title>{createdDate}</Title>
-                      <SubHeading style={{fontSize: 10}}>ಸೇರಿಸಲಾಗಿದ ದಿನಾಂಕ</SubHeading>
+                      <SubHeading style={{ fontSize: 10 }}>ಸೇರಿಸಲಾಗಿದ ದಿನಾಂಕ</SubHeading>
                     </StatItemWrapper>
 
                     <StatItemWrapper>
                       <Title>{lastUpdatedAt}</Title>
-                      <SubHeading style={{fontSize: 10}}>ಕೊನೆಯ ನವೀಕರಿಸಿದ ದಿನಾಂಕ</SubHeading>
+                      <SubHeading style={{ fontSize: 10 }}>ಕೊನೆಯ ನವೀಕರಿಸಿದ ದಿನಾಂಕ</SubHeading>
                     </StatItemWrapper>
                   </StatsWrapper>
                   <InstructorProfileWrapper>
-                    <InstructorNameWrapper>
-                      <SubHeading>ವಿವರಗಳು</SubHeading>
-                      <DescriptionText>{desc}</DescriptionText>
-                    </InstructorNameWrapper>
+                    {
+                      desc ?
+                        <InstructorNameWrapper>
+                          <SubHeading>ವಿವರಗಳು</SubHeading>
+                          <DescriptionText>{desc}</DescriptionText>
+                        </InstructorNameWrapper> : null
+                    }
                   </InstructorProfileWrapper>
                   <Wrapper>
                     {metaData.map((item, index) => (
@@ -166,15 +169,15 @@ export default class DevelopmentDetailsScreen extends React.Component {
                     </TabHeading>
                   }
                 >
-                <Content>
-                  {
-                    images.map((image) => (<ImageProgressComponent
-                      photoURL={image}
-                      resizeMode="cover"
-                      style={{ flex: 1, width: null, height: 200 }}
-                    />))
-                  }
-                </Content>
+                  <Content>
+                    {
+                      images.map((image) => (<ImageProgressComponent
+                        photoURL={image}
+                        resizeMode="cover"
+                        style={{ flex: 1, width: null, height: 200 }}
+                      />))
+                    }
+                  </Content>
                 </Tab> : null
             }
 

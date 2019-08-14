@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
+import { AsyncStorage, TouchableOpacity, Image, FlatList } from 'react-native'
+import { Container, Content, Icon, Text, View } from 'native-base'
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 import { format } from 'date-fns';
 import HeaderComponent from '../Components/HeaderComponent'
-import LoadingOverlay from '../Components/LoadingOverlay';
+import { CustomActivityIndicator } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import { NavigationEvents } from 'react-navigation';
@@ -125,13 +125,9 @@ class BeneficiaryList extends Component {
 				/>
         <HeaderComponent title={''} {...this.props} />
         {this.renderContent()}
-        <LoadingOverlay
-          visible={fetching}
-          color="white"
-          indicatorSize="large"
-          messageFontSize={24}
-          message="Loading..."
-        />
+        {
+          fetching ? <CustomActivityIndicator /> : null
+        }
       </Container>
 
 

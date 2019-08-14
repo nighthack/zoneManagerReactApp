@@ -7,7 +7,7 @@ import ImagePicker from 'react-native-image-picker';
 import ImageResizer from 'react-native-image-resizer';
 import debounce from 'lodash/debounce'
 import { Images } from '../Themes/'
-import LoadingOverlay from '../Components/LoadingOverlay';
+import { CustomActivityIndicator } from '../Components/ui';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import SearchableDropdown from 'react-native-searchable-dropdown';
 import FeedbackActions from '../Redux/FeedbackRedux';
@@ -290,13 +290,6 @@ class FeedbackScreen extends Component {
       <Content contentContainerStyle={Styles.layoutDefault}>
         <Image source={Images.background} style={Styles.bgImg} />
         <View style={Styles.bgLayout}>
-          <View style={Styles.hTop}>
-            <Icon name='comment' type="FontAwesome" style={Styles.hImg} />
-            <View style={Styles.hContent}>
-              <Text style={Styles.hTopText}>Create Feedback</Text>
-              <Text style={Styles.hTopDesc}>Create Feedbacks and suggestions</Text>
-            </View>
-          </View>
           <View style={Styles.regForm}>
             <View style={Styles.infoBox}>
               <View style={Styles.infoHeader}>
@@ -419,28 +412,10 @@ class FeedbackScreen extends Component {
     const isLoaderVsible = fetching || imageLoading ? true : false;
     return (
       <Container>
-        <Header style={Styles.navigation}>
-          <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
-          <View style={Styles.nav}>
-            <View style={Styles.navLeft}>
-              <TouchableOpacity style={Styles.navLeft} onPress={() => {
-                navigation.navigate("FeedbackList")
-              }}>
-                <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
-              </TouchableOpacity>
-            </View>
-            <View style={Styles.navMiddle} />
-            <View style={Styles.navRight} />
-          </View>
-        </Header>
         {this.renderComponent()}
-        <LoadingOverlay
-          visible={isLoaderVsible}
-          color="white"
-          indicatorSize="large"
-          messageFontSize={24}
-          message="Loading..."
-        />
+        {
+          isLoaderVsible ? <CustomActivityIndicator /> : null
+        }
       </Container>
 
     )

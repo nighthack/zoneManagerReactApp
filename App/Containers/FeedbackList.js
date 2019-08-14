@@ -4,13 +4,13 @@ import { Images } from '../Themes/'
 import { AsyncStorage, TouchableOpacity, Image, FlatList  } from 'react-native'
 import { Container,  Content,  Icon, Text, View } from 'native-base'
 import { format } from 'date-fns';
-import HeaderComponent from '../Components/HeaderComponent'
-import LoadingOverlay from '../Components/LoadingOverlay';
+import { CustomActivityIndicator } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import FeedbackActions from '../Redux/FeedbackRedux';
 import Styles from './Styles/BenefeciaryDetailViewStyle';
 import { NavigationEvents } from 'react-navigation';
+import ListCardComponent from '../Components/ListCardComponent';
 
 function randomString(length, chars) {
 	var result = '';
@@ -18,10 +18,6 @@ function randomString(length, chars) {
 	return result;
 }
 class FeedbackList extends Component {
-
-	componentDidMount() {
-		this.onTableFetchRequest(1);
-	}
 
 	onTableFetchRequest = (pageNo) => {
 		AsyncStorage.getItem('accessToken').then((accessToken) => {
@@ -46,20 +42,31 @@ class FeedbackList extends Component {
 		const { navigate } = this.props.navigation;
 		navigate("FeedbackDetailScreen", { selectedData });
 	}
+	formatData(data) {
+    return(
+      {
+        title: data.name,
+        image: data.image,
+        subTitle: data.feedback_type,
+        createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+        lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+        metaData: [ 
+          {title: 'ಸ್ಥಳ', description: data.place},
+          {title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status},
+          {title: 'ಷರಾ', description: data.remarks},
+        ]
+      }
+    )
+	}
 
 	renderContent = () => {
 		const { listError, currentPage, data, fetching, navigation } = this.props;
 		if (listError) {
 			return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
 		}
+		console.log(data);
 		return (
 			<View style={{ flex: 1 }}>
-				<NavigationEvents
-					onWillFocus={payload => console.log('will focus', payload)}
-					onDidFocus={payload => console.log('did focus', payload)}
-					onWillBlur={payload => console.log('will blur', payload)}
-					onDidBlur={payload => console.log('did blur', payload)}
-				/>
 				<Content
 					contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
 				>
@@ -93,38 +100,10 @@ class FeedbackList extends Component {
 
 							renderItem={({ item, separators }) => (
 								<TouchableOpacity onPress={() => this.goToDetailView(item)}>
-									<View style={Styles.tripItem}>
-										<View style={Styles.truckInfo}>
-											<View>
-												<Text style={Styles.infoLabel}>ವಿಷಯ</Text>
-												<Text style={Styles.truckData}>{item.name}</Text>
-												<Text style={Styles.infoLabel}>ಸ್ಥಳ</Text>
-												<Text style={Styles.truckData}>{item.place}</Text>
-												<View>
-													<Text style={Styles.infoLabel}> ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ</Text>
-													<Text style={Styles.truckData}>{item.feedback_type}</Text>
-												</View>
-											</View>
-										</View>
-										<View style={Styles.tripInfo}>
-											<View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-												<Text style={Styles.infoLabel}>ಇಲಾಖೆ</Text>
-												<Text style={Styles.truckData}>{item.department}</Text>
-											</View>
-											<View>
-												<Text style={Styles.infoLabel}>ಹಾಲಿ ಸ್ಥಿತಿ</Text>
-												<Text style={Styles.truckData}>{item.status}</Text>
-											</View>
-											<View>
-												<Text style={Styles.infoLabel}>ಕ್ರಿಯೆ</Text>
-												<Text style={Styles.truckData}>{item.action_taken || 'NA'}</Text>
-											</View>
-										</View>
-										<View style={Styles.more}>
-											<Text style={Styles.postedOn}>ಕೊನೆಯ ನವೀಕರಿಸಿದ ದಿನಾಂಕ: {item.updated_at ? format(new Date(item.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
+                  <ListCardComponent
+                    {...this.formatData(item)}
+                  />
+                </TouchableOpacity>
 
 							)}
 						/>
@@ -147,15 +126,13 @@ class FeedbackList extends Component {
 		const { fetching } = this.props;
 		return (
 			<Container>
-				<HeaderComponent title={''} {...this.props} />
-				{this.renderContent()}
-				<LoadingOverlay
-					visible={fetching}
-					color="white"
-					indicatorSize="large"
-					messageFontSize={24}
-					message="Loading..."
+				<NavigationEvents
+					onDidFocus={() => this.goToPage('first')}
 				/>
+				{this.renderContent()}
+				{
+          fetching ? <CustomActivityIndicator /> : null
+        }
 			</Container>
 		)
 	}
@@ -178,22 +155,3 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(FeedbackList)
-
-
-// onPress={() => {
-// 											navigation.navigate("FeedbackDetailScreen", { selectedItem: item })
-// 										}}
-
-
-
-
-
-// {/* <View>
-// 											<Text style={Styles.infoLabel}>ವಿಷಯ</Text>
-// 											<Text style={Styles.truckData}>{item.name}</Text>
-// 										</View>
-// 										<View>
-// 											<Text style={Styles.infoLabel}>ಇಲಾಖೆ</Text>
-// 											<Text style={Styles.truckData}>{item.department}</Text>
-// 										</View>
-// 										 */}

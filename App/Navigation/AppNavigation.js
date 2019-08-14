@@ -1,5 +1,12 @@
 import { createStackNavigator, createAppContainer, createSwitchNavigator, createDrawerNavigator, createBottomTabNavigator } from 'react-navigation'
-
+import {
+  getDashboardNavigatorHeaderTitle,
+  getDashboardNavigatorTabIconName,
+  getNavigationHeaderRight
+} from '../utils';
+import { Platform } from 'react-native';
+import { Icon } from 'native-base';
+import styled from 'styled-components'
 import RegisterScreen from '../Containers/Register';
 import LaunchScreen from '../Containers/LaunchScreen';
 // These are the Pre Authentication Screens
@@ -33,6 +40,7 @@ import AppointmentListScreen from '../Containers/AppointmentsList';
 // import FeedbackDetailScreen from '../Containers/FeedbackDetail';
 
 import UserSettings from '../Containers/UserSettings';
+import ProfileEdit from '../Containers/EditProfile';
 
 // These Are the post authencation Screens
 import DevelopmentWorksList from '../Containers/DevelopmentWorksList'
@@ -41,6 +49,48 @@ import DevelopmentWorkDetail from '../Containers/DevelopmentWorkDetail'
 import HomeScreen from '../Containers/HomeScreen';
 
 import DrawerComponent from '../Containers/SideMenu';
+
+
+const tabBarOptions = {
+  activeTintColor: '#32ce89',
+  inactiveTintColor: 'grey',
+  showLabel: false,
+  style: {
+    backgroundColor: '#fff',
+    borderTopColor: '#dee3ea'
+  }
+}
+
+const headerTitleStyle = {
+  fontSize: 20,
+  color: '#000'
+}
+
+const HeaderBackImageWrapper = styled.View`
+  width: 35;
+  justify-content: center;
+  align-items: center;
+  margin-left: ${Platform.OS === 'ios' ? 8 : 0};
+`
+
+const defaultStackNavigatorHeaderStyle = {
+  headerStyle: {
+    backgroundColor: '#fff',
+    borderBottomColor: 'transparent'
+  },
+  headerTitleStyle,
+  headerTintColor: '#32ce89',
+  headerBackTitleStyle: headerTitleStyle,
+  headerBackImage: ({ tintColor }) => (
+    <HeaderBackImageWrapper>
+      <Icon name="md-arrow-round-back" color={tintColor} size={30} />
+    </HeaderBackImageWrapper>
+  )
+}
+
+export const tabHeaderStyle = {
+  backgroundColor: '#fff'
+}
 
 const MyDrawerNavigator = createDrawerNavigator({
   Home: {
@@ -110,11 +160,82 @@ const AuthStack = createStackNavigator(
   }
 );
 
+const DashboardTabNavigator = createBottomTabNavigator(
+  {
+    Home: HomeScreen,
+    Feedback: FeedbackScreen,
+    Profile: UserSettings,
+  },
+  {
+    defaultNavigationOptions: ({ navigation }) => {
+      return {
+        tabBarIcon: ({ tintColor }) =>
+          getDashboardNavigatorTabIconName(navigation, tintColor)
+      }
+    },
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTitle: getDashboardNavigatorHeaderTitle(navigation),
+        headerRight: getNavigationHeaderRight(navigation),
+        gesturesEnabled: false,
+        headerBackTitle: null,
+        ...defaultStackNavigatorHeaderStyle
+      }
+    },
+    tabBarOptions
+  }
+)
+
+const DashboardStackNavigator = createStackNavigator({
+  DashboardTabNavigator,
+  BeneficiaryListingScreen: {
+    screen: BeneficiaryListingScreen,
+  },
+  BenfeciaryDetail: {
+    screen: BeneficiaryDetailScreen,
+  },
+  DevelopmentWorksList: {
+    screen: DevelopmentWorksList
+  },
+  DevelopmentWorkDetail: {
+    screen: DevelopmentWorkDetail
+  },
+  EventsListScreen: {
+    screen: EventsListScreen,
+  },
+  EventDetailScreen: {
+    screen: EventDetailScreen,
+  },
+  FeedbackScreen: {
+    screen: FeedbackScreen,
+  },
+  FeedbackList: {
+    screen: FeedbackList,
+  },
+  FeedbackDetailScreen: {
+    screen: FeedbackDetailScreen,
+  },
+  UserSettings: {
+    screen: UserSettings,
+  },
+  Notifications: {
+    screen: LaunchScreen,
+  },
+  AppointmentListScreen: {
+    screen: AppointmentListScreen,
+  },
+  CreateAppointmentScreen: {
+    screen: CreateAppointmentScreen,
+  },
+  EditProfile: {
+    screen: ProfileEdit,
+  }
+})
 
 export default createAppContainer(createSwitchNavigator(
   {
     AuthLoading: AuthLoadingScreen,
-    App: MyDrawerNavigator,
+    App: DashboardStackNavigator,
     Auth: AuthStack,
   },
   {
