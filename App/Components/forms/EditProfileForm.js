@@ -1,15 +1,11 @@
 import React from 'react'
-import PropTypes from 'prop-types'
+import PropTypes from 'prop-types';
 import { Formik } from 'formik'
 import * as yup from 'yup'
-import { FormField } from '../ui'
+import { FormField, SelectField } from '../ui'
 import FormContainer from './FormContainer'
 
-const initialValues = {
-  fullName: 'Monique Verdugo',
-  email: 'moniqueverdugo@mail.com',
-  password: ''
-}
+
 
 const validationSchema = yup.object().shape({
   fullName: yup.string().required('full name is required'),
@@ -20,7 +16,8 @@ const validationSchema = yup.object().shape({
   password: yup.string().required('password is required')
 })
 
-export default function EditProfileForm({ loading, onSubmit }) {
+export default function EditProfileForm({ loading, onSubmit, initialValues }) {
+  console.log(initialValues)
   return (
     <Formik
       initialValues={initialValues}
@@ -33,15 +30,21 @@ export default function EditProfileForm({ loading, onSubmit }) {
           onSubmitButtonPress={() => props.handleSubmit()}
         >
           <FormField
-            label="Your Name"
-            value={props.values.fullName}
-            onChangeText={text => props.setFieldValue('fullName', text)}
-            error={props.touched.fullName && props.errors.fullName}
+            label="ಮೊದಲ ಹೆಸರು"
+            value={props.values.name}
+            onChangeText={text => props.setFieldValue('name', text)}
+            error={props.touched.name && props.errors.name}
           />
 
           <FormField
-            disabled
-            label="Email"
+            label="ಕೊನೆಯ ಹೆಸರು"
+            value={props.values.name}
+            onChangeText={text => props.setFieldValue('name', text)}
+            error={props.touched.name && props.errors.name}
+          />
+
+          <FormField
+            label="ಇಮೇಲ್"
             keyboardType="email-address"
             value={props.values.email}
             onChangeText={text => props.setFieldValue('email', text)}
@@ -49,11 +52,27 @@ export default function EditProfileForm({ loading, onSubmit }) {
           />
 
           <FormField
-            label="Password"
-            secure
-            value={props.values.password}
-            onChangeText={text => props.setFieldValue('password', text)}
-            error={props.touched.password && props.errors.password}
+            label="ಫೋನ್ ನಂಬರ್"
+            keyboardType="phone-pad"
+            value={props.values.phone}
+            onChangeText={text => props.setFieldValue('phone', text)}
+            error={props.touched.phone && props.errors.phone}
+          />
+
+          <FormField
+            label="ಪಿನ್ಕೋಡ್"
+            keyboardType="numeric"
+            value={props.values.pincode}
+            onChangeText={text => props.setFieldValue('pincode', text)}
+            error={props.touched.pincode && props.errors.pincode}
+          />
+
+          <SelectField
+            label="ಲಿಂಗ"
+            keyboardType="numeric"
+            value={props.values.gender}
+            onChangeText={text => props.setFieldValue('gender', text)}
+            error={props.touched.gender && props.errors.gender}
           />
         </FormContainer>
       )}
@@ -65,3 +84,12 @@ EditProfileForm.propTypes = {
   loading: PropTypes.bool.isRequired,
   onSubmit: PropTypes.func.isRequired
 }
+
+
+// <FormField
+// label="Password"
+// secure
+// value={props.values.password}
+// onChangeText={text => props.setFieldValue('password', text)}
+// error={props.touched.password && props.errors.password}
+// />

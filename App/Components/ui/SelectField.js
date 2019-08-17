@@ -34,7 +34,7 @@ const Error = styled.Text`
   margin: 4px 8px;
 `
 
-export default function FormField({
+export default function SelectField({
   label,
   value,
   error,
@@ -67,7 +67,7 @@ export default function FormField({
   )
 }
 
-FormField.propTypes = {
+SelectField.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   error: PropTypes.string,
@@ -78,7 +78,7 @@ FormField.propTypes = {
   onChangeText: PropTypes.func.isRequired,
   onSubmitEditing: PropTypes.func
 }
-FormField.defaultProps = {
+SelectField.defaultProps = {
   secure: false,
   disabled: false,
   keyboardType: 'default',

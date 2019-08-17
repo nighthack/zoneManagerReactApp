@@ -11,7 +11,7 @@ const Wrapper = styled(Button).attrs({
   justify-content: center;
   align-items: center;
   margin: 25px 0px 10px;
-  background-color: #32ce89;
+  background-color: #F97D09;
 `
 
 const ButtonText = styled.Text.attrs({

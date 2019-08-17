@@ -36,7 +36,6 @@ class UserSettings extends Component {
   render() {
     const { fetching, navigation, userObj } = this.props;
     const user = userObj && userObj.user ? userObj.user : {};
-    console.log(navigation);
     return (
       <SafeAreaViewWrapper>
         <Container>

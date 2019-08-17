@@ -3,7 +3,7 @@ import { Icon } from 'native-base';
 
 const onIconPress = (navigation, routeName) => {
 
-  if (routeName === 'Profile2') {
+  if (routeName === 'Profile') {
     navigation.navigate('EditProfile')
   }
 }

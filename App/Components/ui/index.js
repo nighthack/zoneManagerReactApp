@@ -9,6 +9,7 @@ import ProfileMenuOption from './ProfileMenuOption'
 import RegularButton from './RegularButton'
 import SafeAreaViewWrapper from './SafeAreaViewWrapper'
 import Separator from './Separator'
+import SelectField from './SelectField';
 
 export {
   CoursePriceTag,
@@ -21,5 +22,7 @@ export {
   ProfileMenuOption,
   RegularButton,
   SafeAreaViewWrapper,
-  Separator
+  Separator,
+  SelectField,
+
 }
