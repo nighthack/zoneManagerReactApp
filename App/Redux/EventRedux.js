@@ -12,6 +12,11 @@ const { Types, Creators } = createActions({
   eventOnDetailSuccess: ['detailData'],
   eventOnDetailFailure: ['errorCode'],
 
+  oldEventOnListRequest: ['accessToken', 'pageNo'],
+  oldEventOnListSuccess: ['listData', 'pageNo'],
+  oldEventOnListFailure: ['errorCode'],
+  oldEventOnListReset: ['payload'],
+
 });
 
 export const EventTypes = Types
@@ -28,6 +33,7 @@ export const INITIAL_STATE = Immutable({
   lastCalledPage: 1,
   detailError: null,
   detailData: {},
+  oldListData: [],
 })
 
 /* ------------- Selectors ------------- */
@@ -89,6 +95,30 @@ export const OnDetailFetchFail = (state, { errorCode }) => {
   });
 }
 
+// This is called when the list fetch API is called
+export const onOldListRequest = (state) =>
+  state.merge({ 
+    fetching: true,
+  });
+
+// This is called when the list fetch API is Successfull
+export const onOldListFetchSuccess = (state, action) => {
+  const { listData } = action;
+  return state.merge({ 
+    fetching: false, 
+    listError: null, 
+    oldListData: listData,
+  })
+}
+
+// This is called when the list fetch API Fails
+export const OnOldListFetchFail = (state, { errorCode }) => {
+  return state.merge({ 
+    fetching: false, 
+    listError: errorCode, 
+    oldListData: [] 
+  });
+}
   export const onReset = state =>
     state.merge(INITIAL_STATE)
 
@@ -103,5 +133,10 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.EVENT_ON_DETAIL_REQUEST]: onDetailRequest,
   [Types.EVENT_ON_DETAIL_SUCCESS]: onDetailFetchSuccess,
   [Types.EVENT_ON_DETAIL_FAILURE]: OnDetailFetchFail,
+
+  [Types.OLD_EVENT_ON_LIST_REQUEST]: onOldListRequest,
+  [Types.OLD_EVENT_ON_LIST_SUCCESS]: onOldListFetchSuccess,
+  [Types.OLD_EVENT_ON_LIST_FAILURE]: OnOldListFetchFail,
+  [Types.OLD_EVENT_ON_LIST_RESET]: onReset,
   // [Types.MODULE_ON_LIST_RESET]: onListReset,
 });

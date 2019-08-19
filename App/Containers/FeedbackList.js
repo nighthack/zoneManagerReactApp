@@ -18,12 +18,18 @@ function randomString(length, chars) {
 	return result;
 }
 class FeedbackList extends Component {
-
+	static navigationOptions = {
+    title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ',
+  }
 	onTableFetchRequest = (pageNo) => {
 		AsyncStorage.getItem('accessToken').then((accessToken) => {
 			this.props.getFeedbackList(accessToken, pageNo);
 		});
 	}
+
+	componentDidMount() {
+    this.goToPage('first');
+  }
 
 	goToPage = (option) => {
 		const { currentPage } = this.props;
@@ -64,31 +70,12 @@ class FeedbackList extends Component {
 		if (listError) {
 			return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
 		}
-		console.log(data);
 		return (
 			<View style={{ flex: 1 }}>
 				<Content
 					contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
 				>
-					<Image source={Images.background} style={Styles.bgImg} />
 					<View style={Styles.bgLayout}>
-						<View style={Styles.hTop}>
-							<Icon name='google-maps' type="MaterialCommunityIcons" style={Styles.hImg} />
-							<TouchableOpacity style={Styles.hContent} onPress={() => {
-								this.goToPage('first')
-							}}>
-								<Text style={Styles.hTopText}>ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ</Text>
-								<Text style={Styles.hTopDesc}>ಎಲ್ಲಾ ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ ವೀಕ್ಷಿಸಿ</Text>
-							</TouchableOpacity>
-						</View>
-						<View style={[Styles.decisionBox, { paddingHorizontal: 15 }]}>
-							<TouchableOpacity style={Styles.acceptBtn} onPress={() => {
-								navigation.navigate("FeedbackScreen")
-							}}>
-								<Text style={Styles.btnText}>ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ ನೀಡಿ</Text>
-							</TouchableOpacity>
-						</View>
-
 						<FlatList
 							style={{ marginBottom: 80 }}
 							data={data}

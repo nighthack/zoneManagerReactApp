@@ -1,19 +1,22 @@
 import React, { Component } from 'react'
-import { StatusBar, TouchableOpacity, AsyncStorage, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, TabHeading, ScrollableTab, Card, Left, Right, Body, Input, Tabs, Tab, Footer, View, FooterTab, Badge } from 'native-base'
+import { AsyncStorage } from 'react-native'
+import { Container } from 'native-base'
 import { connect } from 'react-redux'
 import { format } from 'date-fns';
 import DetailView from '../Components/DevDetail';
 import ErrorPage from '../Components/NetworkErrorScreen';
-import LoadingOverlay from '../Components/LoadingOverlay';
-import ImageViewerComponent from '../Components/ImageViewer';
+import { CustomActivityIndicator } from '../Components/ui';
 import { NavigationEvents } from 'react-navigation';
-// import EventActions from '../Redux/EventRedux'
+
 import EventActions from '../Redux/EventRedux'
-// Styles
-import Styles from './Styles/EventsListStyle'
 
 class EventDetail extends Component {
+  static navigationOptions = {
+    title: 'ದಿನಂಪ್ರತಿ ಕಾರ್ಯಕ್ರಮಗಳು',
+  }
+  componentDidMount() {
+    this.refreshPage();
+  }
 
   refreshPage() {
     const { navigation, fetching } = this.props;
@@ -49,25 +52,6 @@ class EventDetail extends Component {
     )
   }
 
-  renderHeader = () => {
-    const { navigation } = this.props;
-    return (
-      <Header style={Styles.navigation}>
-          <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
-          <View style={Styles.nav}>
-            <View style={Styles.navLeft}>
-              <TouchableOpacity style={Styles.navLeft} onPress={() => {
-                navigation.navigate("EventsListScreen")
-              }}>
-                <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
-              </TouchableOpacity>
-            </View>
-            <View style={Styles.navMiddle} />
-            <View style={Styles.navRight} />
-          </View>
-        </Header>
-    )
-  }
   render() {
     const { fetching } = this.props;
     return (
@@ -75,8 +59,8 @@ class EventDetail extends Component {
         <NavigationEvents
 					onDidFocus={() => this.refreshPage()}
 				/>
-        {this.renderHeader()}
         {this.renderContent()}
+        {fetching ? <CustomActivityIndicator /> : null}
       </Container>
     )
   }

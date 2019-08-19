@@ -1,6 +1,7 @@
 import React from 'react'
+import { Platform } from 'react-native'
 import PropTypes from 'prop-types'
-import { Item, Input, Text } from 'native-base'
+import { Item, Picker, Text } from 'native-base'
 import styled from 'styled-components/native'
 
 const Wrapper = styled.View`
@@ -21,7 +22,7 @@ const Label = styled(Text)`
   margin: 4px;
 `;
 
-const TextBox = styled(Input)`
+const StyledSelectBox = styled(Picker)`
  
   font-size: 13;
   color: ${props => (props.disabled === true ? '#a5a5a5' : '#000')};
@@ -33,33 +34,39 @@ const Error = styled.Text`
   color: #f4224a;
   margin: 4px 8px;
 `
+function renderPickerOptions(data, feature) {
+  const { OS } = Platform;
+  let options = [];
+  if (OS === 'ios') {
+    options = data
+  } else {
+    options = data.unshift({ name: 'ಆಯ್ಕೆ ಮಾಡಿ', value: null })
+  }
+  return options.map(({ value, name }, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={name} value={value} />)
+}
 
 export default function SelectField({
   label,
   value,
   error,
-  secure,
   disabled,
-  keyboardType,
-  returnKeyType,
-  onChangeText,
-  onSubmitEditing
+  onChange,
+  placeholder,
+  options,
 }) {
   return (
     <Wrapper>
       {label ? <Label>{label}</Label> : null }
       <FormFieldWrapper>
-        <TextBox
+        <StyledSelectBox
           disabled={disabled}
-          placeholder={label}
+          placeholder={placeholder}
           placeholderTextColor="#a5a5a5"
-          value={value}
-          secureTextEntry={secure}
-          keyboardType={keyboardType}
-          returnKeyType={returnKeyType}
-          onChangeText={text => onChangeText(text)}
-          onSubmitEditing={() => onSubmitEditing()}
-        />
+          selectedValue={value}
+          onValueChange={text => onChange(text)}
+        >
+        {renderPickerOptions(options, label)}
+        </StyledSelectBox>
       </FormFieldWrapper>
 
       {!!error && <Error>{error}</Error>}

@@ -1,7 +1,10 @@
 import React from 'react'
 import { Container, Content } from 'native-base';
+import { AsyncStorage } from 'react-native'
 import { connect } from 'react-redux'
+import { NavigationEvents } from 'react-navigation';
 import styled from 'styled-components/native'
+import EventActions from '../Redux/EventRedux'
 import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui'
 import { FeaturedCoursesListView } from '../Components/list-views'
 import { CourseCategoriesGridView } from '../Components/grid-views'
@@ -36,11 +39,11 @@ export const SAMPLE_FEATURED_COURSES = [
   }
 ]
 export const SAMPLE_COURSE_CATEGORIES = [
-  { icon: 'calendar', type: 'AntDesign', title: 'ಅಭಿವೃಧ್ಧಿ ಕಾಮಗಾರಿ', },
-  { icon: 'dashboard', type: 'Octicons', title: 'ಫಲಾನುಭವಿಗಳು' },
-  { icon: 'toolbox', type: 'FontAwesome5', title: 'ದಿನಂಪ್ರತಿ ಕಾರ್ಯಕ್ರಮಗಳು' },
-  { icon: 'envelope', type: 'SimpleLineIcons', title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ' },
-  { icon: 'settings', type: 'SimpleLineIcons', title: 'ಸಮಯಾವಕಾಶ ಕೋರಿಕೆ' },
+  { icon: 'calendar', type: 'AntDesign', title: 'ಅಭಿವೃಧ್ಧಿ ಕಾಮಗಾರಿ', route: 'DevelopmentWorksList' },
+  { icon: 'dashboard', type: 'Octicons', title: 'ಫಲಾನುಭವಿಗಳು', route: 'BeneficiaryListingScreen' },
+  { icon: 'toolbox', type: 'FontAwesome5', title: 'ದಿನಂಪ್ರತಿ ಕಾರ್ಯಕ್ರಮಗಳು', route: 'EventsListScreen' },
+  { icon: 'envelope', type: 'SimpleLineIcons', title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ', route: 'FeedbackList' },
+  // { icon: 'settings', type: 'SimpleLineIcons', title: 'ಸಮಯಾವಕಾಶ ಕೋರಿಕೆ', route: 'AppointmentListScreen'},
 ]
 const Heading = styled.Text`
   font-size: 15;
@@ -49,47 +52,40 @@ const Heading = styled.Text`
 `
 
 class HomeScreen extends React.Component {
-  state = {
-    loading: false,
-    featuredCourses: []
-  }
 
   componentDidMount() {
-    /* eslint-disable react/no-did-mount-set-state */
-    this.setState({ loading: true })
+    this.onTableFetchRequest();
+  }
 
-    setTimeout(() => {
-      this.setState({
-        featuredCourses: SAMPLE_FEATURED_COURSES,
-        loading: false
-      })
-    }, 1500)
+  onTableFetchRequest = (pageID) => {
+    const { fetching } = this.props;
+    AsyncStorage.getItem('accessToken').then((accessToken) => {
+      if (!fetching) {
+        this.props.getEventsList(accessToken, pageID);
+      }
+    });
   }
 
   render() {
-    const { loading, featuredCourses } = this.state
+    const { loading, data } = this.props
     const { navigation } = this.props
-
     return (
       <SafeAreaViewWrapper>
         <Container>
           <CustomStatusBar />
-
           <Content>
-            <Heading>Featured</Heading>
+            <Heading>ಕಾರ್ಯಕ್ರಮಗಳು</Heading>
             <FeaturedCoursesListView
               loading={loading}
-              items={featuredCourses}
-              onItemPress={item => navigation.navigate('CourseDetails')}
+              items={data}
+              onItemPress={item =>  navigation.navigate("EventDetailScreen", { selectedData: item })}
             />
 
             <Heading>ವಿಭಾಗಗಳು</Heading>
             <CourseCategoriesGridView
               items={SAMPLE_COURSE_CATEGORIES}
               onItemPress={item =>
-                navigation.navigate('Results', {
-                  title: `${item.title} Courses`
-                })
+                navigation.navigate(item.route)
               }
             />
           </Content>
@@ -101,9 +97,8 @@ class HomeScreen extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
-    data: state.event.listData,
-    fetching: state.event.fetching,
-    lastCalledPage: state.event.lastCalledPage,
+    data: state.event.oldListData,
+    loading: state.event.fetching,
     listError: state.event.listError,
   }
 }
@@ -111,7 +106,7 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getEventsList: (accessToken, pageNo) =>
-      dispatch(EventActions.eventOnListRequest(accessToken, pageNo))
+      dispatch(EventActions.oldEventOnListRequest(accessToken, pageNo))
   }
 }
 

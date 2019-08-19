@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Images } from '../Themes'
 import { AsyncStorage, TouchableOpacity, Image, FlatList  } from 'react-native'
 import { Container,  Content,  Icon, Text, View } from 'native-base'
 import { format } from 'date-fns';
-import HeaderComponent from '../Components/HeaderComponent'
 import LoadingOverlay from '../Components/LoadingOverlay';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
@@ -56,16 +54,7 @@ class AppointmentList extends Component {
 				<Content
 					contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
 				>
-					<Image source={Images.background} style={Styles.bgImg} />
 					<View style={Styles.bgLayout}>
-						<View style={Styles.hTop}>
-							<Icon name='google-maps' type="MaterialCommunityIcons" style={Styles.hImg} />
-							<TouchableOpacity style={Styles.hContent} onPress={() => {
-								this.goToPage('first')
-							}}>
-								<Text style={Styles.hTopText}>Appointments</Text>
-							</TouchableOpacity>
-						</View>
 						<View style={[Styles.decisionBox, { paddingHorizontal: 15 }]}>
 							<TouchableOpacity style={Styles.acceptBtn} onPress={() => {
 								navigation.navigate("CreateAppointmentScreen")
@@ -139,7 +128,6 @@ class AppointmentList extends Component {
     const { fetching } = this.props;
 		return (
 			<Container>
-				<HeaderComponent title={''} {...this.props} />
 				{this.renderContent()}
 				<LoadingOverlay
 					visible={fetching}

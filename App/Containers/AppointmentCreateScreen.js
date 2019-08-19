@@ -288,15 +288,7 @@ class FeedbackScreen extends Component {
     }
     return (
       <Content contentContainerStyle={Styles.layoutDefault}>
-        <Image source={Images.background} style={Styles.bgImg} />
         <View style={Styles.bgLayout}>
-          <View style={Styles.hTop}>
-            <Icon name='comment' type="FontAwesome" style={Styles.hImg} />
-            <View style={Styles.hContent}>
-              <Text style={Styles.hTopText}>Request Appointment</Text>
-              <Text style={Styles.hTopDesc}>Request Appointments for Sunil Naik</Text>
-            </View>
-          </View>
           <View style={Styles.regForm}>
             <View style={Styles.infoBox}>
               <View style={Styles.infoHeader}>

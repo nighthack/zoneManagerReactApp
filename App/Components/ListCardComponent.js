@@ -45,7 +45,11 @@ const OriginalPrice = styled(SellingPrice)`
   text-decoration: line-through;
   margin-left: 8;
 `
-
+function randomString(length, chars) {
+  var result = '';
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+  return result;
+}
 export default function ListCardComponent({
   title,
   image,
@@ -54,7 +58,7 @@ export default function ListCardComponent({
   metaData,
 }) {
   return (
-    <Wrapper>
+    <Wrapper key={randomString(4, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}>
       {
         image ?
         <ImageProgressComponent

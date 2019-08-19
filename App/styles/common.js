@@ -1,7 +1,7 @@
 import React from 'react'
 import { Platform } from 'react-native'
 import styled from 'styled-components'
-// import { Ionicons } from '@expo/vector-icons'
+import { Icon } from 'native-base'
 
 const HeaderBackImageWrapper = styled.View`
   width: 35;
@@ -20,7 +20,6 @@ export const onboardingHeaderStyle = {
 }
 
 const headerTitleStyle = {
-  fontFamily: 'SFProDisplayBold',
   fontSize: 20,
   color: '#000'
 }
@@ -34,6 +33,9 @@ export const defaultStackNavigatorHeaderStyle = {
   headerBackTitleStyle: headerTitleStyle,
   headerBackImage: ({ tintColor }) => (
     <HeaderBackImageWrapper>
+      <Icon name='arrow-back' type="MaterialIcons" style={{
+        color: '#F5821F'
+      }} />
     </HeaderBackImageWrapper>
   )
 }

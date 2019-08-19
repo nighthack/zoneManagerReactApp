@@ -1,16 +1,13 @@
-import React, { Component } from "react";
-import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
-import { connect } from "react-redux";
-import { format } from 'date-fns';
-import { NavigationEvents } from 'react-navigation';
-import HeaderComponent from "../Components/HeaderComponent";
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { AsyncStorage, TouchableOpacity, FlatList } from 'react-native'
+import { Container, Content } from 'native-base'
 import DevelopmentWorksActions from "../Redux/DevelopmentWorkRedux";
+import { format } from 'date-fns';
 import { CustomActivityIndicator } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
-import { Images } from '../Themes/'
-// Styles
+import { NavigationEvents } from 'react-navigation';
 import Styles from './Styles/BenefeciaryDetailViewStyle';
 import ListCardComponent from '../Components/ListCardComponent';
 
@@ -21,7 +18,15 @@ function randomString(length, chars) {
   return result;
 }
 
-class DevelopmentWorksList extends Component {
+class BeneficiaryList extends Component {
+  static navigationOptions = {
+    title: 'ಅಭಿವೃಧ್ಧಿ ಕಾಮಗಾರಿ',
+    headerBackTitle: null,
+  }
+
+  componentDidMount() {
+    this.goToPage('first');
+  }
 
   goToPage = (option) => {
     const { lastCalledPage } = this.props;
@@ -35,23 +40,19 @@ class DevelopmentWorksList extends Component {
       this.onTableFetchRequest(lastCalledPage);
     }
   }
+
   onTableFetchRequest = (pageID) => {
     const { fetching } = this.props;
     AsyncStorage.getItem('accessToken').then((accessToken) => {
       if (!fetching) {
-        this.props.getDevelopmentWorkslist(accessToken, pageID);
+        this.props.getListData(accessToken, pageID);
       }
     });
   }
 
-
-  onRefresh = () => {
-    this.onTableFetchRequest();
-  }
-
   goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
-    navigate("DevelopmentWorkDetail", { selectedData });
+    navigate('DevelopmentWorkDetail', { selectedData });
   }
 
   formatData(data) {
@@ -75,93 +76,76 @@ class DevelopmentWorksList extends Component {
     )
   }
 
-
   renderContent = () => {
-    const { listError, lastCalledPage, data, fetching } = this.props;
+    const { listError, data } = this.props;
     if (listError) {
       return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
-    } else {
-      return (
-        <View style={{ flex: 1 }}>
-          <Content
-            contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-          >
-            <Image source={Images.background} style={Styles.bgImg} />
-            <View style={Styles.bgLayout}>
-              <View style={Styles.hTop}>
-                <Icon name='package' type="MaterialCommunityIcons" style={Styles.hImg} />
-                <TouchableOpacity style={Styles.hContent} onPress={() => {
-                  this.goToPage('first')
-                }}>
-                  <Text style={Styles.hTopText}>Test</Text>
-
-                  <Text style={Styles.hTopDesc}>View all the development works</Text>
-                </TouchableOpacity>
-              </View>
-              <FlatList
-                style={{ marginBottom: 80 }}
-                contentContainerStyle={Styles.listContent}
-                keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-                data={data}
-                removeClippedSubview
-                renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => this.goToDetailView(item)}>
-                    <ListCardComponent
-                      {...this.formatData(item)}
-                    />
-                  </TouchableOpacity>
-                )}
-              />
-
-            </View>
-          </Content>
-
-          <FooterComponent
-            goToFirstPage={() => this.goToPage('first')}
-            goToNextPage={() => this.goToPage('next')}
-            goToPrevPage={() => this.goToPage('prev')}
-            refreshPage={() => this.goToPage('refresh')}
-            data={data}
-            currentPage={lastCalledPage}
-          />
-        </View>
-      )
     }
+    return (
+      <Content>
+        <FlatList
+          contentContainerStyle={Styles.listContent}
+          keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+          data={data}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => this.goToDetailView(item)}>
+              <ListCardComponent
+                {...this.formatData(item)}
+              />
+            </TouchableOpacity>
+          )}
+          removeClippedSubview
+        />
+      </Content>
+    )
   }
+
   render() {
-    const { fetching } = this.props;
+    const { fetching, lastCalledPage, data } = this.props;
     return (
       <Container>
         <NavigationEvents
           onDidFocus={() => this.goToPage('first')}
         />
-        <HeaderComponent title={''} {...this.props} />
+
         {this.renderContent()}
         {
           fetching ? <CustomActivityIndicator /> : null
         }
+        <FooterComponent
+          goToFirstPage={() => this.goToPage('first')}
+          goToNextPage={() => this.goToPage('next')}
+          goToPrevPage={() => this.goToPage('prev')}
+          refreshPage={() => this.goToPage('refresh')}
+          data={data}
+          currentPage={lastCalledPage}
+        />
       </Container>
-    );
+
+
+    )
   }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state) => {
   return {
+    // data: state.beneficiary.listData,
+    // fetching: state.beneficiary.fetching,
+    // lastCalledPage: state.beneficiary.lastCalledPage,
+    // currentPage: state.beneficiary.pageNo,
+    // listError: state.beneficiary.listError,
     data: state.development.listData,
     fetching: state.development.fetching,
     lastCalledPage: state.development.lastCalledPage,
     listError: state.development.listError,
-  };
-};
+  }
+}
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    getDevelopmentWorkslist: (accessToken, pageNo) =>
-      dispatch(DevelopmentWorksActions.devWorkOnListRequest(accessToken, pageNo))
-  };
-};
+    getListData: (accessToken, pageNo, lastCalledPage) =>
+      dispatch(DevelopmentWorksActions.devWorkOnListRequest(accessToken, pageNo, lastCalledPage))
+  }
+}
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DevelopmentWorksList);
+export default connect(mapStateToProps, mapDispatchToProps)(BeneficiaryList)

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { StatusBar, TouchableOpacity, Image, AsyncStorage } from 'react-native';
+import { AsyncStorage } from 'react-native';
 import { NavigationEvents } from "react-navigation";
 import { CustomActivityIndicator } from '../Components/ui';
 import { format } from 'date-fns';
@@ -10,11 +10,12 @@ import ErrorPage from '../Components/NetworkErrorScreen';
 import DetailView from '../Components/DevDetail';
 import BeneficiaryActions from '../Redux/BeneficiaryRedux';
 
-// Styles
-import Styles from './Styles/BenefeciaryDetailViewStyle'
 
 class BenefeciaryDetailView extends Component {
-
+  static navigationOptions = {
+    title: 'ಫಲಾನುಭವಿಗಳು',
+    headerBackTitle: null,
+  }
   refreshPage() {
     const { navigation, fetching } = this.props;
     const parentProps = navigation.getParam('selectedData', null);
@@ -57,22 +58,6 @@ class BenefeciaryDetailView extends Component {
         <NavigationEvents
           onDidFocus={() => this.refreshPage()}
         />
-        <Header style={Styles.navigation}>
-          <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
-          <View style={Styles.nav}>
-            <View style={Styles.navLeft}>
-              <TouchableOpacity style={Styles.navLeft} onPress={() => {
-                navigation.navigate("BeneficiaryListingScreen")
-              }}>
-                <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
-              </TouchableOpacity>
-            </View>
-            <View style={Styles.navMiddle}>
-              <Text style={Styles.logo}>ಫಲಾನುಭವಿ ವಿವರಗಳು</Text>
-            </View>
-            <View style={Styles.navRight} />
-          </View>
-        </Header>
         {this.renderContent()}
         {fetching ? <CustomActivityIndicator /> : null}
       </Container>

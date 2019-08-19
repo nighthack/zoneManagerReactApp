@@ -4,14 +4,13 @@ import { AsyncStorage, TouchableOpacity, Image, FlatList } from 'react-native'
 import { Container, Content, Icon, Text, View } from 'native-base'
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 import { format } from 'date-fns';
-import HeaderComponent from '../Components/HeaderComponent'
 import { CustomActivityIndicator } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import { NavigationEvents } from 'react-navigation';
-import { Images } from '../Themes/'
 import Styles from './Styles/BenefeciaryDetailViewStyle';
 import ListCardComponent from '../Components/ListCardComponent';
+import { defaultStackNavigatorHeaderStyle } from '../Components/Styles/DevDetailStyle';
 
 
 function randomString(length, chars) {
@@ -19,8 +18,16 @@ function randomString(length, chars) {
   for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
   return result;
 }
+
 class BeneficiaryList extends Component {
-  
+  static navigationOptions = {
+    title: 'ಫಲಾನುಭವಿಗಳು',
+  }
+
+  componentDidMount() {
+    this.goToPage('first');
+  }
+
   goToPage = (option) => {
     const { lastCalledPage } = this.props;
     if (option === 'next') {
@@ -29,7 +36,7 @@ class BeneficiaryList extends Component {
       this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
     } else if (option === 'first') {
       this.onTableFetchRequest(1);
-    } else if(option === 'refresh') {
+    } else if (option === 'refresh') {
       this.onTableFetchRequest(lastCalledPage);
     }
   }
@@ -43,13 +50,13 @@ class BeneficiaryList extends Component {
     });
   }
 
-  goToBeneficiaryDetailView(selectedData) {
+  goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
     navigate('BenfeciaryDetail', { selectedData });
   }
 
   formatData(data) {
-    return(
+    return (
       {
         title: data.beneficiary_name,
         image: data.image,
@@ -57,77 +64,60 @@ class BeneficiaryList extends Component {
         desc: data.granted_relief,
         createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
         lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
-        metaData: [ 
-          {title: 'ಸ್ಥಳ', description: data.place},
-          {title: 'ಅರ್ಜಿ ದಿನಾಂಕ', description: data.application_date},
-          {title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status},
-          {title: 'ಷರಾ', description: data.remarks},
+        metaData: [
+          { title: 'ಸ್ಥಳ', description: data.place },
+          { title: 'ಅರ್ಜಿ ದಿನಾಂಕ', description: data.application_date },
+          { title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status },
+          { title: 'ಷರಾ', description: data.remarks },
         ]
       }
     )
   }
 
   renderContent = () => {
-    const { listError, lastCalledPage, data, fetching } = this.props;
+    const { listError, data } = this.props;
     if (listError) {
       return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
     }
     return (
-      <View style={{ flex: 1 }}>
-        <Content
-          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-        >
-          <Image source={Images.background} style={Styles.bgImg} />
-          <View style={Styles.bgLayout}>
-            <View style={Styles.hTop}>
-              <Icon name='package' type="MaterialCommunityIcons" style={Styles.hImg} />
-              <TouchableOpacity style={Styles.hContent} onPress={() => {
-                this.goToPage('first')
-              }}>
-                <Text style={Styles.hTopText}>ಫಲಾನುಭವಿಗಳು</Text>
-                <Text style={Styles.hTopDesc}>ಎಲ್ಲಾ ಫಲಾನುಭವಿ ಯೋಜನೆಗಳನ್ನು ವೀಕ್ಷಿಸಿ</Text>
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              style={{ marginBottom: 80 }}
-              contentContainerStyle={Styles.listContent}
-              keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-              data={data}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => this.goToDetailView(item)}>
-                  <ListCardComponent
-                    {...this.formatData(item)}
-                  />
-                </TouchableOpacity>
-              )}
-              removeClippedSubview
-            />
-          </View>
-        </Content>
-        <FooterComponent
-          goToFirstPage={() => this.goToPage('first')}
-          goToNextPage={() => this.goToPage('next')}
-          goToPrevPage={() => this.goToPage('prev')}
-          refreshPage={()=> this.goToPage('refresh')}
+      <Content>
+        <FlatList
+          contentContainerStyle={Styles.listContent}
+          keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
           data={data}
-          currentPage={lastCalledPage}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => this.goToDetailView(item)}>
+              <ListCardComponent
+                {...this.formatData(item)}
+              />
+            </TouchableOpacity>
+          )}
+          removeClippedSubview
         />
-      </View>
+      </Content>
     )
   }
 
   render() {
-    const { fetching } = this.props;
+    const { fetching, lastCalledPage, data } = this.props;
     return (
       <Container>
         <NavigationEvents
-					onDidFocus={() => this.goToPage('first')}
-				/>
-        <HeaderComponent title={''} {...this.props} />
+          onDidFocus={() => this.goToPage('first')}
+        />
+
         {this.renderContent()}
         {
           fetching ? <CustomActivityIndicator /> : null
         }
+        <FooterComponent
+          goToFirstPage={() => this.goToPage('first')}
+          goToNextPage={() => this.goToPage('next')}
+          goToPrevPage={() => this.goToPage('prev')}
+          refreshPage={() => this.goToPage('refresh')}
+          data={data}
+          currentPage={lastCalledPage}
+        />
       </Container>
 
 

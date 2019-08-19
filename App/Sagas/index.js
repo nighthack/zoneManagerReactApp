@@ -30,7 +30,7 @@ import {
 import { getUserDetails } from './RootSagas';
 import { getBeneficiaryList, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevWorksList, getDevWorkDetails } from './DevelopmentWorkSagas'
-import { getEventsList, getEventDetails } from './EventSagas';
+import { getEventsList, getEventDetails, getLastWeekEventsList } from './EventSagas';
 import { getPlacesListForSearchParam, getDepartmentsList, getFeedbackList, getFeedbackDetails, createFeedback } from './FeedbackSagas';
 import { getAppointmentsList, getAppointmentDetails } from './appointmentSagas';
 // import { getModuleList, getModuleDetails } from './ModuleSagas';
@@ -81,6 +81,7 @@ export default function* root() {
     // Events
     takeLatest(EventTypes.EVENT_ON_LIST_REQUEST, getEventsList),
     takeLatest(EventTypes.EVENT_ON_DETAIL_REQUEST, getEventDetails),
+    takeLatest(EventTypes.OLD_EVENT_ON_LIST_REQUEST, getLastWeekEventsList),
 
     // // Generic Module 
     // takeLatest(ModuleTypes.MODULE_ON_LIST_REQUEST, getModuleList),

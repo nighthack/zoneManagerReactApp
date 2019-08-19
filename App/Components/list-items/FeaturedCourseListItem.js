@@ -2,6 +2,9 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components/native'
 import { ImageProgressComponent } from '../ui'
+import { Image } from 'react-native'
+import { Images } from '../../Themes/'
+
 
 const Wrapper = styled.TouchableOpacity`
   width: 200;
@@ -26,42 +29,38 @@ const SellingPrice = styled.Text`
   margin-top: 4;
 `
 
-const OriginalPrice = styled(SellingPrice)`
- 
-  color: #8a8a8f;
-  text-decoration: line-through;
-  margin-left: 8;
-`
 
 export default function FeaturedCourseListItem({
-  title,
-  price,
-  originalPrice,
-  photoURL,
+  name,
+  venue,
+  image,
   onPress
 }) {
   return (
     <Wrapper onPress={() => onPress()}>
-      <ImageProgressComponent
-        photoURL={photoURL}
-        resizeMode="cover"
-        style={{ width: 200, height: 150 }}
-        imageStyle={{ borderRadius: 8 }}
-      />
-
-      <CourseTitle>{title}</CourseTitle>
+      {
+        image ?
+          <ImageProgressComponent
+            photoURL={image}
+            resizeMode="cover"
+            style={{ width: 200, height: 150 }}
+            imageStyle={{ borderRadius: 8 }}
+          /> :
+          <Image source={Images.sunil}
+            style={{ width: 200, height: 150 }}
+            resizeMode="cover"
+          />
+      }
+      <CourseTitle>{name}</CourseTitle>
       <PricesWrapper>
-        <SellingPrice>{price}</SellingPrice>
-        {!!originalPrice && <OriginalPrice>{originalPrice}</OriginalPrice>}
+        <SellingPrice>{venue}</SellingPrice>
       </PricesWrapper>
     </Wrapper>
   )
 }
 
 FeaturedCourseListItem.propTypes = {
-  title: PropTypes.string.isRequired,
-  price: PropTypes.string.isRequired,
-  originalPrice: PropTypes.string,
-  photoURL: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  venue: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired
 }

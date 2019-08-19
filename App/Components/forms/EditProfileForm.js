@@ -69,10 +69,11 @@ export default function EditProfileForm({ loading, onSubmit, initialValues }) {
 
           <SelectField
             label="ಲಿಂಗ"
-            keyboardType="numeric"
             value={props.values.gender}
-            onChangeText={text => props.setFieldValue('gender', text)}
+            onChange={value => props.setFieldValue('gender', value)}
             error={props.touched.gender && props.errors.gender}
+            placeholder={'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ'}
+            options={[{ name: 'ಗಂಡು', value: 'ಗಂಡು' }, { name: 'ಹೆಣ್ಣು ', value: 'ಹೆಣ್ಣು' }, { name: 'ಇತರೆ', value: 'ಇತರೆ' }]}
           />
         </FormContainer>
       )}

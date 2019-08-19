@@ -4,6 +4,7 @@ import { FlatList } from 'react-native'
 import styled from 'styled-components/native'
 import { ListLoadingComponent, ListEmptyComponent } from '../ui'
 import { FeaturedCourseListItem } from '../list-items'
+import { Images } from '../../Themes/';
 
 const Wrapper = styled.View`
   height: 250;
@@ -17,10 +18,10 @@ export default function FeaturedCoursesListView({
 }) {
   return (
     <Wrapper>
-      {loading && <ListLoadingComponent text="Loading featured courses..." />}
+      {loading && <ListLoadingComponent text="ಕಾರ್ಯಕ್ರಮಗಳು ಲೋಡ್ ಆಗುತ್ತಿದೆ" />}
 
       {!loading && items.length === 0 && (
-        <ListEmptyComponent text="No courses to display." />
+        <ListEmptyComponent text="ಪ್ರದರ್ಶಿಸಲು ಯಾವುದೇ ಕಾರ್ಯಕ್ರಮಗಳಿಲ್ಲ." />
       )}
 
       {!loading && items.length > 0 && (

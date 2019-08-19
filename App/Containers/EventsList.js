@@ -1,10 +1,9 @@
 import React, { Component } from 'react'
-import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Title, TabHeading, ScrollableTab, Card, Left, Right, Body, Input, Tabs, Tab, Footer, View, FooterTab, Badge } from 'native-base'
+import { AsyncStorage, TouchableOpacity, FlatList } from 'react-native'
+import { Container, Content, View } from 'native-base'
 import { connect } from 'react-redux'
 import { format } from 'date-fns';
-import { Images } from '../Themes/'
-import HeaderComponent from '../Components/HeaderComponent'
+import { CustomActivityIndicator } from '../Components/ui';
 import { NavigationEvents } from 'react-navigation';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
@@ -18,6 +17,14 @@ function randomString(length, chars) {
   return result;
 }
 class EventsList extends Component {
+
+  static navigationOptions = {
+    title: 'ದಿನಂಪ್ರತಿ ಕಾರ್ಯಕ್ರಮಗಳು',
+  }
+
+  componentDidMount() {
+    this.goToPage('first');
+  }
 
   goToPage = (option) => {
     const { lastCalledPage } = this.props;
@@ -73,16 +80,7 @@ class EventsList extends Component {
           <Content
             contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
           >
-            <Image source={Images.background} style={Styles.bgImg} />
             <View style={Styles.bgLayout}>
-              <View style={Styles.hTop}>
-                <Icon name='calendar-check-o' type="FontAwesome" style={Styles.hImg} />
-                <TouchableOpacity style={Styles.hContent} onPress={() => {
-                  this.goToPage('first')
-                }}>
-                  <Text style={Styles.hTopText}>ಮುಂದಿನ ಕಾರ್ಯಕ್ರಮಗಳು</Text>
-                </TouchableOpacity>
-              </View>
               <FlatList
                 style={{ marginBottom: 80 }}
                 data={data}
@@ -119,8 +117,10 @@ class EventsList extends Component {
         <NavigationEvents
 					onDidFocus={() => this.goToPage('first')}
 				/>
-        <HeaderComponent title={""} {...this.props} />
         {this.renderContent()}
+        {
+          fetching ? <CustomActivityIndicator /> : null
+        }
       </Container>
 
     )

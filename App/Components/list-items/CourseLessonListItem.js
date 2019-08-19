@@ -67,7 +67,7 @@ export default function CourseLessonListItem({
 
 CourseLessonListItem.propTypes = {
   title: PropTypes.string.isRequired,
-  description: PropTypes.string,
+  description: PropTypes.any,
   hasIcon: PropTypes.bool,
   iconName: PropTypes.string,
   style: PropTypes.object,

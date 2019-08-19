@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { AsyncStorage, StatusBar, TouchableOpacity, TextInput, Image, Platform, FlatList, Alert } from 'react-native';
-import { Container, Header, Content, Icon, Text, Picker, View, Textarea } from 'native-base';
+import { AsyncStorage, TouchableOpacity, TextInput, Image, Platform, FlatList, Alert } from 'react-native';
+import { Container, Content, Icon, Text, Picker, View } from 'native-base';
 import { connect } from 'react-redux';
 import { DocumentPicker, DocumentPickerUtil } from 'react-native-document-picker';
 import ImagePicker from 'react-native-image-picker';
@@ -15,7 +15,7 @@ import Styles from './Styles/FeedbackScreenStyle'
 
 
 const ImagePickerOptions = {
-  title: 'Select Photos For Feedback',
+  title: 'ಪ್ರತಿಕ್ರಿಯೆಗಾಗಿ ಫೋಟೋಗಳನ್ನು ಆಯ್ಕೆಮಾಡಿ',
   storageOptions: {
     skipBackup: true,
     path: 'images',
@@ -23,6 +23,11 @@ const ImagePickerOptions = {
 };
 
 class FeedbackScreen extends Component {
+  static navigationOptions = {
+    title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ',
+    headerBackTitle: null,
+  }
+
   constructor(props) {
     super(props)
     this.state = {
@@ -292,13 +297,10 @@ class FeedbackScreen extends Component {
         <View style={Styles.bgLayout}>
           <View style={Styles.regForm}>
             <View style={Styles.infoBox}>
-              <View style={Styles.infoHeader}>
-                <Text style={Styles.infoHeaderText}>Details</Text>
-              </View>
               <View style={(errorsObj && errorsObj['feedback[name]']) ? Styles.fRowError : Styles.fRow}>
                 <TextInput
                   style={Styles.fInput}
-                  placeholder='Title/ವಿಷಯ'
+                  placeholder='ವಿಷಯ'
                   placeholderTextColor='rgba(36,42,56,0.4)'
                   onChangeText={(text) => this.onFormChange(text, 'feedback[name]')}
                   value={formObj['feedback[name]']}
@@ -315,7 +317,7 @@ class FeedbackScreen extends Component {
                   itemTextStyle={Styles.fSearchInput}
                   items={plantsList}
                   defaultIndex={0}
-                  placeholder="Select Place / ಸ್ಥಳವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ"
+                  placeholder="ಸ್ಥಳವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ"
                   resetValue
                   underlineColorAndroid="transparent"
                 />
@@ -326,7 +328,7 @@ class FeedbackScreen extends Component {
                   <Picker
                     style={Styles.fPickerItem}
                     textStyle={Styles.fInput}
-                    placeholder="Select ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ"
+                    placeholder="ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ"
                     placeholderStyle={Styles.placeholderStyle}
                     selectedValue={formObj['feedback[feedback_type]']}
                     onValueChange={(itemValue, itemIndex) =>
@@ -344,7 +346,7 @@ class FeedbackScreen extends Component {
               <View style={(errorsObj && errorsObj['feedback[details]']) ? Styles.fRowError : Styles.fRow}>
                 <TextInput
                   style={Styles.fInput}
-                  placeholder='Details/ವಿವರ'
+                  placeholder='ವಿವರ'
                   placeholderTextColor='rgba(36,42,56,0.4)'
                   onChangeText={(text) => this.onFormChange(text, 'feedback[details]')}
                   numberOfLines={10}
@@ -363,7 +365,7 @@ class FeedbackScreen extends Component {
                 <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center' }]}>Photos</Text>
                 <View style={{ alignSelf: 'flex-end', margin: 0 }}>
                   <TouchableOpacity disabled={imageLoading} style={[Styles.fBtnSmall]} onPress={this.addPhoto}>
-                    <Text style={Styles.fBtnText}>Add Photos</Text>
+                    <Text style={Styles.fBtnText}>ಫೋಟೋಗಳನ್ನು ಸೇರಿಸಿ</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -377,28 +379,8 @@ class FeedbackScreen extends Component {
               </View>
             </View>
           </View>
-          <View style={Styles.regForm}>
-            <View style={Styles.infoBox}>
-              <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
-                <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center' }]}>Documents</Text>
-                <View style={{ alignSelf: 'flex-end', margin: 0 }}>
-                  <TouchableOpacity disabled={imageLoading} style={[Styles.fBtnSmall]} onPress={this.addDocument}>
-                    <Text style={Styles.fBtnText}>Add Documents</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={Styles.photos}>
-                <FlatList
-                  data={documents}
-                  showsHorizontalScrollIndicator={false}
-                  removeClippedSubview
-                  renderItem={this.renderDocumentItem}
-                />
-              </View>
-            </View>
-          </View>
           <TouchableOpacity style={Styles.fBtn} onPress={this.onFormSubmit}>
-            <Text style={Styles.fBtnText}>Submit</Text>
+            <Text style={Styles.fBtnText}>ಸಲ್ಲಿಸಲು</Text>
             <Icon name='check' type="FontAwesome" style={Styles.fBtnIcon} />
           </TouchableOpacity>
         </View>
@@ -489,4 +471,26 @@ export default connect(mapStateToProps, mapDispatchToProps)(FeedbackScreen)
 //   {
 //     OS === 'ios' ? <Icon name='building-o' type="FontAwesome" style={Styles.fIcon} /> : null
 //   }
+// </View>
+
+
+// <View style={Styles.regForm}>
+// <View style={Styles.infoBox}>
+//   <View style={[Styles.infoHeader, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+//     <Text style={[Styles.infoHeaderText, { justifyContent: 'center', alignItems: 'center' }]}>Documents</Text>
+//     <View style={{ alignSelf: 'flex-end', margin: 0 }}>
+//       <TouchableOpacity disabled={imageLoading} style={[Styles.fBtnSmall]} onPress={this.addDocument}>
+//         <Text style={Styles.fBtnText}>Add Documents</Text>
+//       </TouchableOpacity>
+//     </View>
+//   </View>
+//   <View style={Styles.photos}>
+//     <FlatList
+//       data={documents}
+//       showsHorizontalScrollIndicator={false}
+//       removeClippedSubview
+//       renderItem={this.renderDocumentItem}
+//     />
+//   </View>
+// </View>
 // </View>

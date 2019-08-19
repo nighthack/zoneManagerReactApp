@@ -11,7 +11,10 @@ import { CustomActivityIndicator } from '../Components/ui';
 import DevelopmentWorksActions from "../Redux/DevelopmentWorkRedux";
 
 class DevelopmentWorkDetail extends Component {
-
+  static navigationOptions = {
+    title: 'ಅಭಿವೃಧ್ಧಿ ಕಾಮಗಾರಿ',
+    headerBackTitle: null,
+  }
   refreshPage() {
     const { navigation, fetching } = this.props;
     const parentProps = navigation.getParam('selectedData', null);

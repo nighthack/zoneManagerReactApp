@@ -20,7 +20,6 @@ export const onboardingHeaderStyle = {
 }
 
 const headerTitleStyle = {
-  fontFamily: 'SFProDisplayBold',
   fontSize: 20,
   color: '#000'
 }

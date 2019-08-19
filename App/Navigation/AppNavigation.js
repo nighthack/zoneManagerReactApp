@@ -92,55 +92,6 @@ export const tabHeaderStyle = {
   backgroundColor: '#fff'
 }
 
-const MyDrawerNavigator = createDrawerNavigator({
-  Home: {
-    screen: HomeScreen,
-  },
-  BeneficiaryListingScreen: {
-    screen: BeneficiaryListingScreen,
-  },
-  BenfeciaryDetail: {
-    screen: BeneficiaryDetailScreen,
-  },
-  DevelopmentWorksList: {
-    screen: DevelopmentWorksList
-  },
-  DevelopmentWorkDetail: {
-    screen: DevelopmentWorkDetail
-  },
-  EventsListScreen: {
-    screen: EventsListScreen,
-  },
-  EventDetailScreen: {
-    screen: EventDetailScreen,
-  },
-  FeedbackScreen: {
-    screen: FeedbackScreen,
-  },
-  FeedbackList: {
-    screen: FeedbackList,
-  },
-  FeedbackDetailScreen: {
-    screen: FeedbackDetailScreen,
-  },
-  UserSettings: {
-    screen: UserSettings,
-  },
-  Notifications: {
-    screen: LaunchScreen,
-  },
-  AppointmentListScreen: {
-    screen: AppointmentListScreen,
-  },
-  CreateAppointmentScreen: {
-    screen: CreateAppointmentScreen,
-  }
-},
-  {
-    contentComponent: DrawerComponent
-  });
-
-
 const AuthStack = createStackNavigator(
   {
     Login: LoginScreen,
@@ -186,51 +137,64 @@ const DashboardTabNavigator = createBottomTabNavigator(
   }
 )
 
-const DashboardStackNavigator = createStackNavigator({
-  DashboardTabNavigator,
-  BeneficiaryListingScreen: {
-    screen: BeneficiaryListingScreen,
+const DashboardStackNavigator = createStackNavigator(
+  {
+    DashboardTabNavigator,
+    BeneficiaryListingScreen: {
+      screen: BeneficiaryListingScreen,
+    },
+    BenfeciaryDetail: {
+      screen: BeneficiaryDetailScreen,
+    },
+    DevelopmentWorksList: {
+      screen: DevelopmentWorksList
+    },
+    DevelopmentWorkDetail: {
+      screen: DevelopmentWorkDetail
+    },
+    EventsListScreen: {
+      screen: EventsListScreen,
+    },
+    EventDetailScreen: {
+      screen: EventDetailScreen,
+    },
+    FeedbackScreen: {
+      screen: FeedbackScreen,
+    },
+    FeedbackList: {
+      screen: FeedbackList,
+    },
+    FeedbackDetailScreen: {
+      screen: FeedbackDetailScreen,
+    },
+    UserSettings: {
+      screen: UserSettings,
+    },
+    Notifications: {
+      screen: LaunchScreen,
+    },
+    AppointmentListScreen: {
+      screen: AppointmentListScreen,
+    },
+    CreateAppointmentScreen: {
+      screen: CreateAppointmentScreen,
+    },
+    EditProfile: {
+      screen: ProfileEdit,
+    }
   },
-  BenfeciaryDetail: {
-    screen: BeneficiaryDetailScreen,
-  },
-  DevelopmentWorksList: {
-    screen: DevelopmentWorksList
-  },
-  DevelopmentWorkDetail: {
-    screen: DevelopmentWorkDetail
-  },
-  EventsListScreen: {
-    screen: EventsListScreen,
-  },
-  EventDetailScreen: {
-    screen: EventDetailScreen,
-  },
-  FeedbackScreen: {
-    screen: FeedbackScreen,
-  },
-  FeedbackList: {
-    screen: FeedbackList,
-  },
-  FeedbackDetailScreen: {
-    screen: FeedbackDetailScreen,
-  },
-  UserSettings: {
-    screen: UserSettings,
-  },
-  Notifications: {
-    screen: LaunchScreen,
-  },
-  AppointmentListScreen: {
-    screen: AppointmentListScreen,
-  },
-  CreateAppointmentScreen: {
-    screen: CreateAppointmentScreen,
-  },
-  EditProfile: {
-    screen: ProfileEdit,
+  {
+    navigationOptions: ({ navigation }) => {
+      return {
+        headerTitle: getDashboardNavigatorHeaderTitle(navigation),
+        headerRight: getNavigationHeaderRight(navigation),
+        gesturesEnabled: false,
+        headerBackTitle: null,
+        ...defaultStackNavigatorHeaderStyle
+      }
+    },
   }
-})
+)
 
 export default createAppContainer(createSwitchNavigator(
   {
