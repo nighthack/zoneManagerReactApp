@@ -34,6 +34,7 @@ export const INITIAL_STATE = Immutable({
   detailError: null,
   detailData: {},
   oldListData: [],
+  fetchingDetail: false,
 })
 
 /* ------------- Selectors ------------- */
@@ -73,14 +74,14 @@ export const OnListFetchFail = (state, { errorCode }) => {
 
 export const onDetailRequest = (state) =>
   state.merge({ 
-    fetching: true,
+    fetchingDetail: true,
   });
 
 // This is called when the list fetch API is Successfull
 export const onDetailFetchSuccess = (state, action) => {
   const { detailData } = action;
   return state.merge({ 
-    fetching: false, 
+    fetchingDetail: false, 
     detailError: null, 
     detailData,
   })
@@ -89,7 +90,7 @@ export const onDetailFetchSuccess = (state, action) => {
 // This is called when the list fetch API Fails
 export const OnDetailFetchFail = (state, { errorCode }) => {
   return state.merge({ 
-    fetching: false, 
+    fetchingDetail: false, 
     detailError: errorCode, 
     detailData: {},
   });

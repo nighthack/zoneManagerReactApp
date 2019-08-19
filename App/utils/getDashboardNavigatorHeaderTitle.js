@@ -3,6 +3,10 @@ export default function getDashboardNavigatorHeaderTitle(navigation) {
   let headerTitle
   if (routeName === 'Home') {
     headerTitle = 'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್'
+  } else if(routeName === 'Feedback') {
+    headerTitle = 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ'
+  } else if(routeName === 'Profile') {
+    headerTitle = 'ಪ್ರೊಫೈಲ್'
   } else {
     headerTitle = routeName
   }

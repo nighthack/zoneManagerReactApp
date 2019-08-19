@@ -174,7 +174,7 @@ export default class DevelopmentDetailsScreen extends React.Component {
                       images.map((image) => (<ImageProgressComponent
                         photoURL={image}
                         resizeMode="cover"
-                        style={{ flex: 1, width: null, height: 200 }}
+                        style={{ flex: 1, width: null, height: 200, margin: 20 }}
                       />))
                     }
                   </Content>

@@ -293,8 +293,7 @@ class FeedbackScreen extends Component {
     }
     return (
       <Content contentContainerStyle={Styles.layoutDefault}>
-        <Image source={Images.background} style={Styles.bgImg} />
-        <View style={Styles.bgLayout}>
+        <View style={{...Styles.bgLayout, marginTop: 30 }}>
           <View style={Styles.regForm}>
             <View style={Styles.infoBox}>
               <View style={(errorsObj && errorsObj['feedback[name]']) ? Styles.fRowError : Styles.fRow}>

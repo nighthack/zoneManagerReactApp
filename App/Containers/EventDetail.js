@@ -69,7 +69,7 @@ class EventDetail extends Component {
 const mapStateToProps = (state) => {
   return {
     data: state.event.detailData,
-    fectching: state.event.fetchingDetails,
+    fectching: state.event.fetchingDetail,
     detailError: state.event.detailError,
   }
 }

@@ -53,13 +53,14 @@ class UserSettings extends Component {
               iconName="ios-information-circle"
               iconColor="#346df1"
               text="About Us"
-              onPress={() => this.toggleModal('showAboutModal')}
+              onPress={() => {}}
             />
             <ProfileMenuOption
               iconName="md-log-out"
               iconColor="#000"
               text="Sign Out"
-              onPress={() => resetNavigationStack(navigation)}
+              onPress={() => {}}
+              // onPress={() => resetNavigationStack(navigation)}
             />
           </Content>
         </Container>
