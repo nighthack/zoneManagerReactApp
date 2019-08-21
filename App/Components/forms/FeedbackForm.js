@@ -31,7 +31,10 @@ export default function FeedbackCreateForm({ loading, onSubmit }) {
     <Formik
       initialValues={initialValues}
       validationSchema={validationSchema}
-      onSubmit={values => onSubmit(values)}
+      onSubmit={(values, { resetForm }) => {
+        onSubmit(values)
+        resetForm();
+      }}
       render={props => {
         return (
           <FormContainer
