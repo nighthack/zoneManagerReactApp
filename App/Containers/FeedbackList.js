@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { AsyncStorage, TouchableOpacity, FlatList  } from 'react-native'
-import { Container,  Content, View } from 'native-base'
+import { AsyncStorage, TouchableOpacity, FlatList } from 'react-native'
+import { Container, Content, View } from 'native-base'
 import { format } from 'date-fns';
 import { CustomActivityIndicator } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
@@ -18,8 +18,8 @@ function randomString(length, chars) {
 }
 class FeedbackList extends Component {
 	static navigationOptions = {
-    title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ',
-  }
+		title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ',
+	}
 	onTableFetchRequest = (pageNo) => {
 		AsyncStorage.getItem('accessToken').then((accessToken) => {
 			this.props.getFeedbackList(accessToken, pageNo);
@@ -27,8 +27,8 @@ class FeedbackList extends Component {
 	}
 
 	componentDidMount() {
-    this.goToPage('first');
-  }
+		this.goToPage('first');
+	}
 
 	goToPage = (option) => {
 		const { currentPage } = this.props;
@@ -48,53 +48,63 @@ class FeedbackList extends Component {
 		navigate("FeedbackDetailScreen", { selectedData });
 	}
 	formatData(data) {
-    return(
-      {
-        title: data.name,
-        image: data.image,
-        subTitle: data.feedback_type,
-        createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
-        lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
-        metaData: [ 
-          {title: 'ಸ್ಥಳ', description: data.place},
-          {title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status},
-          {title: 'ಷರಾ', description: data.remarks},
-        ]
-      }
-    )
+		return (
+			{
+				title: data.name,
+				image: data.image,
+				subTitle: data.feedback_type,
+				createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+				lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+				metaData: [
+					{ title: 'ಸ್ಥಳ', description: data.place },
+					{ title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status },
+					{ title: 'ಷರಾ', description: data.remarks },
+				]
+			}
+		)
 	}
 
 	renderContent = () => {
-		const { listError, currentPage, data, fetching, navigation } = this.props;
+		const { listError, data, fetching } = this.props;
 		if (listError) {
 			return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
 		}
 		return (
-			<View style={{ flex: 1 }}>
-				<Content
-					contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-				>
-					<View style={Styles.bgLayout}>
-						<FlatList
-							style={{ marginBottom: 80 }}
-							data={data}
-							refreshing={fetching}
-							showsHorizontalScrollIndicator={false}
-							removeClippedSubview
-							keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-							onEndReached={this.getMoreItems}
+			<Content>
+				<FlatList
+					data={data}
+					refreshing={fetching}
+					showsHorizontalScrollIndicator={false}
+					removeClippedSubview
+					keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+					onEndReached={this.getMoreItems}
 
-							renderItem={({ item, separators }) => (
-								<TouchableOpacity onPress={() => this.goToDetailView(item)}>
-                  <ListCardComponent
-                    {...this.formatData(item)}
-                  />
-                </TouchableOpacity>
+					renderItem={({ item, separators }) => (
+						<TouchableOpacity onPress={() => this.goToDetailView(item)}>
+							<ListCardComponent
+								{...this.formatData(item)}
+							/>
+						</TouchableOpacity>
 
-							)}
-						/>
-					</View>
-				</Content>
+					)}
+				/>
+			</Content>
+
+
+		)
+	}
+
+	render() {
+		const { fetching, data, currentPage } = this.props;
+		return (
+			<Container>
+				<NavigationEvents
+					onDidFocus={() => this.goToPage('first')}
+				/>
+				{this.renderContent()}
+				{
+					fetching ? <CustomActivityIndicator /> : null
+				}
 				<FooterComponent
 					goToFirstPage={() => this.goToPage('first')}
 					goToNextPage={() => this.goToPage('next')}
@@ -103,22 +113,6 @@ class FeedbackList extends Component {
 					data={data}
 					currentPage={currentPage}
 				/>
-			</View>
-
-		)
-	}
-
-	render() {
-		const { fetching } = this.props;
-		return (
-			<Container>
-				<NavigationEvents
-					onDidFocus={() => this.goToPage('first')}
-				/>
-				{this.renderContent()}
-				{
-          fetching ? <CustomActivityIndicator /> : null
-        }
 			</Container>
 		)
 	}
