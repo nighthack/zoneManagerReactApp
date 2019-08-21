@@ -11,13 +11,16 @@ const onIconPress = (navigation, routeName) => {
 export default function getNavigationHeaderRight(navigation) {
   const { routeName } = navigation.state.routes[navigation.state.index];
   let iconName;
+  let type;
   if (routeName === 'Profile') {
-    iconName = 'ios-arrow-back'
+    iconName = 'account-edit',
+    type='MaterialCommunityIcons'
   }
 
   return (
     <Icon
       name={iconName}
+      type={type}
       color="#000"
       size={20}
       style={{ marginRight: 16 }}

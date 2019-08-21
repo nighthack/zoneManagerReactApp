@@ -1,7 +1,7 @@
 import React from 'react'
 import { Platform } from 'react-native'
 import PropTypes from 'prop-types'
-import { Item, Picker, Text } from 'native-base'
+import { Item, DatePicker, Text } from 'native-base'
 import styled from 'styled-components/native'
 
 const Wrapper = styled.View`
@@ -22,7 +22,6 @@ const Label = styled(Text)`
   margin: 4px;
 `;
 
-const StyledSelectBox = styled(Picker)``
 
 const Error = styled.Text`
  
@@ -30,47 +29,42 @@ const Error = styled.Text`
   color: #f4224a;
   margin: 4px 8px;
 `
-function renderPickerOptions(data, feature) {
-  const { OS } = Platform;
-  let options = [];
-  if (OS === 'ios') {
-    options = data
-  } else {
-    options = data.unshift({ name: 'ಆಯ್ಕೆ ಮಾಡಿ', value: null })
-  }
-  return options.map(({ value, name }, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={name} value={value} />)
-}
 
-export default function SelectField({
+export default function DatePickerFormField({
   label,
   value,
   error,
   disabled,
   onChange,
   placeholder,
-  options,
+  defaultDate,
 }) {
   return (
     <Wrapper>
-      {label ? <Label>{label}</Label> : null }
+      {label ? <Label>{label}</Label> : null}
       <FormFieldWrapper>
-        <StyledSelectBox
+        <DatePicker
+          defaultDate={defaultDate}
+          minimumDate={new Date(1900, 1, 1)}
+          maximumDate={new Date()}
+          locale={"en"}
+          timeZoneOffsetInMinutes={undefined}
+          modalTransparent={false}
+          animationType={"fade"}
+          androidMode={"spinner"}
+          placeHolderText={placeholder}
+          textStyle={{}}
+          placeHolderTextStyle={{ color: 'rgba(36,42,56,0.4)' }}
+          onDateChange={(date) => onChange(date)}
           disabled={disabled}
-          placeholder={placeholder}
-          placeholderTextColor="#a5a5a5"
-          selectedValue={value}
-          onValueChange={text => onChange(text)}
-        >
-        {renderPickerOptions(options, label)}
-        </StyledSelectBox>
+        />
       </FormFieldWrapper>
-
-      {!!error && <Error>{error}</Error>}
-    </Wrapper>
+      { !!error && <Error>{error}</Error> }
+    </Wrapper >
   )
 }
 
-SelectField.propTypes = {
+DatePickerFormField.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   error: PropTypes.string,
@@ -78,10 +72,10 @@ SelectField.propTypes = {
   disabled: PropTypes.bool,
   keyboardType: PropTypes.string,
   returnKeyType: PropTypes.string,
-  onValueChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
   onSubmitEditing: PropTypes.func
 }
-SelectField.defaultProps = {
+DatePickerFormField.defaultProps = {
   disabled: false,
   error: '',
   onSubmitEditing: () => null

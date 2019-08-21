@@ -226,18 +226,6 @@ regForm: {
     borderRightWidth: 0,
   },
 
-  photoDelete: {
-    position: 'absolute',
-    right: 5,
-    top: 1,
-    padding: 3,
-    borderRadius: 3,
-    backgroundColor: '#FF0000'
-  },
-  photoDeleteIcon: {
-    fontSize: 14,
-    color: '#FFF'
-  },
 
   truckImg: {
     width: 90,
@@ -246,12 +234,7 @@ regForm: {
     marginHorizontal: 5,
     borderRadius: 3
   },
-  photos: {
-    flex: 1,
-    flexDirection: 'row',
-    padding: 15
-  },
-
+ 
   documentsWrapper: {
 
   },

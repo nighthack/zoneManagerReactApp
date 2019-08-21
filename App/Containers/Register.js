@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
-import { StatusBar, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, Keyboard } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox, Picker, DatePicker } from 'native-base'
+import { StatusBar, TouchableOpacity, TextInput, Image, Platform, Keyboard } from 'react-native'
+import { Container, Header, Content, Icon, Text, View, Picker, DatePicker } from 'native-base'
 import { connect } from 'react-redux'
 import { Images } from '../Themes/'
 import { ToastActionsCreators } from 'react-native-redux-toast';

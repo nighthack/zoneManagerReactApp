@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui';
 import { EditProfileForm } from '../Components/forms';
+import { debug } from 'util';
 
 
 export const PageContentWrapper = styled.View`
@@ -28,7 +29,7 @@ class EditProfile extends React.Component {
 
   onFormSubmit(values) {
     const { navigation } = this.props
-
+    debugger;
     this.setState({ formLoading: true })
 
     const { email, password } = values
@@ -39,10 +40,23 @@ class EditProfile extends React.Component {
     }, 1500)
   }
 
+  formatUserObj(data) {
+    if(data) {
+      const namesBreakup = data.name.split(" ");
+      const first_name = namesBreakup[0];
+      const last_name = namesBreakup[1] || '';
+      return {
+        ...data,
+        first_name,
+        last_name,
+      }
+    }
+    return {};
+  }
+
   render() {
-    const { navigation, userObj } = this.props
+    const { userObj } = this.props
     const { formLoading } = this.state
-    console.log(userObj);
     return (
       <SafeAreaViewWrapper extraStyles={{ backgroundColor: '#f5f5f2' }}>
         <Container>
@@ -51,7 +65,7 @@ class EditProfile extends React.Component {
             <EditProfileForm
               loading={formLoading}
               onSubmit={values => this.onFormSubmit(values)}
-              initialValues={userObj.user}
+              initialValues={this.formatUserObj(userObj.user)}
             />
           </PageContentWrapper>
         </Container>

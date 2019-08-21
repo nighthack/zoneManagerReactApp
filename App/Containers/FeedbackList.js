@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Images } from '../Themes/'
-import { AsyncStorage, TouchableOpacity, Image, FlatList  } from 'react-native'
-import { Container,  Content,  Icon, Text, View } from 'native-base'
+import { AsyncStorage, TouchableOpacity, FlatList  } from 'react-native'
+import { Container,  Content, View } from 'native-base'
 import { format } from 'date-fns';
 import { CustomActivityIndicator } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';

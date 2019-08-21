@@ -10,6 +10,10 @@ import RegularButton from './RegularButton'
 import SafeAreaViewWrapper from './SafeAreaViewWrapper'
 import Separator from './Separator'
 import SelectField from './SelectField';
+import DatePicker from './DatePicker';
+import StatusPicker from './StatusPicker';
+import PlacePicker from './PlacePicker';
+import PhotoPicker from './photoPicker';
 
 export {
   CoursePriceTag,
@@ -24,5 +28,8 @@ export {
   SafeAreaViewWrapper,
   Separator,
   SelectField,
-
+  DatePicker,
+  StatusPicker,
+  PlacePicker,
+  PhotoPicker,
 }

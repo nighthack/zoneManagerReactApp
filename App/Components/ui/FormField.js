@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Item, Input, Text } from 'native-base'
+import { Item, Input, Text, Textarea } from 'native-base'
 import styled from 'styled-components/native'
 
 const Wrapper = styled.View`
@@ -43,23 +43,40 @@ export default function FormField({
   keyboardType,
   returnKeyType,
   onChangeText,
-  onSubmitEditing
+  onSubmitEditing,
+  multiline,
+  placeholder
 }) {
   return (
     <Wrapper>
-      {label ? <Label>{label}</Label> : null }
+      {label ? <Label>{label}</Label> : null}
       <FormFieldWrapper>
-        <TextBox
-          disabled={disabled}
-          placeholder={label}
-          placeholderTextColor="#a5a5a5"
-          value={value}
-          secureTextEntry={secure}
-          keyboardType={keyboardType}
-          returnKeyType={returnKeyType}
-          onChangeText={text => onChangeText(text)}
-          onSubmitEditing={() => onSubmitEditing()}
-        />
+        {
+          multiline ?
+            <Textarea
+              disabled={disabled}
+              placeholder={placeholder}
+              placeholderTextColor="#a5a5a5"
+              value={value}
+              secureTextEntry={secure}
+              keyboardType={keyboardType}
+              returnKeyType={returnKeyType}
+              onChangeText={text => onChangeText(text)}
+              onSubmitEditing={() => onSubmitEditing()}
+              rowSpan={6}
+            /> :
+            <TextBox
+              disabled={disabled}
+              placeholder={label}
+              placeholderTextColor="#a5a5a5"
+              value={value}
+              secureTextEntry={secure}
+              keyboardType={keyboardType}
+              returnKeyType={returnKeyType}
+              onChangeText={text => onChangeText(text)}
+              onSubmitEditing={() => onSubmitEditing()}
+            />
+        }
       </FormFieldWrapper>
 
       {!!error && <Error>{error}</Error>}

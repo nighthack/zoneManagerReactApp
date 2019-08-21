@@ -2,22 +2,25 @@ import React from 'react'
 import PropTypes from 'prop-types';
 import { Formik } from 'formik'
 import * as yup from 'yup'
-import { FormField, SelectField } from '../ui'
+import { FormField, SelectField, DatePicker } from '../ui'
 import FormContainer from './FormContainer'
 
-
-
 const validationSchema = yup.object().shape({
-  fullName: yup.string().required('full name is required'),
+  first_name: yup.string().required('ಮೊದಲ ಹೆಸರು ಅಗತ್ಯವಿದೆ'),
+  last_name: yup.string().required('ಕೊನೆಯ ಹೆಸರು ಅಗತ್ಯವಿದೆ'),
   email: yup
     .string()
-    .required('email address is required')
-    .email('enter a valid email address'),
-  password: yup.string().required('password is required')
+    .required('ಇಮೇಲ್  ಅಗತ್ಯವಿದೆ')
+    .email('ಮಾನ್ಯವಾದ ಇಮೇಲ್ ನಮೂದಿಸಿ'),
+  dob: yup
+    .date()
+    .required('ಹುಟ್ಟಿದ ದಿನಾಂಕದ ಅಗತ್ಯವಿದೆ'),
+  gender: yup
+    .string()
+    .required('ಲಿಂಗ  ಅಗತ್ಯವಿದೆ')
 })
 
 export default function EditProfileForm({ loading, onSubmit, initialValues }) {
-  console.log(initialValues)
   return (
     <Formik
       initialValues={initialValues}
@@ -26,21 +29,21 @@ export default function EditProfileForm({ loading, onSubmit, initialValues }) {
       render={props => (
         <FormContainer
           loading={loading}
-          submitButtonText="Update Profile"
+          submitButtonText="ನವೀಕರಿಸಿ"
           onSubmitButtonPress={() => props.handleSubmit()}
         >
           <FormField
             label="ಮೊದಲ ಹೆಸರು"
-            value={props.values.name}
-            onChangeText={text => props.setFieldValue('name', text)}
-            error={props.touched.name && props.errors.name}
+            value={props.values.first_name}
+            onChangeText={text => props.setFieldValue('first_name', text)}
+            error={props.touched.first_name && props.errors.first_name}
           />
 
           <FormField
             label="ಕೊನೆಯ ಹೆಸರು"
-            value={props.values.name}
-            onChangeText={text => props.setFieldValue('name', text)}
-            error={props.touched.name && props.errors.name}
+            value={props.values.last_name}
+            onChangeText={text => props.setFieldValue('last_name', text)}
+            error={props.touched.last_name && props.errors.last_name}
           />
 
           <FormField
@@ -51,22 +54,6 @@ export default function EditProfileForm({ loading, onSubmit, initialValues }) {
             error={props.touched.email && props.errors.email}
           />
 
-          <FormField
-            label="ಫೋನ್ ನಂಬರ್"
-            keyboardType="phone-pad"
-            value={props.values.phone}
-            onChangeText={text => props.setFieldValue('phone', text)}
-            error={props.touched.phone && props.errors.phone}
-          />
-
-          <FormField
-            label="ಪಿನ್ಕೋಡ್"
-            keyboardType="numeric"
-            value={props.values.pincode}
-            onChangeText={text => props.setFieldValue('pincode', text)}
-            error={props.touched.pincode && props.errors.pincode}
-          />
-
           <SelectField
             label="ಲಿಂಗ"
             value={props.values.gender}
@@ -75,6 +62,16 @@ export default function EditProfileForm({ loading, onSubmit, initialValues }) {
             placeholder={'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ'}
             options={[{ name: 'ಗಂಡು', value: 'ಗಂಡು' }, { name: 'ಹೆಣ್ಣು ', value: 'ಹೆಣ್ಣು' }, { name: 'ಇತರೆ', value: 'ಇತರೆ' }]}
           />
+
+          <DatePicker
+            label="ಹುಟ್ಟಿದ ದಿನಾಂಕ"
+            defaultDate={props.values.dob}
+            onChange={value => props.setFieldValue('dob', value)}
+            error={props.touched.dob && props.errors.dob}
+            placeholder={'ಹುಟ್ಟಿದ ದಿನಾಂಕ ಆಯ್ಕೆ ಮಾಡಿ'}
+          />
+
+          
         </FormContainer>
       )}
     />
@@ -94,3 +91,21 @@ EditProfileForm.propTypes = {
 // onChangeText={text => props.setFieldValue('password', text)}
 // error={props.touched.password && props.errors.password}
 // />
+
+// <FormField
+//   label="ಪಿನ್ಕೋಡ್"
+//   keyboardType="numeric"
+//   value={props.values.pincode}
+//   onChangeText={text => props.setFieldValue('pincode', text)}
+//   error={props.touched.pincode && props.errors.pincode}
+// />
+
+
+// <FormField
+// label="ಫೋನ್ ನಂಬರ್"
+// keyboardType="phone-pad"
+// value={props.values.phone}
+// onChangeText={text => props.setFieldValue('phone', text)}
+// error={props.touched.phone && props.errors.phone}
+// />
+
