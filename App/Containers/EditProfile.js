@@ -29,7 +29,6 @@ class EditProfile extends React.Component {
 
   onFormSubmit(values) {
     const { navigation } = this.props
-    debugger;
     this.setState({ formLoading: true })
 
     const { email, password } = values

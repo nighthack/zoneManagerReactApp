@@ -69,7 +69,7 @@ export default function FeedbackCreateForm({ loading, onSubmit }) {
               error={props.touched.feedback_type && props.errors.feedback_type}
               placeholder={'ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ ವಿಧ ಆಯ್ಕೆ ಮಾಡಿ'}
             />
-            <PhotoPicker 
+            <PhotoPicker
               label="ಫೋಟೋಗಳನ್ನು ಸೇರಿಸಿ"
               onChange={value => props.setFieldValue('photos', value)}
             />

@@ -30,13 +30,11 @@ class FeedbackScreen extends Component {
   }
 
   onFormSubmit = (values) => {
-    debugger;
     let data = new FormData();
     for (let property in values) {
       if (property !== 'photos') {
         data.append(`feedback[${property}]`, values[property]);
       } else {
-        debugger;
         const photos = values[property];
         if (photos && photos.length) {
           photos.map((photoItem, index) => {
