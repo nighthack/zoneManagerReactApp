@@ -189,7 +189,7 @@ class PhotoPicker extends Component {
 
 PhotoPicker.propTypes = {
   label: PropTypes.string.isRequired,
-  onValueChange: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
 }
 
 

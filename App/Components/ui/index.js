@@ -14,6 +14,7 @@ import DatePicker from './DatePicker';
 import StatusPicker from './StatusPicker';
 import PlacePicker from './PlacePicker';
 import PhotoPicker from './photoPicker';
+import TimePicker from './TimePicker';
 
 export {
   CoursePriceTag,
@@ -32,4 +33,5 @@ export {
   StatusPicker,
   PlacePicker,
   PhotoPicker,
+  TimePicker,
 }

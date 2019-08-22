@@ -107,17 +107,12 @@ StatusPicker.propTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   error: PropTypes.string,
-  secure: PropTypes.bool,
   disabled: PropTypes.bool,
-  keyboardType: PropTypes.string,
-  returnKeyType: PropTypes.string,
-  onValueChange: PropTypes.func.isRequired,
-  onSubmitEditing: PropTypes.func
+  onChange: PropTypes.func.isRequired,
 }
 StatusPicker.defaultProps = {
   disabled: false,
   error: '',
-  onSubmitEditing: () => null
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(StatusPicker)

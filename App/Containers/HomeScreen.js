@@ -43,7 +43,7 @@ export const SAMPLE_COURSE_CATEGORIES = [
   { icon: 'dashboard', type: 'Octicons', title: 'ಫಲಾನುಭವಿಗಳು', route: 'BeneficiaryListingScreen' },
   { icon: 'toolbox', type: 'FontAwesome5', title: 'ದಿನಂಪ್ರತಿ ಕಾರ್ಯಕ್ರಮಗಳು', route: 'EventsListScreen' },
   { icon: 'envelope', type: 'SimpleLineIcons', title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ', route: 'FeedbackList' },
-  // { icon: 'settings', type: 'SimpleLineIcons', title: 'ಸಮಯಾವಕಾಶ ಕೋರಿಕೆ', route: 'AppointmentListScreen'},
+  { icon: 'settings', type: 'SimpleLineIcons', title: 'ಸಮಯಾವಕಾಶ ಕೋರಿಕೆ', route: 'AppointmentListScreen'},
 ]
 const Heading = styled.Text`
   font-size: 15;
@@ -80,7 +80,6 @@ class HomeScreen extends React.Component {
               items={data}
               onItemPress={item =>  navigation.navigate("EventDetailScreen", { selectedData: item })}
             />
-
             <Heading>ವಿಭಾಗಗಳು</Heading>
             <CourseCategoriesGridView
               items={SAMPLE_COURSE_CATEGORIES}

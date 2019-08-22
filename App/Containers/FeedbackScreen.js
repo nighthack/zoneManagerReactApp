@@ -14,15 +14,6 @@ class FeedbackScreen extends Component {
     headerBackTitle: null,
   }
 
-  componentDidMount() {
-    const { fetching } = this.props;
-    AsyncStorage.getItem('accessToken').then((accessToken) => {
-      if (!fetching) {
-        this.props.getDepartmentsStatus(accessToken);
-      }
-    });
-  }
-
   componentWillReceiveProps(nextProps) {
     if (nextProps.createFeedbackResponse && nextProps.createFeedbackResponse.id) {
       this.goToPage();
@@ -49,9 +40,7 @@ class FeedbackScreen extends Component {
           });
         }
       }
-
     }
-
     AsyncStorage.getItem('accessToken').then((accessToken) => {
       this.props.createFeedback(accessToken, data);
     });
@@ -78,7 +67,7 @@ class FeedbackScreen extends Component {
   }
 
   renderComponent() {
-    const { errorCode } = this.props;
+    const { errorCode, fetching } = this.props;
     if (errorCode) {
       return <ErrorPage status={errorCode} onButtonClick={() => this.refreshPage(1)} />
     }
@@ -88,7 +77,7 @@ class FeedbackScreen extends Component {
         backgroundColor: '#F1F2F6'
       }}>
         <FeedbackForm
-          // loading={formLoading}
+          loading={fetching}
           onSubmit={values => this.onFormSubmit(values)}
         />
       </Content>
@@ -112,8 +101,7 @@ class FeedbackScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    plantsList: state.feedback.plantsList,
-    departments: state.feedback.departments,
+    fetching: state.feedback.fetching,
     error: state.feedback.formError,
     errorCode: state.feedback.createFeedbackErrorCode,
     createFeedbackResponse: state.feedback.createFeedbackResponse,
@@ -122,8 +110,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getPlantsForSearchParam: (searchParam) =>
-      dispatch(FeedbackActions.getPlacesList(searchParam)),
     getDepartmentsStatus: (accessToken) =>
       dispatch(FeedbackActions.getDepartmentsList(accessToken)),
     createFeedback: (accessToken, data) =>
