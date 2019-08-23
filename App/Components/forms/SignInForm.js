@@ -6,6 +6,7 @@ import { Formik } from 'formik'
 import * as yup from 'yup'
 import { FormField, RegularButton, CustomActivityIndicator } from '../ui'
 import { ActionText } from './FormContainer'
+import { Images } from '../../Themes'
 
 const Wrapper = styled.View`
   padding: 16px;
@@ -13,7 +14,7 @@ const Wrapper = styled.View`
 
 const profilePhotoDimensions = 100
 const ProfilePhoto = styled.Image.attrs({
-  source: { uri: 'https://imgur.com/oqgs8nX.png' }
+  source: Images.sunil,
 })`
   width: ${profilePhotoDimensions};
   height: ${profilePhotoDimensions};
@@ -25,19 +26,18 @@ const ProfilePhoto = styled.Image.attrs({
 `
 
 const initialValues = {
-  email: '',
+  phone: '',
   password: ''
 }
 
 const validationSchema = yup.object().shape({
-  email: yup
+  phone: yup
     .string()
-    .required('email address is required')
-    .email('enter a valid email address'),
-  password: yup.string().required('password is required')
+    .required('ಫೋನ್ ನಂಬರ್ ಅಗತ್ಯವಿದೆ'),
+  password: yup.string().required(' ಪಾಸ್ವರ್ಡ್ ಅಗತ್ಯವಿದೆ')
 })
 
-export default function SignInForm({ loading, onSubmit, onSignUpPress }) {
+export default function SignInForm({ loading, onSubmit, onSignUpPress, onForgotPasswordPress }) {
   return (
     <Formik
       initialValues={initialValues}
@@ -49,25 +49,28 @@ export default function SignInForm({ loading, onSubmit, onSignUpPress }) {
             <ProfilePhoto />
 
             <FormField
-              label="Email"
-              keyboardType="email-address"
-              value={props.values.email}
-              onChangeText={text => props.setFieldValue('email', text)}
-              error={props.touched.email && props.errors.email}
+              label="ಫೋನ್ ನಂಬರ್"
+              keyboardType="phone-pad"
+              value={props.values.phone}
+              onChangeText={text => props.setFieldValue('phone', text)}
+              error={props.touched.phone && props.errors.phone}
             />
 
             <FormField
-              label="Password"
+              label="ಪಾಸ್ವರ್ಡ್"
               secure
               value={props.values.password}
               onChangeText={text => props.setFieldValue('password', text)}
               error={props.touched.password && props.errors.password}
             />
 
-            <RegularButton text="Log In" onPress={() => props.handleSubmit()} />
+            <RegularButton text="ಲಾಗಿನ್" onPress={() => props.handleSubmit()} />
 
             <ActionText onPress={() => onSignUpPress()}>
-              Don't have an account? Sign up
+              ಖಾತೆ ಇಲ್ಲವೇ? ಸೈನ್ ಅಪ್ ಮಾಡಿ
+            </ActionText>
+            <ActionText onPress={() => onForgotPasswordPress()}>
+              ಪಾಸ್ವರ್ಡ್ ಮರೆತಿರಾ?
             </ActionText>
 
             {loading && <CustomActivityIndicator />}
@@ -79,7 +82,7 @@ export default function SignInForm({ loading, onSubmit, onSignUpPress }) {
 }
 
 SignInForm.propTypes = {
-  loading: PropTypes.bool.isRequired,
+  loading: PropTypes.bool,
   onSubmit: PropTypes.func.isRequired,
   onSignUpPress: PropTypes.func.isRequired
 }

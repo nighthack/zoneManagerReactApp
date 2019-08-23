@@ -55,7 +55,7 @@ class UserSettings extends Component {
               text="About Us"
               onPress={() => {}}
             />
-            <ProfileMenuOption
+            <ProfileMenuOption 
               iconName="md-log-out"
               iconColor="#000"
               text="Sign Out"
