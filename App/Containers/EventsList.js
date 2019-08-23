@@ -8,7 +8,6 @@ import { NavigationEvents } from 'react-navigation';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import EventActions from '../Redux/EventRedux'
-import Styles from './Styles/EventsListStyle'
 import ListCardComponent from '../Components/ListCardComponent';
 import EmptyListComponent from '../Components/EmptyList';
 
@@ -77,27 +76,23 @@ class EventsList extends Component {
       return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
     } else {
       return (
-        <Content
-          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-        >
-          <View style={Styles.bgLayout}>
-            <FlatList
-              style={{ marginBottom: 80 }}
-              data={data}
-              refreshing={fetching}
-              keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-              showsHorizontalScrollIndicator={false}
-              removeClippedSubview
-              ListEmptyComponent={() => <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
-              renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => this.goToDetailView(item)}>
-                  <ListCardComponent
-                    {...this.formatData(item)}
-                  />
-                </TouchableOpacity>
-              )}
-            />
-          </View>
+        <Content>
+          <FlatList
+            style={{ marginBottom: 80 }}
+            data={data}
+            refreshing={fetching}
+            keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+            showsHorizontalScrollIndicator={false}
+            removeClippedSubview
+            ListEmptyComponent={() => <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
+            renderItem={({ item }) => (
+              <TouchableOpacity onPress={() => this.goToDetailView(item)}>
+                <ListCardComponent
+                  {...this.formatData(item)}
+                />
+              </TouchableOpacity>
+            )}
+          />
         </Content>
 
       )

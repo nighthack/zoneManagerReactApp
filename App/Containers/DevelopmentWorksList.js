@@ -8,7 +8,6 @@ import { CustomActivityIndicator } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import { NavigationEvents } from 'react-navigation';
-import Styles from './Styles/BenefeciaryDetailViewStyle';
 import ListCardComponent from '../Components/ListCardComponent';
 import EmptyListComponent from '../Components/EmptyList';
 
@@ -85,7 +84,6 @@ class BeneficiaryList extends Component {
     return (
       <Content>
         <FlatList
-          contentContainerStyle={Styles.listContent}
           keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
           data={data}
           renderItem={({ item }) => (
