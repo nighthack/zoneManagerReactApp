@@ -17,7 +17,7 @@ export const IconWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   border-radius: ${iconWrapperDims / 2};
-  background-color: #f5fcf3;
+  background-color: #278d27;
 `
 
 export const Title = styled.Text.attrs({
@@ -33,8 +33,8 @@ export default function CourseCategoryGridItem({ icon, title, onPress, type }) {
     <Wrapper>
       <IconWrapper onPress={() => onPress()}>
         <Icon name={icon} type={type || 'FontAwesome'} style={{
-          fontSize: 22,
-          color: '#84d5b1'
+          fontSize: 35,
+          color: '#fff'
         }} />
       </IconWrapper>
       <Title>{title}</Title>

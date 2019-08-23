@@ -39,11 +39,11 @@ export const SAMPLE_FEATURED_COURSES = [
   }
 ]
 export const SAMPLE_COURSE_CATEGORIES = [
-  { icon: 'calendar', type: 'AntDesign', title: 'ಅಭಿವೃಧ್ಧಿ ಕಾಮಗಾರಿ', route: 'DevelopmentWorksList' },
-  { icon: 'dashboard', type: 'Octicons', title: 'ಫಲಾನುಭವಿಗಳು', route: 'BeneficiaryListingScreen' },
-  { icon: 'toolbox', type: 'FontAwesome5', title: 'ದಿನಂಪ್ರತಿ ಕಾರ್ಯಕ್ರಮಗಳು', route: 'EventsListScreen' },
-  { icon: 'envelope', type: 'SimpleLineIcons', title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ', route: 'FeedbackList' },
-  { icon: 'settings', type: 'SimpleLineIcons', title: 'ಸಮಯಾವಕಾಶ ಕೋರಿಕೆ', route: 'AppointmentListScreen'},
+  { icon: 'road', type: 'FontAwesome', title: 'ಅಭಿವೃಧ್ಧಿ ಕಾಮಗಾರಿ', route: 'DevelopmentWorksList' },
+  { icon: 'ios-people', type: 'Ionicons', title: 'ಫಲಾನುಭವಿಗಳು', route: 'BeneficiaryListingScreen' },
+  { icon: 'event-note', type: 'MaterialIcons', title: 'ದಿನಂಪ್ರತಿ ಕಾರ್ಯಕ್ರಮಗಳು', route: 'EventsListScreen' },
+  { icon: 'feedback', type: 'MaterialIcons', title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ', route: 'FeedbackList' },
+  { icon: 'ios-timer', type: 'Ionicons', title: 'ಸಮಯಾವಕಾಶ ಕೋರಿಕೆ', route: 'AppointmentListScreen'},
 ]
 const Heading = styled.Text`
   font-size: 15;
