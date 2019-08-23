@@ -64,7 +64,7 @@ class AppointmentCreateScreen extends Component {
   goToPage = () => {
     const { navigation } = this.props;
     this.props.resetStateOnNavigation();
-    navigation.navigate("FeedbackList");
+    navigation.navigate("AppointmentListScreen");
   }
 
   renderComponent() {
