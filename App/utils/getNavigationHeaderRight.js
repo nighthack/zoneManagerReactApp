@@ -12,7 +12,7 @@ export default function getNavigationHeaderRight(navigation) {
   const { routeName } = navigation.state.routes[navigation.state.index];
   let iconName;
   let type;
-  if (routeName === 'Profile') {
+  if (routeName === 'Profile123') {
     iconName = 'account-edit',
     type='MaterialCommunityIcons'
   }

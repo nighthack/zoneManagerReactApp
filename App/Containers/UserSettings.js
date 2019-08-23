@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Container, Content } from 'native-base';
+import { AsyncStorage, TouchableOpacity, FlatList } from 'react-native'
 import styled from 'styled-components/native'
 import {
   SafeAreaViewWrapper,
@@ -9,6 +10,7 @@ import {
 import { SectionHeader } from '../Components/headers'
 import { CustomActivityIndicator } from '../Components/ui';
 import { connect } from 'react-redux'
+import LoginActions from '../Redux/LoginRedux'
 
 
 const ProfileHeroWrapper = styled.View`
@@ -33,6 +35,23 @@ const PointsText = styled.Text`
 `
 
 class UserSettings extends Component {
+
+  async deleteToken() {
+    try {
+      await AsyncStorage.removeItem('accessToken')
+    } catch (err) {
+      console.log(`The error is: ${err}`)
+    }
+    this.props.navigation.navigate('Login')
+  }
+  onLogout = () => {
+    const { access_token } = this.props.userObj ? this.props.userObj.user : {};
+    const accessToken = access_token;
+    this.props.onLogout(accessToken);
+    const { navigate } = this.props.navigation;
+    this.deleteToken();
+  }
+  
   render() {
     const { fetching, navigation, userObj } = this.props;
     const user = userObj && userObj.user ? userObj.user : {};
@@ -48,19 +67,20 @@ class UserSettings extends Component {
               </UserDetailsWrapper>
             </ProfileHeroWrapper>
             <SectionHeader>ಸೆಟ್ಟಿಂಗ್‌ಗಳು</SectionHeader>
-            <ProfileMenuOption
-              showDivider
-              iconName="ios-information-circle"
-              iconColor="#346df1"
-              text="About Us"
+            <ProfileMenuOption 
+              iconName="md-person-add"
+              iconColor="#278d27"
+              text="ಪ್ರೊಫೈಲ್ ಮಾಹಿತಿಯ ಬದಲಾವಣೆ ಮಾಡಿ"
               onPress={() => {}}
+              onPress={() => navigation.navigate('EditProfile')}
             />
             <ProfileMenuOption 
               iconName="md-log-out"
               iconColor="#000"
-              text="Sign Out"
+              text="
+              ಲಾಗ್ ಔಟ್"
               onPress={() => {}}
-              // onPress={() => resetNavigationStack(navigation)}
+              onPress={() => this.onLogout()}
             />
           </Content>
         </Container>
@@ -80,4 +100,10 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps, null)(UserSettings)
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onLogout: (accessToken) => dispatch(LoginActions.logoutRequest(accessToken)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserSettings)
