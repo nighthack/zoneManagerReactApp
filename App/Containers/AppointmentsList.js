@@ -1,26 +1,39 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { AsyncStorage, TouchableOpacity, Image, FlatList  } from 'react-native'
-import { Container,  Content,  Icon, Text, View } from 'native-base'
+import { AsyncStorage, TouchableOpacity, FlatList } from 'react-native'
+import styled from 'styled-components/native'
+import { Container, Content, View } from 'native-base'
 import { format } from 'date-fns';
-import LoadingOverlay from '../Components/LoadingOverlay';
+import { CustomActivityIndicator, RegularButton } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import AppointmentActions from '../Redux/AppointmentRedux';
-import Styles from './Styles/BenefeciaryDetailViewStyle';
 import { NavigationEvents } from 'react-navigation';
+import ListCardComponent from '../Components/ListCardComponent';
+import EmptyListComponent from '../Components/EmptyList';
 
+const StartButtonWrapper = styled(View)`
+  justify-content: flex-start;
+  align-items: stretch;
+  margin: 0px 16px;
+`
 function randomString(length, chars) {
 	var result = '';
 	for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
 	return result;
 }
-class AppointmentList extends Component {
-
+class AppointmentListScreen extends Component {
+	static navigationOptions = {
+		title: 'ಸಮಯಾವಕಾಶ ಕೋರಿಕೆ',
+	}
 	onTableFetchRequest = (pageNo) => {
 		AsyncStorage.getItem('accessToken').then((accessToken) => {
-			this.props.getAppointmentsList(accessToken, pageNo);
+			this.props.getListData(accessToken, pageNo);
 		});
+	}
+
+	componentDidMount() {
+		this.goToPage('first');
 	}
 
 	goToPage = (option) => {
@@ -40,77 +53,73 @@ class AppointmentList extends Component {
 		const { navigate } = this.props.navigation;
 		navigate("FeedbackDetailScreen", { selectedData });
 	}
+	formatData(data) {
+		return (
+			{
+				title: data.name,
+				image: data.image,
+				subTitle: data.feedback_type,
+				createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+				lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+				metaData: [
+					{ title: 'ಸ್ಥಳ', description: data.place },
+					{ title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status },
+					{ title: 'ಷರಾ', description: data.remarks },
+				]
+			}
+		)
+	}
 
 	renderContent = () => {
-		const { listError, currentPage, data, fetching, navigation } = this.props;
+		const { listError, data, fetching } = this.props;
 		if (listError) {
 			return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
 		}
+		if (data && data.length) {
+			return (
+				<Content>
+					<FlatList
+						data={data}
+						refreshing={fetching}
+						showsHorizontalScrollIndicator={false}
+						removeClippedSubview
+						keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+						onEndReached={this.getMoreItems}
+
+						renderItem={({ item, separators }) => (
+							<TouchableOpacity onPress={() => this.goToDetailView(item)}>
+								<ListCardComponent
+									{...this.formatData(item)}
+								/>
+							</TouchableOpacity>
+
+						)}
+					/>
+				</Content>
+			)
+		}
+		return <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />
+	}
+
+	render() {
+		const { fetching, data, currentPage, navigation } = this.props;
 		return (
-			<View style={{ flex: 1 }}>
+			<Container>
 				<NavigationEvents
 					onDidFocus={() => this.goToPage('first')}
 				/>
-				<Content
-					contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-				>
-					<View style={Styles.bgLayout}>
-						<View style={[Styles.decisionBox, { paddingHorizontal: 15 }]}>
-							<TouchableOpacity style={Styles.acceptBtn} onPress={() => {
-								navigation.navigate("CreateAppointmentScreen")
-							}}>
-								<Text style={Styles.btnText}>Request Appointment</Text>
-							</TouchableOpacity>
-						</View>
+				<StartButtonWrapper>
+					<RegularButton
+						text="ಸಮಯಾವಕಾಶ ವಿನಂತಿಸಿ"
+						onPress={() => navigation.navigate("CreateAppointmentScreen")}
+						primary
+					/>
+				</StartButtonWrapper>
 
-						<FlatList
-							style={{ marginBottom: 80 }}
-							data={data}
-							refreshing={fetching}
-							showsHorizontalScrollIndicator={false}
-							removeClippedSubview
-							keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-							onEndReached={this.getMoreItems}
-
-							renderItem={({ item, separators }) => (
-								<TouchableOpacity onPress={() => this.goToDetailView(item)}>
-									<View style={Styles.tripItem}>
-										<View style={Styles.truckInfo}>
-											<View>
-												<Text style={Styles.infoLabel}>ವಿಷಯ</Text>
-												<Text style={Styles.truckData}>{item.name}</Text>
-												<Text style={Styles.infoLabel}>ಸ್ಥಳ</Text>
-												<Text style={Styles.truckData}>{item.place}</Text>
-												<View>
-													<Text style={Styles.infoLabel}> ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ</Text>
-													<Text style={Styles.truckData}>{item.feedback_type}</Text>
-												</View>
-											</View>
-										</View>
-										<View style={Styles.tripInfo}>
-											<View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-												<Text style={Styles.infoLabel}>ಇಲಾಖೆ</Text>
-												<Text style={Styles.truckData}>{item.department}</Text>
-											</View>
-											<View>
-												<Text style={Styles.infoLabel}>ಹಾಲಿ ಸ್ಥಿತಿ</Text>
-												<Text style={Styles.truckData}>{item.status}</Text>
-											</View>
-											<View>
-												<Text style={Styles.infoLabel}>ಕ್ರಿಯೆ</Text>
-												<Text style={Styles.truckData}>{item.action_taken || 'NA'}</Text>
-											</View>
-										</View>
-										<View style={Styles.more}>
-											<Text style={Styles.postedOn}>ಕೊನೆಯ ನವೀಕರಿಸಿದ ದಿನಾಂಕ: {item.updated_at ? format(new Date(item.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-
-							)}
-						/>
-					</View>
-				</Content>
+				{this.renderContent()}
+				{
+					fetching ? <CustomActivityIndicator /> : null
+				}
 				<FooterComponent
 					goToFirstPage={() => this.goToPage('first')}
 					goToNextPage={() => this.goToPage('next')}
@@ -118,23 +127,6 @@ class AppointmentList extends Component {
 					refreshPage={() => this.goToPage('refresh')}
 					data={data}
 					currentPage={currentPage}
-				/>
-			</View>
-
-		)
-	}
-
-	render() {
-    const { fetching } = this.props;
-		return (
-			<Container>
-				{this.renderContent()}
-				<LoadingOverlay
-					visible={fetching}
-					color="white"
-					indicatorSize="large"
-					messageFontSize={24}
-					message="Loading..."
 				/>
 			</Container>
 		)
@@ -152,9 +144,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
 	return {
-		getAppointmentsList: (accessToken, pageNo) =>
+		getListData: (accessToken, pageNo) =>
 			dispatch(AppointmentActions.appointmentOnListRequest(accessToken, pageNo))
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(AppointmentList)
+export default connect(mapStateToProps, mapDispatchToProps)(AppointmentListScreen)

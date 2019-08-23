@@ -10,7 +10,7 @@ import ErrorPage from '../Components/NetworkErrorScreen';
 import { NavigationEvents } from 'react-navigation';
 import Styles from './Styles/BenefeciaryDetailViewStyle';
 import ListCardComponent from '../Components/ListCardComponent';
-import { defaultStackNavigatorHeaderStyle } from '../Components/Styles/DevDetailStyle';
+import EmptyListComponent from '../Components/EmptyList';
 
 
 function randomString(length, chars) {
@@ -85,6 +85,7 @@ class BeneficiaryList extends Component {
           contentContainerStyle={Styles.listContent}
           keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
           data={data}
+          ListEmptyComponent={()=> <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
           renderItem={({ item }) => (
             <TouchableOpacity onPress={() => this.goToDetailView(item)}>
               <ListCardComponent

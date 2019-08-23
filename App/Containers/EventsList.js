@@ -10,6 +10,7 @@ import ErrorPage from '../Components/NetworkErrorScreen';
 import EventActions from '../Redux/EventRedux'
 import Styles from './Styles/EventsListStyle'
 import ListCardComponent from '../Components/ListCardComponent';
+import EmptyListComponent from '../Components/EmptyList';
 
 function randomString(length, chars) {
   var result = '';
@@ -54,7 +55,7 @@ class EventsList extends Component {
   }
 
   formatData(data) {
-    return(
+    return (
       {
         title: data.name,
         images: data.images,
@@ -62,65 +63,65 @@ class EventsList extends Component {
         desc: data.details,
         createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
         lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
-        metaData: [ 
-          {title: 'ಸಮಯಾವಕಾಶದ ವೇಳೆ', description: `${data.date} ${data.start_time ? format(new Date(data.start_time), 'hh:mm A') : ''} - ${data.end_time ? format(new Date(data.end_time), 'hh:mm A') : ''}`, iconName: 'calendar', hasIcon: true},
-          {title: 'ಷರಾ', description: data.remarks},
+        metaData: [
+          { title: 'ಸಮಯಾವಕಾಶದ ವೇಳೆ', description: `${data.date} ${data.start_time ? format(new Date(data.start_time), 'hh:mm A') : ''} - ${data.end_time ? format(new Date(data.end_time), 'hh:mm A') : ''}`, iconName: 'calendar', hasIcon: true },
+          { title: 'ಷರಾ', description: data.remarks },
         ]
       }
     )
   }
-  
+
   renderContent = () => {
-    const { listError, lastCalledPage, data, fetching } = this.props;
+    const { listError, data, fetching } = this.props;
     if (listError) {
       return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
     } else {
       return (
-        <View style={{ flex: 1 }}>
-          <Content
-            contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-          >
-            <View style={Styles.bgLayout}>
-              <FlatList
-                style={{ marginBottom: 80 }}
-                data={data}
-                refreshing={fetching}
-                keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-                showsHorizontalScrollIndicator={false}
-                removeClippedSubview
-                renderItem={({ item }) => (
-                  <TouchableOpacity onPress={() => this.goToDetailView(item)}>
-                    <ListCardComponent
-                      {...this.formatData(item)}
-                    />
-                  </TouchableOpacity>
-                )}
-              />
-            </View>
-          </Content>
-          <FooterComponent
-            goToFirstPage={() => this.goToPage('first')}
-            goToNextPage={() => this.goToPage('next')}
-            goToPrevPage={() => this.goToPage('prev')}
-            refreshPage={() => this.goToPage('refresh')}
-            data={data}
-            currentPage={lastCalledPage}
-          />
-        </View>
+        <Content
+          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
+        >
+          <View style={Styles.bgLayout}>
+            <FlatList
+              style={{ marginBottom: 80 }}
+              data={data}
+              refreshing={fetching}
+              keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+              showsHorizontalScrollIndicator={false}
+              removeClippedSubview
+              ListEmptyComponent={() => <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
+              renderItem={({ item }) => (
+                <TouchableOpacity onPress={() => this.goToDetailView(item)}>
+                  <ListCardComponent
+                    {...this.formatData(item)}
+                  />
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </Content>
+
       )
     }
   }
   render() {
-    const { fetching } = this.props;
+    const { fetching, data, lastCalledPage } = this.props;
     return (
       <Container>
         <NavigationEvents
-					onDidFocus={() => this.goToPage('first')}
-				/>
+          onDidFocus={() => this.goToPage('first')}
+        />
         {this.renderContent()}
         {
           fetching ? <CustomActivityIndicator /> : null
         }
+        <FooterComponent
+          goToFirstPage={() => this.goToPage('first')}
+          goToNextPage={() => this.goToPage('next')}
+          goToPrevPage={() => this.goToPage('prev')}
+          refreshPage={() => this.goToPage('refresh')}
+          data={data}
+          currentPage={lastCalledPage}
+        />
       </Container>
 
     )

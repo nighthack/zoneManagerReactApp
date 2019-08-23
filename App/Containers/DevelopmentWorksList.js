@@ -10,6 +10,7 @@ import ErrorPage from '../Components/NetworkErrorScreen';
 import { NavigationEvents } from 'react-navigation';
 import Styles from './Styles/BenefeciaryDetailViewStyle';
 import ListCardComponent from '../Components/ListCardComponent';
+import EmptyListComponent from '../Components/EmptyList';
 
 
 function randomString(length, chars) {
@@ -95,6 +96,8 @@ class BeneficiaryList extends Component {
             </TouchableOpacity>
           )}
           removeClippedSubview
+          ListEmptyComponent={()=> <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
+          
         />
       </Content>
     )

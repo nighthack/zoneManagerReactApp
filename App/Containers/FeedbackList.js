@@ -7,9 +7,9 @@ import { CustomActivityIndicator } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import FeedbackActions from '../Redux/FeedbackRedux';
-import Styles from './Styles/BenefeciaryDetailViewStyle';
 import { NavigationEvents } from 'react-navigation';
 import ListCardComponent from '../Components/ListCardComponent';
+import EmptyListComponent from '../Components/EmptyList';
 
 function randomString(length, chars) {
 	var result = '';
@@ -78,7 +78,7 @@ class FeedbackList extends Component {
 					removeClippedSubview
 					keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
 					onEndReached={this.getMoreItems}
-
+					ListEmptyComponent={()=> <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
 					renderItem={({ item, separators }) => (
 						<TouchableOpacity onPress={() => this.goToDetailView(item)}>
 							<ListCardComponent
@@ -89,8 +89,6 @@ class FeedbackList extends Component {
 					)}
 				/>
 			</Content>
-
-
 		)
 	}
 

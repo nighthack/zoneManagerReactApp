@@ -11,7 +11,8 @@ const Wrapper = styled(Button).attrs({
   justify-content: center;
   align-items: center;
   margin: 25px 0px 10px;
-  background-color: #F97D09;
+  background-color: ;
+  background-color: ${props => props.primary ? "#278d27" : "#F97D09"};
 `
 
 const ButtonText = styled.Text.attrs({
@@ -22,9 +23,9 @@ const ButtonText = styled.Text.attrs({
   color: #fff;
 `
 
-export default function RegularButton({ text, onPress }) {
+export default function RegularButton({ text, onPress, primary }) {
   return (
-    <Wrapper onPress={() => onPress()}>
+    <Wrapper primary={primary} onPress={() => onPress()}>
       <ButtonText>{text}</ButtonText>
     </Wrapper>
   )
