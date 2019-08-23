@@ -32,7 +32,7 @@ import { getBeneficiaryList, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevWorksList, getDevWorkDetails } from './DevelopmentWorkSagas'
 import { getEventsList, getEventDetails, getLastWeekEventsList } from './EventSagas';
 import { getPlacesListForSearchParam, getDepartmentsList, getFeedbackList, getFeedbackDetails, createFeedback } from './FeedbackSagas';
-import { getAppointmentsList, getAppointmentDetails } from './appointmentSagas';
+import { getAppointmentsList, getAppointmentDetails, createAppointment } from './appointmentSagas';
 // import { getModuleList, getModuleDetails } from './ModuleSagas';
 // import { getAllPositions,  } from './VerifiedSignUpSagas'
 
@@ -78,6 +78,7 @@ export default function* root() {
     // // Appointment Module
     takeLatest(AppointmentTypes.APPOINTMENT_ON_LIST_REQUEST, getAppointmentsList),
     takeLatest(AppointmentTypes.APPOINTMENT_ON_DETAIL_REQUEST, getAppointmentDetails),
+    takeLatest(AppointmentTypes.CREATE_APPOINTMENT, createAppointment),
     // Events
     takeLatest(EventTypes.EVENT_ON_LIST_REQUEST, getEventsList),
     takeLatest(EventTypes.EVENT_ON_DETAIL_REQUEST, getEventDetails),

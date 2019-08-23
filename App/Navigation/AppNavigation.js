@@ -37,6 +37,7 @@ import FeedbackDetailScreen from '../Containers/FeedbackDetail';
 // Appointment Screen
 import CreateAppointmentScreen from '../Containers/AppointmentCreateScreen';
 import AppointmentListScreen from '../Containers/AppointmentsList';
+import AppointmentDetailScreen from '../Containers/AppointmentDetailScreen';
 // import FeedbackDetailScreen from '../Containers/FeedbackDetail';
 
 import UserSettings from '../Containers/UserSettings';
@@ -176,6 +177,9 @@ const DashboardStackNavigator = createStackNavigator(
     },
     CreateAppointmentScreen: {
       screen: CreateAppointmentScreen,
+    },
+    AppointmentDetailScreen: {
+      screen: AppointmentDetailScreen
     },
     EditProfile: {
       screen: ProfileEdit,

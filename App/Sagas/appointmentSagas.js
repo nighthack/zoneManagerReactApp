@@ -101,150 +101,58 @@ export function* getAppointmentDetails({ accessToken, id }) {
   }
 }
 
-
-// export function* getPlacesListForSearchParam({ searchParam }) {
-//   try {
-//     const options = {
-//       method: 'GET',
-//     };
-//     const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}commons/places?app_token=${APP_TOKEN}&search=${searchParam}`, options);
-//     switch (status) {
-//       case undefined:
-//         {
-//           yield put(FeedbackActions.getPlacesListFail(503));
-//           yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
-//           break;
-//         }
-//       case 401:
-//         {
-//           yield put(NavigationActions.navigate({ routeName: 'Login' }))
-//           yield put(FeedbackActions.getPlacesListFail(status));
-//           yield put(ToastActionsCreators.displayWarning('Invalid Access'));
-//           yield put(LoginActions.logoutRequest(accessToken));
-//           // TO DO ADD LOGOUT
-//           break;
-//         }
-//       case 200:
-//         {
-//           yield put(FeedbackActions.getPlacesListSuccess(body))
-//           break;
-//         }
-//       default:
-//         {
-//           yield put(FeedbackActions.getPlacesListFail(status || 503));
-//           if (body && body.message && typeof body.message === 'string') {
-//             yield put(ToastActionsCreators.displayInfo(message));
-//           } else {
-//             yield put(ToastActionsCreators.displayInfo('oops!!'));
-//           }
-//         }
-//     }
-
-//   } catch (error) {
-//     yield put(FeedbackActions.getPlacesListFail(503));
-//     yield put(ToastActionsCreators.displayInfo('oops!!'));
-//   }
-// }
-
-// export function* getDepartmentsList({ accessToken }) {
-//   try {
-//     const options = {
-//       method: 'GET',
-//     };
-//     // departments
-//     // departments: call(request, `${BASE_URL}${API_VERSION}commons/departments?access_token=${accessToken}`, options),
-//     const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}commons/status_list?access_token=${accessToken}&model=Feedback`, options);
-//     switch (status) {
-//       case undefined:
-//         {
-//           yield put(FeedbackActions.getDepartmentsListFail(503));
-//           yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
-//           break;
-//         }
-//       case 401:
-//         {
-//           yield put(NavigationActions.navigate({ routeName: 'Login' }))
-//           yield put(FeedbackActions.getDepartmentsListFail(status));
-//           yield put(ToastActionsCreators.displayWarning('Invalid Access'));
-//           yield put(LoginActions.logoutRequest(accessToken));
-//           break;
-//         }
-//       case 200:
-//         {
-//           yield put(FeedbackActions.getDepartmentsListSuccess({ statuses: body }))
-//           break;
-//         }
-//       default:
-//         {
-//           yield put(FeedbackActions.getDepartmentsListFail(status || 503));
-//           if (body && body.message && typeof body.message === 'string') {
-//             yield put(ToastActionsCreators.displayInfo(message));
-//           } else {
-//             yield put(ToastActionsCreators.displayInfo('oops!!'));
-//           }
-//         }
-//     }
-
-//   } catch (error) {
-//     yield put(FeedbackActions.getDepartmentsListFail(503));
-//     yield put(ToastActionsCreators.displayInfo('oops!!'));
-//   }
-// }
+export function* createAppointment({ accessToken, data }) {
+  try {
+    const headers = new Headers({
+      'Content-Type': 'multipart/form-data',
+      "cache-control": "no-cache",
+    });
+    data.append("app_token", APP_TOKEN);
+    const options = {
+      method: 'POST',
+      body: data,
+      headers,
+      processData: false,
+      contentType: false,
+      credentials: 'same-origin'
+    };
 
 
-// export function* createFeedback({ accessToken, data }) {
-//   try {
-//     const headers = new Headers({
-//       'Content-Type': 'multipart/form-data',
-//       "cache-control": "no-cache",
-//     });
-//     data.append("app_token", APP_TOKEN);
-//     const options = {
-//       method: 'POST',
-//       body: data,
-//       headers,
-//       processData: false,
-//       contentType: false,
-//       credentials: 'same-origin'
-//     };
+    const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}appointments?access_token=${accessToken}`, options);
+    switch (status) {
+      case undefined:
+        {
+          yield put(AppointmentActions.createAppointmentFail(503));
+          yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
+          break;
+        }
+      case 401:
+        {
+          yield put(NavigationActions.navigate({ routeName: 'Login' }))
+          yield put(AppointmentActions.createAppointmentFail(status));
+          yield put(ToastActionsCreators.displayWarning('Invalid Access'));
+          yield put(LoginActions.logoutRequest(accessToken));
+          break;
+        }
+      case 200:
+        {
+          yield put(AppointmentActions.createAppointmentSuccess(body));
+          yield put(ToastActionsCreators.displayInfo('ನಾವು ಶೀಘ್ರದಲ್ಲೇ ನಿಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸುತ್ತೇವೆ'));
+          break;
+        }
+      default:
+        {
+          yield put(AppointmentActions.createAppointmentFail(status || 503));
+          if (body && body.message && typeof body.message === 'string') {
+            yield put(ToastActionsCreators.displayInfo(message));
+          } else {
+            yield put(ToastActionsCreators.displayInfo('oops!!'));
+          }
+        }
+    }
 
-
-//     const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}feedbacks?access_token=${accessToken}`, options);
-//     switch (status) {
-//       case undefined:
-//         {
-//           yield put(FeedbackActions.createFeedbackFail(503));
-//           yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
-//           break;
-//         }
-//       case 401:
-//         {
-//           yield put(NavigationActions.navigate({ routeName: 'Login' }))
-//           yield put(FeedbackActions.createFeedbackFail(status));
-//           yield put(ToastActionsCreators.displayWarning('Invalid Access'));
-//           yield put(LoginActions.logoutRequest(accessToken));
-//           break;
-//         }
-//       case 200:
-//         {
-//           yield put(FeedbackActions.createFeedbackSuccess(body));
-//           // yield put(FeedbackActions.feedbackOnListRequest(accessToken, 1));
-//           yield put(ToastActionsCreators.displayInfo('Thanks for your valuable feedback'));
-//           break;
-//         }
-//       default:
-//         {
-//           yield put(FeedbackActions.createFeedbackFail(status || 503));
-//           if (body && body.message && typeof body.message === 'string') {
-//             yield put(ToastActionsCreators.displayInfo(message));
-//           } else {
-//             yield put(ToastActionsCreators.displayInfo('oops!!'));
-//           }
-//         }
-//     }
-
-//   } catch (error) {
-//     yield put(FeedbackActions.createFeedbackFail(503));
-//     yield put(ToastActionsCreators.displayInfo('oops!!'));
-//   }
-// }
+  } catch (error) {
+    yield put(AppointmentActions.createAppointmentFail(503));
+    yield put(ToastActionsCreators.displayInfo('oops!!'));
+  }
+}

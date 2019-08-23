@@ -51,20 +51,24 @@ class AppointmentListScreen extends Component {
 
 	goToDetailView(selectedData) {
 		const { navigate } = this.props.navigation;
-		navigate("FeedbackDetailScreen", { selectedData });
+		navigate("AppointmentDetailScreen", { selectedData });
 	}
 	formatData(data) {
 		return (
 			{
-				title: data.name,
+				title: data.title,
 				image: data.image,
-				subTitle: data.feedback_type,
+				subTitle: '',
 				createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
 				lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
 				metaData: [
-					{ title: 'ಸ್ಥಳ', description: data.place },
-					{ title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status },
-					{ title: 'ಷರಾ', description: data.remarks },
+					{ title:'ಸಂಘ ಸಂಸ್ಥೆ/ವ್ಯಕ್ತಿಯ ಹೆಸರು', description: data.organisation},
+					{ title: 'ಕಾರ್ಯಕ್ರಮ ನಡೆಯುವ ಸ್ಥಳ', description: data.venue },
+					{ title: 'ಕೋರಿಕೆಯ ದಿನಾಂಕ', description: data.req_date },
+					{ title: 'ಕೋರಿಕೆಯ ಸಮಯ', description: format(new Date(data.req_time), 'hh:mm A') },
+					{ title: 'ಪರ್ಯಾಯ ದಿನಾಂಕ', description: data.opt_date },
+					{ title: 'ಪರ್ಯಾಯ ಸಮಯ', description: data.opt_time && format(new Date(data.opt_time), 'hh:mm A') },
+
 				]
 			}
 		)

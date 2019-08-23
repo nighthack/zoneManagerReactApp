@@ -45,8 +45,7 @@ export default function DatePickerFormField({
       <FormFieldWrapper>
         <DatePicker
           defaultDate={defaultDate}
-          minimumDate={new Date(1900, 1, 1)}
-          maximumDate={new Date()}
+          minimumDate={new Date()}
           locale={"en"}
           timeZoneOffsetInMinutes={undefined}
           modalTransparent={false}

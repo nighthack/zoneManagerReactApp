@@ -20,11 +20,11 @@ const { Types, Creators } = createActions({
   // getDepartmentsListSuccess: ['data'],
   // getDepartmentsListFail: ['data'],
 
-  // createFeedback: ['accessToken', 'data'],
-  // createFeedbackSuccess: ['data'],
-  // createFeedbackFail: ['errorCode'],
+  createAppointment: ['accessToken', 'data'],
+  createAppointmentSuccess: ['data'],
+  createAppointmentFail: ['errorCode'],
 
-  // resetStateOnNavigation: ['code'],
+  resetStateOnNavigation: ['code'],
 
 });
 
@@ -155,11 +155,11 @@ export const reducer = createReducer(INITIAL_STATE, {
   // [Types.GET_DEPARTMENTS_LIST_SUCCESS]: onRequestDeptsSuccess,
   // [Types.GET_DEPARTMENTS_LIST_FAIL]: onRequestDeptsFail,
 
-  // [Types.CREATE_FEEDBACK]: onCreateFeedback,
-  // [Types.CREATE_FEEDBACK_SUCCESS]: onCreateFeedbackSuccess,
-  // [Types.CREATE_FEEDBACK_FAIL]: onCreateFeedbackFail,
+  [Types.CREATE_APPOINTMENT]: onCreateFeedback,
+  [Types.CREATE_APPOINTMENT_SUCCESS]: onCreateFeedbackSuccess,
+  [Types.CREATE_APPOINTMENT_FAIL]: onCreateFeedbackFail,
 
-  // [Types.RESET_STATE_ON_NAVIGATION]: resetFeedbackCreate,
+  [Types.RESET_STATE_ON_NAVIGATION]: resetFeedbackCreate,
 
 
   // [Types.MODULE_ON_LIST_RESET]: onListReset,

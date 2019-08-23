@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { AsyncStorage } from 'react-native';
 import { Container, Content } from 'native-base';
+import { format } from 'date-fns';
 import { connect } from 'react-redux';
 import { AppointmentForm } from '../Components/forms'
 import { CustomActivityIndicator } from '../Components/ui';
 import ErrorPage from '../Components/NetworkErrorScreen';
-import FeedbackActions from '../Redux/FeedbackRedux';
+import AppointmentActions from '../Redux/AppointmentRedux';
 
 
 class AppointmentCreateScreen extends Component {
@@ -24,13 +25,18 @@ class AppointmentCreateScreen extends Component {
     let data = new FormData();
     for (let property in values) {
       if (property !== 'photos') {
-        data.append(`feedback[${property}]`, values[property]);
+        if(property.includes('date') && values[property]) {
+          const dateObjToString  = format(values[property], 'DD-MM-YYYY') 
+          data.append(`appointment[${property}]`, dateObjToString);
+        } else {
+          data.append(`appointment[${property}]`, values[property]);
+        }
       } else {
         const photos = values[property];
         if (photos && photos.length) {
           photos.map((photoItem, index) => {
             if (photoItem.file) {
-              data.append(`feedback[stored_images_attributes][${index}][image]`, {
+              data.append(`appointment[stored_images_attributes][${index}][image]`, {
                 uri: photoItem.file.uri,
                 type: 'image/jpeg',
                 name: 'image.jpg',
@@ -42,7 +48,7 @@ class AppointmentCreateScreen extends Component {
       }
     }
     AsyncStorage.getItem('accessToken').then((accessToken) => {
-      this.props.createFeedback(accessToken, data);
+      this.props.createAppointment(accessToken, data);
     });
   }
 
@@ -52,11 +58,6 @@ class AppointmentCreateScreen extends Component {
       formObj: {},
       errorsObj: {},
       photos: [],
-    });
-    AsyncStorage.getItem('accessToken').then((accessToken) => {
-      if (!fetching) {
-        this.props.getDepartmentsStatus(accessToken);
-      }
     });
   }
 
@@ -101,21 +102,19 @@ class AppointmentCreateScreen extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    fetching: state.feedback.fetching,
-    error: state.feedback.formError,
-    errorCode: state.feedback.createFeedbackErrorCode,
-    createFeedbackResponse: state.feedback.createFeedbackResponse,
+    fetching: state.appointment.fetching,
+    error: state.appointment.formError,
+    errorCode: state.appointment.createFeedbackErrorCode,
+    createFeedbackResponse: state.appointment.createFeedbackResponse,
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getDepartmentsStatus: (accessToken) =>
-      dispatch(FeedbackActions.getDepartmentsList(accessToken)),
-    createFeedback: (accessToken, data) =>
-      dispatch(FeedbackActions.createFeedback(accessToken, data)),
+    createAppointment: (accessToken, data) =>
+      dispatch(AppointmentActions.createAppointment(accessToken, data)),
     resetStateOnNavigation: () =>
-      dispatch(FeedbackActions.resetStateOnNavigation())
+      dispatch(AppointmentActions.resetStateOnNavigation())
 
   }
 }
