@@ -48,11 +48,9 @@ import DevelopmentWorkDetail from '../Containers/DevelopmentWorkDetail'
 
 import HomeScreen from '../Containers/HomeScreen';
 
-import DrawerComponent from '../Containers/SideMenu';
-
 
 const tabBarOptions = {
-  activeTintColor: '#32ce89',
+  activeTintColor: '#F97D09',
   inactiveTintColor: 'grey',
   showLabel: false,
   style: {
