@@ -28,7 +28,8 @@ const validationSchema = yup.object().shape({
     .required('ಕೋರಿಕೆಯ ಸಮಯ  ಅಗತ್ಯವಿದೆ'),
   req_date: yup
     .date()
-    .required('ಕೋರಿಕೆಯ ದಿನಾಂಕದ ಅಗತ್ಯವಿದೆ'),
+    .required('ಕೋರಿಕೆಯ ದಿನಾಂಕದ ಅಗತ್ಯವಿದೆ')
+    .min(new Date(), `ಕೋರಿಕೆಯ ದಿನಾಂಕದ ಅಮಾನ್ಯವಾಗಿದೆ`),
   venue: yup
     .string()
     .required('ಸ್ಥಳ ಅಗತ್ಯವಿದೆ'),

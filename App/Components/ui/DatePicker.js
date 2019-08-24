@@ -39,13 +39,13 @@ export default function DatePickerFormField({
   placeholder,
   defaultDate,
 }) {
+
   return (
     <Wrapper>
       {label ? <Label>{label}</Label> : null}
       <FormFieldWrapper>
         <DatePicker
           defaultDate={defaultDate}
-          minimumDate={new Date()}
           locale={"en"}
           timeZoneOffsetInMinutes={undefined}
           modalTransparent={false}

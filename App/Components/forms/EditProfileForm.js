@@ -14,7 +14,8 @@ const validationSchema = yup.object().shape({
     .email('ಮಾನ್ಯವಾದ ಇಮೇಲ್ ನಮೂದಿಸಿ'),
   dob: yup
     .date()
-    .required('ಹುಟ್ಟಿದ ದಿನಾಂಕದ ಅಗತ್ಯವಿದೆ'),
+    .required('ಹುಟ್ಟಿದ ದಿನಾಂಕದ ಅಗತ್ಯವಿದೆ')
+    .max(new Date(), `ಹುಟ್ಟಿದ ದಿನಾಂಕ ಅಮಾನ್ಯವಾಗಿದೆ`),
   gender: yup
     .string()
     .required('ಲಿಂಗ  ಅಗತ್ಯವಿದೆ')

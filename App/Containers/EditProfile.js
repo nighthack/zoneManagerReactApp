@@ -55,7 +55,6 @@ class EditProfile extends React.Component {
 
   render() {
     const { userObj, loading } = this.props
-    const { formLoading } = this.state
     return (
       <SafeAreaViewWrapper extraStyles={{ backgroundColor: '#f5f5f2' }}>
         <Container>
