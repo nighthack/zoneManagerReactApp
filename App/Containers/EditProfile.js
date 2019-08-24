@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui';
 import { EditProfileForm } from '../Components/forms';
-import { debug } from 'util';
+import { CustomActivityIndicator } from '../Components/ui';
 
 
 export const PageContentWrapper = styled.View`
@@ -40,7 +40,7 @@ class EditProfile extends React.Component {
   }
 
   formatUserObj(data) {
-    if(data) {
+    if (data) {
       const namesBreakup = data.name.split(" ");
       const first_name = namesBreakup[0];
       const last_name = namesBreakup[1] || '';
@@ -54,19 +54,24 @@ class EditProfile extends React.Component {
   }
 
   render() {
-    const { userObj } = this.props
+    const { userObj, loading } = this.props
     const { formLoading } = this.state
     return (
       <SafeAreaViewWrapper extraStyles={{ backgroundColor: '#f5f5f2' }}>
         <Container>
           <CustomStatusBar />
           <PageContentWrapper>
-            <EditProfileForm
-              loading={formLoading}
+            {
+              userObj && <EditProfileForm
+              loading={loading}
               onSubmit={values => this.onFormSubmit(values)}
               initialValues={this.formatUserObj(userObj.user)}
             />
+            }
           </PageContentWrapper>
+          {
+            loading ? <CustomActivityIndicator /> : null
+          }
         </Container>
       </SafeAreaViewWrapper>
     )
@@ -75,6 +80,7 @@ class EditProfile extends React.Component {
 const mapStateToProps = (state) => {
   return {
     userObj: state.root.userDetails,
+    loading: state.root.fetching,
   }
 }
 
