@@ -96,7 +96,7 @@ This will update app version in IOS and Android Manifests
 2. Build app using gradle
 ```
 cd android
-./gradlew assembleDebug
+./gradlew assembleRelease
 ```
 
 3. Build using android runner if build fails
