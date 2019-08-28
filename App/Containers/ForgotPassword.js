@@ -77,19 +77,6 @@ class ForgotPassword extends Component {
     const { errorObj, showPassword } = this.state;
     return (
       <Container>
-        <Header style={Styles.navigation}>
-          <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
-          <View style={Styles.nav}>
-            <View style={Styles.navLeft}>
-              <TouchableOpacity style={Styles.navLeft} onPress={() => this.goToPage('Login')}>
-                <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
-              </TouchableOpacity>
-            </View>
-            <View style={Styles.navMiddle} />
-            <View style={Styles.navRight} />
-          </View>
-        </Header>
-
         <Content contentContainerStyle={Styles.layoutDefault}>
 
           <Image source={Images.background} style={Styles.bgImg} />

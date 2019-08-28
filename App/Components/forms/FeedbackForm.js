@@ -39,7 +39,7 @@ export default function FeedbackCreateForm({ loading, onSubmit }) {
         return (
           <FormContainer
             loading={loading}
-            submitButtonText="ಪ್ರತಿಕ್ರಿಯೆಯನ್ನು ಸಲ್ಲಿಸಿ"
+            submitButtonText="ಸಲ್ಲಿಸಿ"
             onSubmitButtonPress={() => props.handleSubmit()}
           >
             <FormField

@@ -56,6 +56,7 @@ class BeneficiaryList extends Component {
   }
 
   formatData(data) {
+    console.log(data);
     return(
       {
         title: data.name,

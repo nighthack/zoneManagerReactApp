@@ -45,6 +45,6 @@ FormContainer.propTypes = {
   actionText: PropTypes.string,
   submitButtonText: PropTypes.string.isRequired,
   onSubmitButtonPress: PropTypes.func.isRequired,
-  loading: PropTypes.bool.isRequired,
+  loading: PropTypes.bool,
   children: PropTypes.node.isRequired
 }

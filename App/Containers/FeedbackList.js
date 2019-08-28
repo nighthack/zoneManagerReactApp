@@ -1,15 +1,22 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import styled from 'styled-components/native';
 import { AsyncStorage, TouchableOpacity, FlatList } from 'react-native'
 import { Container, Content, View } from 'native-base'
 import { format } from 'date-fns';
-import { CustomActivityIndicator } from '../Components/ui';
+import { CustomActivityIndicator, RegularButton } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import FeedbackActions from '../Redux/FeedbackRedux';
 import { NavigationEvents } from 'react-navigation';
 import ListCardComponent from '../Components/ListCardComponent';
 import EmptyListComponent from '../Components/EmptyList';
+
+const StartButtonWrapper = styled(View)`
+  justify-content: flex-start;
+  align-items: stretch;
+  margin: 0px 16px;
+`
 
 function randomString(length, chars) {
 	var result = '';
@@ -78,7 +85,7 @@ class FeedbackList extends Component {
 					removeClippedSubview
 					keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
 					onEndReached={this.getMoreItems}
-					ListEmptyComponent={()=> <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
+					ListEmptyComponent={() => <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
 					renderItem={({ item, separators }) => (
 						<TouchableOpacity onPress={() => this.goToDetailView(item)}>
 							<ListCardComponent
@@ -93,12 +100,19 @@ class FeedbackList extends Component {
 	}
 
 	render() {
-		const { fetching, data, currentPage } = this.props;
+		const { fetching, data, currentPage, navigation } = this.props;
 		return (
 			<Container>
 				<NavigationEvents
 					onDidFocus={() => this.goToPage('first')}
 				/>
+				<StartButtonWrapper>
+					<RegularButton
+						text="ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ ಸಲ್ಲಿಸಿ"
+						onPress={() => navigation.navigate("Feedback")}
+						primary
+					/>
+				</StartButtonWrapper>
 				{this.renderContent()}
 				{
 					fetching ? <CustomActivityIndicator /> : null

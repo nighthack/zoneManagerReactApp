@@ -127,7 +127,7 @@ export default class DevelopmentDetailsScreen extends React.Component {
                         <CoursePriceTag price={subTitle} />
                       </CoursePriceWrapper> : null
                   }
-                  <StatsWrapper>
+                  {/* <StatsWrapper>
                     <StatItemWrapper>
                       <Title>{createdDate}</Title>
                       <SubHeading style={{ fontSize: 10 }}>ಸೇರಿಸಲಾಗಿದ ದಿನಾಂಕ</SubHeading>
@@ -137,16 +137,19 @@ export default class DevelopmentDetailsScreen extends React.Component {
                       <Title>{lastUpdatedAt}</Title>
                       <SubHeading style={{ fontSize: 10 }}>ಕೊನೆಯ ನವೀಕರಿಸಿದ ದಿನಾಂಕ</SubHeading>
                     </StatItemWrapper>
-                  </StatsWrapper>
-                  <InstructorProfileWrapper>
-                    {
-                      desc ?
+                  </StatsWrapper> */}
+
+                  {
+                    desc ?
+                      <InstructorProfileWrapper>
                         <InstructorNameWrapper>
                           <SubHeading>ವಿವರಗಳು</SubHeading>
                           <DescriptionText>{desc}</DescriptionText>
-                        </InstructorNameWrapper> : null
-                    }
-                  </InstructorProfileWrapper>
+                        </InstructorNameWrapper>
+                      </InstructorProfileWrapper>
+                      : null
+                  }
+
                   <Wrapper>
                     {metaData.map((item, index) => (
                       <CourseLessonListItem

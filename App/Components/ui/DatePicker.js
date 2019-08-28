@@ -65,7 +65,7 @@ export default function DatePickerFormField({
 
 DatePickerFormField.propTypes = {
   label: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.string,
   error: PropTypes.string,
   secure: PropTypes.bool,
   disabled: PropTypes.bool,

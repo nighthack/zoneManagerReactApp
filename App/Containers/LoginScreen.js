@@ -20,7 +20,7 @@ export const PageContentWrapper = styled.View`
 
 class SignInScreen extends React.Component {
   static navigationOptions = {
-    title: 'Log in',
+    title: 'ಲಾಗಿನ್',
     headerStyle: onboardingHeaderStyle,
   }
   constructor(props) {

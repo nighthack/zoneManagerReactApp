@@ -9,35 +9,7 @@ import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui'
 import { FeaturedCoursesListView } from '../Components/list-views'
 import { CourseCategoriesGridView } from '../Components/grid-views'
 
-export const SAMPLE_FEATURED_COURSES = [
-  {
-    title: 'Learn Product Photography - The Right Way',
-    price: '$29.99',
-    photoURL: 'https://imgur.com/rRyGXyP.png'
-  },
-  {
-    title: 'Flower arrangements like a Pro!',
-    price: '$19.99',
-    originalPrice: '$29.99',
-    photoURL: 'https://imgur.com/lu3RVHY.png'
-  },
-  {
-    title: 'Introduction to Football (Soccer) Tactics',
-    price: '$9.99',
-    originalPrice: '$19.99',
-    photoURL: 'https://imgur.com/NLccF0H.png'
-  },
-  {
-    title: 'Learn How 2 Dance - Salsa (Beginner)',
-    price: '$10.99',
-    photoURL: 'https://imgur.com/VXp5sUc.png'
-  },
-  {
-    title: 'Meal Planning Masterclass: Create Your Own Meal Plan',
-    price: '$10.99',
-    photoURL: 'https://imgur.com/9yxW634.png'
-  }
-]
+
 export const SAMPLE_COURSE_CATEGORIES = [
   { icon: 'road', type: 'FontAwesome', title: 'ಅಭಿವೃಧ್ಧಿ ಕಾಮಗಾರಿ', route: 'DevelopmentWorksList' },
   { icon: 'ios-people', type: 'Ionicons', title: 'ಫಲಾನುಭವಿಗಳು', route: 'BeneficiaryListingScreen' },

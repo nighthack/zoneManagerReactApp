@@ -36,27 +36,30 @@ export default function FeaturedCourseListItem({
   image,
   onPress
 }) {
-  return (
-    <Wrapper onPress={() => onPress()}>
-      {
-        image ?
-          <ImageProgressComponent
-            photoURL={image}
-            resizeMode="cover"
-            style={{ width: 200, height: 150 }}
-            imageStyle={{ borderRadius: 8 }}
-          /> :
-          <Image source={Images.sunil}
-            style={{ width: 200, height: 150 }}
-            resizeMode="cover"
-          />
-      }
-      <CourseTitle>{name}</CourseTitle>
-      <PricesWrapper>
-        <SellingPrice>{venue}</SellingPrice>
-      </PricesWrapper>
-    </Wrapper>
-  )
+  if (image) {
+    return (
+      <Wrapper onPress={() => onPress()}>
+        {
+          image ?
+            <ImageProgressComponent
+              photoURL={image}
+              resizeMode="cover"
+              style={{ width: 200, height: 150 }}
+              imageStyle={{ borderRadius: 8 }}
+            /> :
+            <Image source={Images.sunil}
+              style={{ width: 200, height: 150 }}
+              resizeMode="cover"
+            />
+        }
+        <CourseTitle>{name}</CourseTitle>
+        <PricesWrapper>
+          <SellingPrice>{venue}</SellingPrice>
+        </PricesWrapper>
+      </Wrapper>
+    )
+  }
+  return null;
 }
 
 FeaturedCourseListItem.propTypes = {

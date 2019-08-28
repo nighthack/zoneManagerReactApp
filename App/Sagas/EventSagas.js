@@ -1,6 +1,6 @@
 import { call, put } from 'redux-saga/effects'
 import { BASE_URL, API_VERSION, APP_TOKEN } from '../Services/constants';
-import { format, subDays } from 'date-fns';
+import { format, subMonths } from 'date-fns';
 import { NavigationActions } from 'react-navigation';
 import { ToastActionsCreators } from 'react-native-redux-toast';
 import EventActions from '../Redux/EventRedux';
@@ -97,13 +97,13 @@ export function* getEventDetails({ accessToken, id }) {
 
 export function* getLastWeekEventsList({ accessToken, pageNo }) {
   const today  = format(new Date(), 'YYYY-MM-DD');
-  const lastWeek = format(subDays(new Date(), 7), 'YYYY-MM-DD')
+  const lastMonth = format(subMonths(new Date(), 1), 'YYYY-MM-DD');
   try {
     const options = {
       method: 'GET',
     };
 
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}?access_token=${accessToken}&start_date=${lastWeek}&end_date=${today}`, options);
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}?access_token=${accessToken}&start_date=${lastMonth}&end_date=${today}&limit=100`, options);
     switch (status) {
       case undefined: {
         yield put(EventActions.oldEventOnListFailure(503));

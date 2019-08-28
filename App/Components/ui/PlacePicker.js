@@ -193,7 +193,7 @@ const mapDispatchToProps = (dispatch) => {
 
 PlacePicker.propTypes = {
   label: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.any,
   error: PropTypes.string,
   disabled: PropTypes.bool,
   onChange: PropTypes.func.isRequired,

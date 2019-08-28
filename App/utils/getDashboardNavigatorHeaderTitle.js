@@ -7,7 +7,7 @@ export default function getDashboardNavigatorHeaderTitle(navigation) {
     headerTitle = 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ'
   } else if(routeName === 'Profile') {
     headerTitle = 'ಪ್ರೊಫೈಲ್'
-  } else {
+  }  else {
     headerTitle = routeName
   }
   return headerTitle

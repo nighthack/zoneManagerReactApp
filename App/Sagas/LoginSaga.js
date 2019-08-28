@@ -79,6 +79,7 @@ export function* getOTP({ phone, shouldBeNewUser }) {
       if (verifyNumberResponse.status === 404) {
         const { body, status } = yield call(request, `${BASE_URL}${API_VERSION}users/otp`, options);
         if (status >= 200 && status < 300) {
+          debugger;
           const { message } = body;
           yield put(ToastActionsCreators.displayInfo(message))
           yield put(LoginActions.otpSuccess(body));
