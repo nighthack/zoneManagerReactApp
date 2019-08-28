@@ -48,7 +48,6 @@ class SignInScreen extends React.Component {
       <SafeAreaViewWrapper extraStyles={{ backgroundColor: '#f5f5f2' }}>
         <Container>
           <CustomStatusBar />
-
           <PageContentWrapper>
             <SignInForm
               loading={fetching}

@@ -105,17 +105,7 @@ const AuthStack = createStackNavigator(
     },
   },
   {
-    // headerMode: 'none',
     initialRouteName: 'Login',
-    navigationOptions: ({ navigation }) => {
-      return {
-        headerTitle: getDashboardNavigatorHeaderTitle(navigation),
-        headerRight: getNavigationHeaderRight(navigation),
-        gesturesEnabled: false,
-        headerBackTitle: null,
-        ...defaultStackNavigatorHeaderStyle
-      }
-    }
   }
 );
 

@@ -5,6 +5,7 @@ import * as yup from 'yup'
 import { FormField, SelectField, DatePicker, PlacePicker } from '../ui'
 import FormContainer from './FormContainer'
 
+
 const initialValues = {
   first_name: '',
   last_name: '',
@@ -58,8 +59,9 @@ export default function SignUpForm({ loading, onSubmit, positions }) {
       render={props => (
         <FormContainer
           loading={loading}
-          submitButtonText='ಸಲ್ಲಿಸಿ'
+          submitButtonText='ಒಟಿಪಿ ಪಡೆಯಿರಿ'
           // actionText="By pressing 'Join Us', you agree to our terms & conditions"
+          showLinkButton
           onSubmitButtonPress={() => props.handleSubmit()}
         >
           <FormField
@@ -76,14 +78,6 @@ export default function SignUpForm({ loading, onSubmit, positions }) {
             error={props.touched.last_name && props.errors.last_name}
           />
 
-
-          <PlacePicker
-            label="ಸ್ಥಳವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ"
-            value={props.values.place_id}
-            onChange={({ id }) => props.setFieldValue('place_id', id)}
-            error={props.touched.place_id && props.errors.place_id}
-          />
-
           <FormField
             label="ಮೊಬೈಲ್ ಸಂಖ್ಯೆ"
             keyboardType="phone-pad"
@@ -91,13 +85,19 @@ export default function SignUpForm({ loading, onSubmit, positions }) {
             onChangeText={text => props.setFieldValue('phone', text)}
             error={props.touched.phone && props.errors.phone}
           />
-
           <FormField
             label="ಇಮೇಲ್"
             keyboardType="email-address"
             value={props.values.email}
             onChangeText={text => props.setFieldValue('email', text)}
             error={props.touched.email && props.errors.email}
+          />
+
+          <PlacePicker
+            label="ಸ್ಥಳವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ"
+            value={props.values.place_id}
+            onChange={({ id }) => props.setFieldValue('place_id', id)}
+            error={props.touched.place_id && props.errors.place_id}
           />
 
           <SelectField

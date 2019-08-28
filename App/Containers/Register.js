@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
-import { TouchableOpacity, Keyboard, Modal } from 'react-native'
 import { Container, Content, Icon, Text } from 'native-base'
 import { connect } from 'react-redux'
 import { ToastActionsCreators } from 'react-native-redux-toast';
 import { CustomActivityIndicator } from '../Components/ui';
 import LoginActions from '../Redux/LoginRedux'
-import { SignUpForm } from '../Components/forms'
-// Styles
-import Styles from './Styles/RegisterStyle'
+import { SignUpForm, OTPForm } from '../Components/forms'
 
 export const onboardingHeaderStyle = {
   backgroundColor: '#f5f5f2',
@@ -52,17 +49,6 @@ class Register extends Component {
 
 
 
-  handleNextClick = () => {
-    this.dismissKeyboard();
-    const isFormValid = this.validateForm();
-    if (isFormValid) {
-      const { formObj } = this.state;
-      this.props.getOTPForNumber(formObj['user[phone]']);
-    } else {
-      this.props.errorToast('ದಯವಿಟ್ಟು ಎಲ್ಲಾ ಕಡ್ಡಾಯ ಕ್ಷೇತ್ರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ');
-    }
-  }
-
   goToPage = (route) => {
     const { navigation } = this.props;
     navigation.navigate(route);
@@ -70,105 +56,65 @@ class Register extends Component {
     this.setState({
       formObj: {},
       errorsObj: {},
-      showPassword: false,
-      showPasswordConfirmation: false,
       isErrorShown: false,
     });
   }
 
-  dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
-
-
 
   onFormSubmit = (values) => {
-    debugger;
     this.props.getOTPForNumber(values.phone);
     this.setState({ formObj: values });
   };
 
-  renderFormSubmitButton() {
-    const { otpStatus, fetching } = this.props;
-    switch (otpStatus) {
-      case 0:
-        {
-          return (
-            <TouchableOpacity
-              style={Styles.fBtn}
-              onPress={this.handleNextClick}
-              disabled={fetching}
-            >
-              <Text style={Styles.fBtnText}>ಮುಂದೆ</Text>
-              <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
-            </TouchableOpacity>
-          )
-        }
-      case 1:
-        {
-          return (
-            <TouchableOpacity
-              style={Styles.fBtn}
-              onPress={this.onFormSubmit}
-              disabled={fetching}
-            >
-              <Text style={Styles.fBtnText}>ನೋಂದಣಿ</Text>
-              <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
-            </TouchableOpacity>
-          )
-        }
-      case 2:
-        {
-          return (
-            <TouchableOpacity
-              style={Styles.fBtn}
-              onPress={this.handleNextClick}
-              disabled={fetching}
-            >
-              <Text style={Styles.fBtnText}>ಒಟಿಪಿಯನ್ನು ಮರುಹೊಂದಿಸಿ</Text>
-              <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
-            </TouchableOpacity>
-          )
-        }
-      default:
-        {
-          return (
-            <TouchableOpacity
-              style={Styles.fBtn}
-              onPress={this.handleNextClick}
-              disabled={fetching}
-            >
-              <Text style={Styles.fBtnText}>ಮುಂದೆ</Text>
-              <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
-            </TouchableOpacity>
-          )
-        }
+  onOTPFormSubmit = (values) => {
+    const { formObj } = this.state;
+    const tempFormObj = { ...formObj, ...values };
+    this.setState({ formObj: { ...formObj, ...values } });
+    let data = new FormData();
+    for (let property in tempFormObj) {
+      if (property === 'first_name') {
+        const firstName = tempFormObj[property];
+        const lastName = tempFormObj['last_name'];
+        data.append('user[name]', `${firstName} ${lastName}`);
+      }
+      if (property === 'dob') {
+        const date = ("0" + tempFormObj[property].getDate()).slice(-2);
+        const month = ("0" + (tempFormObj[property].getMonth() + 1)).slice(-2);
+        const year = tempFormObj[property].getFullYear();
+        data.append(`user[${property}]`, `${year}-${month}-${date}`);
+      }  else if (property !== 'last_name' && property !== 'first_name') {
+        data.append(`user[${property}]`, tempFormObj[property]);
+      }
     }
+    this.props.attempSingUp(data);
   }
+
 
   renderPostionOptions() {
     const { positions } = this.props;
     let options = positions.map(({ name, id }) => ({ name, value: id }));
     return options;
   }
+
   render() {
-    const { navigate } = this.props.navigation;
-    const { otpStatus, fetching, error, placesList, positions } = this.props;
-    const { formObj, errorsObj } = this.state;
-    console.log(otpStatus);
+    const { otpStatus, fetching } = this.props;
     return (
       <Container>
         <Content contentContainerStyle={{
           flexGrow: 1,
           backgroundColor: '#F1F2F6'
         }}>
+          <SignUpForm
+            loading={fetching}
+            onSubmit={values => this.onFormSubmit(values)}
+            positions={this.renderPostionOptions()}
+            otpStatus={otpStatus}
+          />
           {
-            !otpStatus ?
-              <SignUpForm
-                loading={fetching}
-                onSubmit={values => this.onFormSubmit(values)}
-                positions={this.renderPostionOptions()}
-              /> : null
+            otpStatus ? <OTPForm
+              loading={fetching}
+              onSubmit={values => this.onOTPFormSubmit(values)}
+            /> : null
           }
 
         </Content>
