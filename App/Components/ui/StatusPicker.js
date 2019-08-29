@@ -1,4 +1,4 @@
-import React, { Component }  from 'react'
+import React, { Component } from 'react'
 import { Platform, AsyncStorage } from 'react-native'
 import PropTypes from 'prop-types'
 import { Item, Picker, Text } from 'native-base'
@@ -34,15 +34,11 @@ const Error = styled.Text`
 `
 function renderPickerOptions(data, feature) {
   const { OS } = Platform;
-  let options = [];
-  if(data && data.length) {
-    if (OS === 'ios') {
-      options = data
-    } else {
-      options = data.unshift({ name: 'ಆಯ್ಕೆ ಮಾಡಿ', value: null })
-    }
+  let PickerOptions = data.map(({ value, name }, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={name} value={value} />);
+  if (OS !== 'ios') {
+    PickerOptions.unshift(<Picker.Item key={`selectbox_${feature}_placeholder`} label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />)
   }
-  return options.map((option, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={option} value={option} />)
+  return PickerOptions;
 }
 
 class StatusPicker extends Component {
@@ -66,24 +62,27 @@ class StatusPicker extends Component {
       placeholder,
       statuses,
     } = this.props;
-    return (
-      <Wrapper>
-        {label ? <Label>{label}</Label> : null}
-        <FormFieldWrapper>
-          <StyledSelectBox
-            disabled={disabled}
-            placeholder={placeholder}
-            placeholderTextColor="#a5a5a5"
-            selectedValue={value}
-            onValueChange={text => onChange(text)}
-          >
-            {renderPickerOptions(statuses, 'status')}
-          </StyledSelectBox>
-        </FormFieldWrapper>
+    if (statuses && statuses, length) {
+      return (
+        <Wrapper>
+          {label ? <Label>{label}</Label> : null}
+          <FormFieldWrapper>
+            <StyledSelectBox
+              disabled={disabled}
+              placeholder={placeholder}
+              placeholderTextColor="#a5a5a5"
+              selectedValue={value}
+              onValueChange={text => onChange(text)}
+            >
+              {renderPickerOptions(statuses, 'status')}
+            </StyledSelectBox>
+          </FormFieldWrapper>
 
-        {!!error && <Error>{error}</Error>}
-      </Wrapper>
-    )
+          {!!error && <Error>{error}</Error>}
+        </Wrapper>
+      )
+    }
+    return null;
   }
 }
 
