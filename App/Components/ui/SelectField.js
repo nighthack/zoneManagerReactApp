@@ -32,13 +32,11 @@ const Error = styled.Text`
 `
 function renderPickerOptions(data, feature) {
   const { OS } = Platform;
-  let options = [];
-  if (OS === 'ios') {
-    options = data
-  } else {
-    options = data.unshift({ name: 'ಆಯ್ಕೆ ಮಾಡಿ', value: null })
+  let PickerOptions = data.map(({ value, name }, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={name} value={value} />);
+  if (OS !== 'ios') {
+    PickerOptions.unshift(<Picker.Item key={`selectbox_${feature}_placeholder`} label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />)
   }
-  return options.map(({ value, name }, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={name} value={value} />)
+  return PickerOptions;
 }
 
 export default function SelectField({
@@ -52,19 +50,22 @@ export default function SelectField({
 }) {
   return (
     <Wrapper>
-      {label ? <Label>{label}</Label> : null }
+      {label ? <Label>{label}</Label> : null}
       <FormFieldWrapper>
-        <StyledSelectBox
-          disabled={disabled}
-          placeholder={placeholder}
-          placeholderTextColor="#a5a5a5"
-          selectedValue={value}
-          onValueChange={text => onChange(text)}
-        >
-        {renderPickerOptions(options, label)}
-        </StyledSelectBox>
+        {
+          options && options.length ?
+            <StyledSelectBox
+              disabled={disabled}
+              placeholder={placeholder}
+              placeholderTextColor="#a5a5a5"
+              selectedValue={value}
+              onValueChange={text => onChange(text)}
+            >
+              {renderPickerOptions(options, label)}
+            </StyledSelectBox> :
+            null
+        }
       </FormFieldWrapper>
-
       {!!error && <Error>{error}</Error>}
     </Wrapper>
   )
