@@ -103,7 +103,7 @@ export function* getLastWeekEventsList({ accessToken, pageNo }) {
       method: 'GET',
     };
 
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}?access_token=${accessToken}&start_date=${lastMonth}&end_date=${today}&limit=100`, options);
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}?access_token=${accessToken}&start_date=${lastMonth}&end_date=${today}`, options);
     switch (status) {
       case undefined: {
         yield put(EventActions.oldEventOnListFailure(503));

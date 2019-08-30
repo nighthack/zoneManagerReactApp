@@ -47,6 +47,8 @@ import ProfileEdit from '../Containers/EditProfile';
 import DevelopmentWorksList from '../Containers/DevelopmentWorksList'
 import DevelopmentWorkDetail from '../Containers/DevelopmentWorkDetail'
 
+import FacebookScreen from '../Containers/FacebookPage';
+
 import HomeScreen from '../Containers/HomeScreen';
 
 
@@ -182,6 +184,9 @@ const DashboardStackNavigator = createStackNavigator(
     },
     EditProfile: {
       screen: ProfileEdit,
+    },
+    FacebookScreen: {
+      screen: FacebookScreen,
     }
   },
   {
