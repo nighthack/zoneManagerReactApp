@@ -27,6 +27,7 @@ const validationSchema = yup.object().shape({
 })
 
 export default function FeedbackCreateForm({ loading, onSubmit }) {
+
   return (
     <Formik
       initialValues={initialValues}
@@ -87,30 +88,3 @@ FeedbackCreateForm.propTypes = {
   loading: PropTypes.bool,
   onSubmit: PropTypes.func.isRequired,
 }
-
-
-// <FormField
-// label="Password"
-// secure
-// value={props.values.password}
-// onChangeText={text => props.setFieldValue('password', text)}
-// error={props.touched.password && props.errors.password}
-// />
-
-// <FormField
-//   label="ಪಿನ್ಕೋಡ್"
-//   keyboardType="numeric"
-//   value={props.values.pincode}
-//   onChangeText={text => props.setFieldValue('pincode', text)}
-//   error={props.touched.pincode && props.errors.pincode}
-// />
-
-
-// <FormField
-// label="ಫೋನ್ ನಂಬರ್"
-// keyboardType="phone-pad"
-// value={props.values.phone}
-// onChangeText={text => props.setFieldValue('phone', text)}
-// error={props.touched.phone && props.errors.phone}
-// />
-

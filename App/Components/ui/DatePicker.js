@@ -39,7 +39,6 @@ export default function DatePickerFormField({
   placeholder,
   defaultDate,
 }) {
-
   return (
     <Wrapper>
       {label ? <Label>{label}</Label> : null}
@@ -52,6 +51,7 @@ export default function DatePickerFormField({
           animationType={"fade"}
           androidMode={"spinner"}
           placeHolderText={placeholder}
+          placeHolderText={!value ? placeholder : null}
           textStyle={{}}
           placeHolderTextStyle={{ color: 'rgba(36,42,56,0.4)' }}
           onDateChange={(date) => onChange(date)}

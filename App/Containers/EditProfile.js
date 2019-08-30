@@ -1,10 +1,12 @@
 import React from 'react';
 import { Container } from 'native-base';
+import { AsyncStorage } from 'react-native'
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui';
 import { EditProfileForm } from '../Components/forms';
 import { CustomActivityIndicator } from '../Components/ui';
+import RootActions from '../Redux/RootRedux'
 
 
 export const PageContentWrapper = styled.View`
@@ -23,38 +25,51 @@ class EditProfile extends React.Component {
     headerStyle
   }
 
-  state = {
-    formLoading: false
-  }
-
   onFormSubmit(values) {
-    const { navigation } = this.props
-    this.setState({ formLoading: true })
-
-    const { email, password } = values
-
-    setTimeout(() => {
-      this.setState({ formLoading: false })
-      navigation.navigate('Dashboard')
-    }, 1500)
+    const { userObj } = this.props
+    const validKeys = ['phone', 'place_id', 'position_id', 'email', 'gender'];
+    AsyncStorage.getItem('accessToken').then((userToken) => {
+      const { id } = userObj.citizen;
+      let data = new FormData();
+      for (let property in values) {
+        if (property === 'first_name') {
+          const firstName = values[property];
+          const lastName = values['last_name'];
+          data.append('user[name]', `${firstName} ${lastName}`);
+        }
+        if (property === 'dob') {
+          const date = ("0" + values[property].getDate()).slice(-2);
+          const month = ("0" + (values[property].getMonth() + 1)).slice(-2);
+          const year = values[property].getFullYear();
+          data.append(`user[${property}]`, `${year}-${month}-${date}`);
+        }  else if (validKeys.includes(property)) {
+          data.append(`user[${property}]`, values[property]);
+        }
+      }
+      this.props.editProfileDetails(userToken, id, data);
+    });
+    
   }
 
   formatUserObj(data) {
     if (data) {
       const namesBreakup = data.name.split(" ");
+      const dateBreakup = data.dob.split('-');
       const first_name = namesBreakup[0];
-      const last_name = namesBreakup[1] || '';
+      const last_name = data.name.replace(namesBreakup[0],'');
+      const dob = new Date(dateBreakup[0], parseInt(dateBreakup[1], 10) - 1, dateBreakup[2]);
       return {
         ...data,
         first_name,
         last_name,
+        dob,
       }
     }
     return {};
   }
 
   render() {
-    const { userObj, loading } = this.props
+    const { userObj, loading } = this.props;
     return (
       <SafeAreaViewWrapper extraStyles={{ backgroundColor: '#f5f5f2' }}>
         <Container>
@@ -64,7 +79,7 @@ class EditProfile extends React.Component {
               userObj && <EditProfileForm
               loading={loading}
               onSubmit={values => this.onFormSubmit(values)}
-              initialValues={this.formatUserObj(userObj.user)}
+              initialValues={this.formatUserObj(userObj.citizen)}
             />
             }
           </PageContentWrapper>
@@ -85,6 +100,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    editProfileDetails: (accessToken,id,data) => dispatch(RootActions.updateUserDetails(accessToken,id,data)),
   }
 }
 

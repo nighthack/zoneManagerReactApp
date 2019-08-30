@@ -16,6 +16,7 @@ import PlacePicker from './PlacePicker';
 import PhotoPicker from './photoPicker';
 import TimePicker from './TimePicker';
 import LinkButton from './LinkButton';
+import PositionPicker from './positionPicker';
 
 export {
   CoursePriceTag,
@@ -36,4 +37,5 @@ export {
   PhotoPicker,
   TimePicker,
   LinkButton,
+  PositionPicker,
 }

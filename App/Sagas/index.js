@@ -27,7 +27,7 @@ import {
     getPlacesListForSearch,
     getPositionsList,
 } from './LoginSaga'
-import { getUserDetails } from './RootSagas';
+import { getUserDetails, editUserDetails } from './RootSagas';
 import { getBeneficiaryList, getBeneficiaryDetails } from './BeneficiarySagas'
 import { getDevWorksList, getDevWorkDetails } from './DevelopmentWorkSagas'
 import { getEventsList, getEventDetails, getLastWeekEventsList } from './EventSagas';
@@ -60,6 +60,7 @@ export default function* root() {
     
     // Root Redux
     takeLatest(RootTypes.GET_USER_DETAILS, getUserDetails),
+    takeLatest(RootTypes.UPDATE_USER_DETAILS, editUserDetails),
     // Beneficiary Module
     takeLatest(BeneficiaryTypes.BENEFICIARY_ON_LIST_REQUEST, getBeneficiaryList),
     takeLatest(BeneficiaryTypes.BENEFICIARY_ON_DETAIL_REQUEST, getBeneficiaryDetails),

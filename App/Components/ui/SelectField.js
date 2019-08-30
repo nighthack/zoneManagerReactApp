@@ -48,6 +48,7 @@ export default function SelectField({
   placeholder,
   options,
 }) {
+  console.log(value)
   return (
     <Wrapper>
       {label ? <Label>{label}</Label> : null}
@@ -56,7 +57,7 @@ export default function SelectField({
           options && options.length ?
             <StyledSelectBox
               disabled={disabled}
-              placeholder={placeholder}
+              placeholder={!value ? placeholder : null}
               placeholderTextColor="#a5a5a5"
               selectedValue={value}
               onValueChange={text => onChange(text)}
@@ -79,7 +80,7 @@ SelectField.propTypes = {
   disabled: PropTypes.bool,
   keyboardType: PropTypes.string,
   returnKeyType: PropTypes.string,
-  onValueChange: PropTypes.func.isRequired,
+  onValueChange: PropTypes.func,
   onSubmitEditing: PropTypes.func
 }
 SelectField.defaultProps = {

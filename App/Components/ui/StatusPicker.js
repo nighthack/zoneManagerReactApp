@@ -34,7 +34,7 @@ const Error = styled.Text`
 `
 function renderPickerOptions(data, feature) {
   const { OS } = Platform;
-  let PickerOptions = data.map(({ value, name }, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={name} value={value} />);
+  let PickerOptions = data.map(( status, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={status} value={status} />);
   if (OS !== 'ios') {
     PickerOptions.unshift(<Picker.Item key={`selectbox_${feature}_placeholder`} label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />)
   }
@@ -62,7 +62,7 @@ class StatusPicker extends Component {
       placeholder,
       statuses,
     } = this.props;
-    if (statuses && statuses, length) {
+    if (statuses && statuses.length) {
       return (
         <Wrapper>
           {label ? <Label>{label}</Label> : null}

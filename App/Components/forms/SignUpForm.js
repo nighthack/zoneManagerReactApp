@@ -106,7 +106,7 @@ export default function SignUpForm({ loading, onSubmit, positions }) {
             onChange={value => props.setFieldValue('gender', value)}
             error={props.touched.gender && props.errors.gender}
             placeholder={'ಲಿಂಗವನ್ನು ಆಯ್ಕೆ ಮಾಡಿ'}
-            options={[{ name: 'ಗಂಡು', value: 'ಗಂಡು' }, { name: 'ಹೆಣ್ಣು ', value: 'ಹೆಣ್ಣು' }, { name: 'ಇತರೆ', value: 'ಇತರೆ' }]}
+            options={[{ name: 'ಗಂಡು', value: 'Male' }, { name: 'ಹೆಣ್ಣು ', value: 'Female' }, { name: 'ಇತರೆ', value: 'Others' }]}
           />
 
           <SelectField
