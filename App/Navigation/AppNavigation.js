@@ -48,6 +48,7 @@ import DevelopmentWorksList from '../Containers/DevelopmentWorksList'
 import DevelopmentWorkDetail from '../Containers/DevelopmentWorkDetail'
 
 import FacebookScreen from '../Containers/FacebookPage';
+import TwitterScreen from '../Containers/TwitterPage';
 
 import HomeScreen from '../Containers/HomeScreen';
 
@@ -187,7 +188,10 @@ const DashboardStackNavigator = createStackNavigator(
     },
     FacebookScreen: {
       screen: FacebookScreen,
-    }
+    },
+    TwitterScreen: {
+      screen: TwitterScreen,
+    },
   },
   {
     navigationOptions: ({ navigation }) => {

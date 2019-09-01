@@ -36,7 +36,7 @@ function renderPickerOptions(data, feature) {
   const { OS } = Platform;
   let PickerOptions = data.map(( status, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={status} value={status} />);
   if (OS !== 'ios') {
-    PickerOptions.unshift(<Picker.Item key={`selectbox_${feature}_placeholder`} label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />)
+    PickerOptions = [<Picker.Item key={`selectbox_${feature}_placeholder`} label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />].concat(PickerOptions);
   }
   return PickerOptions;
 }

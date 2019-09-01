@@ -17,6 +17,7 @@ export const SAMPLE_COURSE_CATEGORIES = [
   { icon: 'feedback', type: 'MaterialIcons', title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ', route: 'FeedbackList' },
   { icon: 'ios-timer', type: 'Ionicons', title: 'ಸಮಯಾವಕಾಶ ಕೋರಿಕೆ', route: 'AppointmentListScreen'},
   { icon: 'facebook-square', type: 'FontAwesome', title: 'ನ್ಯೂಸ್ ಫೀಡ್', route: 'FacebookScreen'},
+  { icon: 'twitter-square', type: 'FontAwesome', title: 'ಟ್ವಿಟರ್', route: 'TwitterScreen'},
 ]
 const Heading = styled.Text`
   font-size: 15;

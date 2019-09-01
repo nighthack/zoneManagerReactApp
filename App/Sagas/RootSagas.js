@@ -33,7 +33,7 @@ export function* getUserDetails({ accessToken, pageNo }) {
       case 200: {
         yield put(RootActions.getUserDetailsSuccess(body))
         if (!(body && body.length)) {
-          yield put(ToastActionsCreators.displayInfo('End of List'));
+          // yield put(ToastActionsCreators.displayInfo('End of List'));
         }
         break;
       }
@@ -77,7 +77,7 @@ export function* editUserDetails({ accessToken, user_id, data }) {
       if (user && user.access_token) {
         AsyncStorage.setItem('accessToken', user.access_token);
         yield put(RootActions.getUserDetailsSuccess(body));
-        console.log(body);
+        yield put(ToastActionsCreators.displayInfo('ವಿವರಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ನವೀಕರಿಸಲಾಗಿದೆ'))
         yield put(NavigationActions.navigate({ routeName: 'Home' }))
       } else {
         yield put(RootActions.updateUserDetailsFail(errors));
@@ -87,8 +87,7 @@ export function* editUserDetails({ accessToken, user_id, data }) {
       yield put(ToastActionsCreators.displayWarning(message))
     }
   } catch (e) {
-    console.log(e)
     yield put(RootActions.updateUserDetailsFail({}))
-    yield put(ToastActionsCreators.displayInfo('Please Make sure you have filled all the fields'))
+    yield put(ToastActionsCreators.displayInfo('ವಿನಂತಿಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲು ಸಾಧ್ಯವಿಲ್ಲ'))
   }
 }

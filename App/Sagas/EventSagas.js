@@ -33,7 +33,7 @@ export function* getEventsList({ accessToken, pageNo }) {
       case 200: {
         yield put(EventActions.eventOnListSuccess(body, pageNo));
         if (!(body && body.length)) {
-          yield put(ToastActionsCreators.displayInfo('End of List'));
+          // yield put(ToastActionsCreators.displayInfo('End of List'));
         }
         break;
       }
@@ -121,7 +121,7 @@ export function* getLastWeekEventsList({ accessToken, pageNo }) {
       case 200: {
         yield put(EventActions.oldEventOnListSuccess(body, pageNo));
         if (!(body && body.length)) {
-          yield put(ToastActionsCreators.displayInfo('End of List'));
+          // yield put(ToastActionsCreators.displayInfo('End of List'));
         }
         break;
       }

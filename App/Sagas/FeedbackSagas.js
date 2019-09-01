@@ -35,7 +35,7 @@ export function* getFeedbackList({ accessToken, pageNo }) {
         {
           yield put(FeedbackActions.feedbackOnListSuccess(body, pageNo))
           if (!(body && body.length)) {
-            yield put(ToastActionsCreators.displayInfo('End of List'));
+            // yield put(ToastActionsCreators.displayInfo('End of List'));
           }
           break;
         }

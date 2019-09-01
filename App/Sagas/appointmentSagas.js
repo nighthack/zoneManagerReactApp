@@ -35,7 +35,7 @@ export function* getAppointmentsList({ accessToken, pageNo }) {
         {
           yield put(AppointmentActions.appointmentOnListSuccess(body, pageNo))
           if (!(body && body.length)) {
-            yield put(ToastActionsCreators.displayInfo('End of List'));
+            // yield put(ToastActionsCreators.displayInfo('End of List'));
           }
           break;
         }

@@ -32,7 +32,7 @@ export function* getModuleList({ accessToken, pageNo }) {
       case 200: {
         yield put(ModuleActions.moduleOnListSuccess(body, pageNo))
         if (!(body && body.length)) {
-          yield put(ToastActionsCreators.displayInfo('End of List'));
+          // yield put(ToastActionsCreators.displayInfo('End of List'));
         }
         break;
       }

@@ -31,7 +31,7 @@ export function* getDevWorksList({ accessToken, pageNo }) {
       case 200: {
         yield put(DevWorkActions.devWorkOnListSuccess(body, pageNo))
         if (!(body && body.length)) {
-          yield put(ToastActionsCreators.displayInfo('End of List'));
+          // yield put(ToastActionsCreators.displayInfo('End of List'));
         }
         break;
       }

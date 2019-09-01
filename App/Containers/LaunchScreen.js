@@ -2,19 +2,9 @@ import React, { Component } from 'react'
 import { ScrollView, Text, Image, View } from 'react-native'
 import { Images } from '../Themes'
 
-// Styles
 import styles from './Styles/LaunchScreenStyles'
 
 export default class LaunchScreen extends Component {
-// static navigationOptions = {
-  //   drawerLabel: 'Lalith',
-  //   drawerIcon: ({ tintColor }) => (
-  //     <Image
-  //       source={Images.logo}
-  //       style={[styles.icon, { tintColor: tintColor }]}
-  //     />
-  //   ),
-  // };
   render() {
     return (
       <View style={styles.mainContainer}>

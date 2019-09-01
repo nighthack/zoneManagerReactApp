@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StatusBar, TouchableOpacity, Text, WebView } from 'react-native'
+import { WebView } from 'react-native'
 import { Container, Header, Content, Icon, View } from 'native-base'
 import { connect } from 'react-redux'
 import { CustomActivityIndicator } from '../Components/ui';
