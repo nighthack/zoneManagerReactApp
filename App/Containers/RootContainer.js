@@ -4,9 +4,6 @@ import ReduxNavigation from '../Navigation/ReduxNavigation'
 import { connect } from 'react-redux'
 import StartupActions from '../Redux/StartupRedux'
 
-// Styles
-import styles from './Styles/RootContainerStyles'
-
 class RootContainer extends Component {
   componentDidMount () {
     this.props.startup()
@@ -14,7 +11,7 @@ class RootContainer extends Component {
 
   render () {
     return (
-      <View style={styles.applicationView}>
+      <View style={{ flex: 1}}>
         <StatusBar barStyle='light-content' />
         <ReduxNavigation />
       </View>
