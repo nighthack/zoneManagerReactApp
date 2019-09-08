@@ -54,10 +54,10 @@ class EditProfile extends React.Component {
   formatUserObj(data) {
     if (data) {
       const namesBreakup = data.name.split(" ");
-      const dateBreakup = data.dob.split('-');
+      const dateBreakup = data.dob ? data.dob.split('-') : [];
       const first_name = namesBreakup[0];
       const last_name = data.name.replace(namesBreakup[0],'');
-      const dob = new Date(dateBreakup[0], parseInt(dateBreakup[1], 10) - 1, dateBreakup[2]);
+      const dob = data.dob  ? new Date(dateBreakup[0], parseInt(dateBreakup[1], 10) - 1, dateBreakup[2]) : null;
       return {
         ...data,
         first_name,
