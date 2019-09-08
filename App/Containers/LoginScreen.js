@@ -1,9 +1,10 @@
 import React from 'react'
 import { Container } from 'native-base'
 import { connect } from 'react-redux'
-import { AsyncStorage, Platform } from 'react-native'
+import { AsyncStorage, Platform, BackHandler, Alert } from 'react-native'
 import styled from 'styled-components/native'
 import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui'
+// import RNEexitApp from 'react-native-exit-app';
 import LoginActions from '../Redux/LoginRedux'
 import { SignInForm } from '../Components/forms'
 
@@ -26,48 +27,48 @@ class SignInScreen extends React.Component {
   constructor(props) {
     super(props)
     AsyncStorage.getItem('id_token').then((userToken) => {
-      if (userToken) {
-        BackHandler.removeEventListener('hardwareBackPress', undefined);
-      }
       props.navigation.navigate(userToken ? 'App' : 'Auth');
     });
   }
 
-  componentDidMount() {
-    if (Platform.OS === 'ios') return
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-  }
+  // componentDidMount() {
+  //   if (Platform.OS === 'ios') return
+  //   BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  // }
 
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', undefined);
-  }
+  // componentWillUnmount() {
+  //   BackHandler.removeEventListener('hardwareBackPress', undefined);
+  // }
 
   goToPage = (route) => {
     const { navigation } = this.props;
-    navigation.navigate(route);
-    this.props.onNavigationResetState();
+     // alert('navigationg out');
+      // BackHandler.removeEventListener('hardwareBackPress', undefined);
+      navigation.navigate(route);
+      this.props.onNavigationResetState(); 
+
   }
   onFormSubmit(values) {
     this.setState({ formLoading: true })
     const { phone, password } = values
     this.props.attemptLogin(phone, password);
   }
-  handleBackButton = () => {
-    Alert.alert(
-      'Exit App',
-      'Exiting the application?', [{
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel'
-      }, {
-        text: 'OK',
-        onPress: () => BackHandler.exitApp()
-      },], {
-        cancelable: false
-      }
-    )
-    return true;
-  }
+  // handleBackButton = () => {
+  //   Alert.alert(
+  //     'Exit App',
+  //     'Exiting the application?', [{
+  //       text: 'Cancel',
+  //       onPress: () => console.log('Cancel Pressed'),
+  //       style: 'cancel'
+  //     }, {
+  //       text: 'OK',
+  //       onPress: () => RNEexitApp.exitApp()
+  //     },], {
+  //       cancelable: false
+  //     }
+  //   )
+  //   return true;
+  // }
 
 
   render() {
