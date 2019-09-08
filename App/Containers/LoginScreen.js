@@ -26,10 +26,21 @@ class SignInScreen extends React.Component {
   constructor(props) {
     super(props)
     AsyncStorage.getItem('id_token').then((userToken) => {
+      if (userToken) {
+        BackHandler.removeEventListener('hardwareBackPress', undefined);
+      }
       props.navigation.navigate(userToken ? 'App' : 'Auth');
     });
   }
 
+  componentDidMount() {
+    if (Platform.OS === 'ios') return
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', undefined);
+  }
 
   goToPage = (route) => {
     const { navigation } = this.props;
@@ -41,6 +52,23 @@ class SignInScreen extends React.Component {
     const { phone, password } = values
     this.props.attemptLogin(phone, password);
   }
+  handleBackButton = () => {
+    Alert.alert(
+      'Exit App',
+      'Exiting the application?', [{
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel'
+      }, {
+        text: 'OK',
+        onPress: () => BackHandler.exitApp()
+      },], {
+        cancelable: false
+      }
+    )
+    return true;
+  }
+
 
   render() {
     const { navigation, fetching } = this.props
