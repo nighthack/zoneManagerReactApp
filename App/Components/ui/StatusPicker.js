@@ -33,11 +33,7 @@ const Error = styled.Text`
   margin: 4px 8px;
 `
 function renderPickerOptions(data, feature) {
-  const { OS } = Platform;
   let PickerOptions = data.map(( status, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={status} value={status} />);
-  if (OS !== 'ios') {
-    PickerOptions = [<Picker.Item key={`selectbox_${feature}_placeholder`} label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />].concat(PickerOptions);
-  }
   return PickerOptions;
 }
 
@@ -74,6 +70,7 @@ class StatusPicker extends Component {
               selectedValue={value}
               onValueChange={text => onChange(text)}
             >
+              <Picker.Item label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />
               {renderPickerOptions(statuses, 'status')}
             </StyledSelectBox>
           </FormFieldWrapper>

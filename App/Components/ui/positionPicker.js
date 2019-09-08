@@ -35,9 +35,6 @@ const Error = styled.Text`
 function renderPickerOptions(data, feature) {
   const { OS } = Platform;
   let PickerOptions = data.map(( {id, name }, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={name} value={id} />);
-  if (OS !== 'ios') {
-    PickerOptions = [<Picker.Item key={`selectbox_${feature}_placeholder`} label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />].concatPickerOptions;
-  }
   return PickerOptions;
 }
 
@@ -69,6 +66,7 @@ class PositionPicker extends Component {
               selectedValue={value}
               onValueChange={text => onChange(text)}
             >
+              <Picker.Item key={`selectbox_position_placeholder`} label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />
               {renderPickerOptions(positions, 'positions')}
             </StyledSelectBox>
           </FormFieldWrapper>
