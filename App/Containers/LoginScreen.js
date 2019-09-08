@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container } from 'native-base'
 import { connect } from 'react-redux'
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage, Platform } from 'react-native'
 import styled from 'styled-components/native'
 import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui'
 import LoginActions from '../Redux/LoginRedux'
