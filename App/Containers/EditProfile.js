@@ -4,6 +4,7 @@ import { AsyncStorage } from 'react-native'
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui';
+import { NavigationEvents } from 'react-navigation';
 import { EditProfileForm } from '../Components/forms';
 import { CustomActivityIndicator } from '../Components/ui';
 import RootActions from '../Redux/RootRedux'
@@ -42,13 +43,13 @@ class EditProfile extends React.Component {
           const month = ("0" + (values[property].getMonth() + 1)).slice(-2);
           const year = values[property].getFullYear();
           data.append(`user[${property}]`, `${year}-${month}-${date}`);
-        }  else if (validKeys.includes(property)) {
+        } else if (validKeys.includes(property)) {
           data.append(`user[${property}]`, values[property]);
         }
       }
       this.props.editProfileDetails(userToken, id, data);
     });
-    
+
   }
 
   formatUserObj(data) {
@@ -56,8 +57,8 @@ class EditProfile extends React.Component {
       const namesBreakup = data.name.split(" ");
       const dateBreakup = data.dob ? data.dob.split('-') : [];
       const first_name = namesBreakup[0];
-      const last_name = data.name.replace(namesBreakup[0],'');
-      const dob = data.dob  ? new Date(dateBreakup[0], parseInt(dateBreakup[1], 10) - 1, dateBreakup[2]) : null;
+      const last_name = data.name.replace(namesBreakup[0], '');
+      const dob = data.dob ? new Date(dateBreakup[0], parseInt(dateBreakup[1], 10) - 1, dateBreakup[2]) : null;
       return {
         ...data,
         first_name,
@@ -68,19 +69,33 @@ class EditProfile extends React.Component {
     return {};
   }
 
+  getUserDetails() {
+    const { userObj } = this.props;
+    if (!(userObj && userObj.citizen)) {
+      AsyncStorage.getItem('accessToken').then((userToken) => {
+        if (userToken) {
+          this.props.getUserDetails(userToken);
+        }
+      });
+    }
+
+  }
   render() {
     const { userObj, loading } = this.props;
     return (
       <SafeAreaViewWrapper extraStyles={{ backgroundColor: '#f5f5f2' }}>
+        <NavigationEvents
+          onDidFocus={() => this.getUserDetails()}
+        />
         <Container>
           <CustomStatusBar />
           <PageContentWrapper>
             {
               userObj && <EditProfileForm
-              loading={loading}
-              onSubmit={values => this.onFormSubmit(values)}
-              initialValues={this.formatUserObj(userObj.citizen)}
-            />
+                loading={loading}
+                onSubmit={values => this.onFormSubmit(values)}
+                initialValues={this.formatUserObj(userObj.citizen)}
+              />
             }
           </PageContentWrapper>
           {
@@ -100,7 +115,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    editProfileDetails: (accessToken,id,data) => dispatch(RootActions.updateUserDetails(accessToken,id,data)),
+    editProfileDetails: (accessToken, id, data) => dispatch(RootActions.updateUserDetails(accessToken, id, data)),
+    getUserDetails: (accessToken) => dispatch(RootActions.getUserDetails(accessToken)),
   }
 }
 

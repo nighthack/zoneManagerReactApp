@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types';
 import { Formik } from 'formik'
 import * as yup from 'yup'
-import { FormField, DatePicker, TimePicker, PhotoPicker } from '../ui'
+import { FormField, DatePicker, TimePicker } from '../ui'
 import FormContainer from './FormContainer'
 
 const initialValues = {
@@ -107,10 +107,10 @@ export default function FeedbackCreateForm({ loading, onSubmit }) {
               error={props.touched.opt_time && props.errors.opt_time}
               placeholder={'ಪರ್ಯಾಯ ಕೋರಿಕೆಯ ಸಮಯ ಆಯ್ಕೆ ಮಾಡಿ'}
             />
-            <PhotoPicker
+            {/* <PhotoPicker
               label="ಫೋಟೋಗಳನ್ನು ಸೇರಿಸಿ"
               onChange={value => props.setFieldValue('photos', value)}
-            />
+            /> */}
           </FormContainer>
         )
       }}

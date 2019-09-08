@@ -31,7 +31,6 @@ const Error = styled.Text`
   margin: 4px 8px;
 `
 function renderPickerOptions(data, feature) {
-  const { OS } = Platform;
   let PickerOptions = data.map(({ value, name }, index) => <Picker.Item key={`selectbox_${feature}_${index}`} label={name} value={value} />);
   return PickerOptions;
 }
@@ -45,7 +44,6 @@ export default function SelectField({
   placeholder,
   options,
 }) {
-  console.log(value)
   return (
     <Wrapper>
       {label ? <Label>{label}</Label> : null}
@@ -59,7 +57,7 @@ export default function SelectField({
               selectedValue={value}
               onValueChange={text => onChange(text)}
             >
-              <Picker.Item key={`selectbox_${feature}_placeholder`} label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />
+              <Picker.Item key={`selectbox_${label}_placeholder`} label={'ಆಯ್ಕೆ ಮಾಡಿ'} value={null} />
               {renderPickerOptions(options, label)}
             </StyledSelectBox> :
             null

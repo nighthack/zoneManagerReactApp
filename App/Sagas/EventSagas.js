@@ -96,14 +96,12 @@ export function* getEventDetails({ accessToken, id }) {
 
 
 export function* getLastWeekEventsList({ accessToken, pageNo }) {
-  const today  = format(new Date(), 'YYYY-MM-DD');
-  const lastMonth = format(subMonths(new Date(), 1), 'YYYY-MM-DD');
   try {
     const options = {
       method: 'GET',
     };
 
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}?access_token=${accessToken}&start_date=${lastMonth}&end_date=${today}`, options);
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}/images?access_token=${accessToken}`, options);
     switch (status) {
       case undefined: {
         yield put(EventActions.oldEventOnListFailure(503));
