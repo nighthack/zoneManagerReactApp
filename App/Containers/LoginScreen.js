@@ -4,7 +4,8 @@ import { connect } from 'react-redux'
 import { AsyncStorage, Platform, BackHandler, Alert } from 'react-native'
 import styled from 'styled-components/native'
 import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui'
-// import RNEexitApp from 'react-native-exit-app';
+import { NavigationEvents } from 'react-navigation';
+import RNEexitApp from 'react-native-exit-app';
 import LoginActions from '../Redux/LoginRedux'
 import { SignInForm } from '../Components/forms'
 
@@ -31,19 +32,15 @@ class SignInScreen extends React.Component {
     });
   }
 
-  // componentDidMount() {
-  //   if (Platform.OS === 'ios') return
-  //   BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-  // }
-
-  // componentWillUnmount() {
-  //   BackHandler.removeEventListener('hardwareBackPress', undefined);
-  // }
+  componentWillReceiveProps(nextProps) {
+    const _this = this;
+    if (nextProps.user.access_token) {
+      this.goToPage('App');
+    }
+  }
 
   goToPage = (route) => {
     const { navigation } = this.props;
-     // alert('navigationg out');
-      // BackHandler.removeEventListener('hardwareBackPress', undefined);
       navigation.navigate(route);
       this.props.onNavigationResetState(); 
 
@@ -53,28 +50,43 @@ class SignInScreen extends React.Component {
     const { phone, password } = values
     this.props.attemptLogin(phone, password);
   }
-  // handleBackButton = () => {
-  //   Alert.alert(
-  //     'Exit App',
-  //     'Exiting the application?', [{
-  //       text: 'Cancel',
-  //       onPress: () => console.log('Cancel Pressed'),
-  //       style: 'cancel'
-  //     }, {
-  //       text: 'OK',
-  //       onPress: () => RNEexitApp.exitApp()
-  //     },], {
-  //       cancelable: false
-  //     }
-  //   )
-  //   return true;
-  // }
+  
+  handleBackButton = () => {
+    Alert.alert(
+      'Exit App',
+      'Exiting the application?', [{
+        text: 'Cancel',
+        onPress: () => console.log('Cancel Pressed'),
+        style: 'cancel'
+      }, {
+        text: 'OK',
+        onPress: () => RNEexitApp.exitApp()
+      },], {
+        cancelable: false
+      }
+    )
+    return true;
+  }
 
+  bindBackButton() {
+    if (Platform.OS === 'ios') return
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  unBindBackButton() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
 
   render() {
     const { navigation, fetching } = this.props
     return (
       <SafeAreaViewWrapper extraStyles={{ backgroundColor: '#f5f5f2' }}>
+        <NavigationEvents
+          onWillBlur={() => {
+            this.unBindBackButton();
+          }}
+          onDidFocus={() => this.bindBackButton()}
+        />
         <Container>
           <CustomStatusBar />
           <PageContentWrapper>
@@ -95,6 +107,7 @@ const mapStateToProps = (state) => {
   return {
     fetching: state.login.fetching,
     error: state.login.error,
+    user: state.login.user,
   }
 }
 

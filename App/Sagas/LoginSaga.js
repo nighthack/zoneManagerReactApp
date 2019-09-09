@@ -1,6 +1,6 @@
 import { put, call } from 'redux-saga/effects';
 import LoginActions from '../Redux/LoginRedux';
-import { AsyncStorage, BackHandler } from 'react-native';
+import { AsyncStorage } from 'react-native';
 import BeneficiaryActions from '../Redux/BeneficiaryRedux';
 import DevelopmentWorkActions from '../Redux/DevelopmentWorkRedux';
 import EventActions from '../Redux/EventRedux';
@@ -38,8 +38,6 @@ export function* login({ phone, password }) {
       if (status >= 200 && status < 300) {
         AsyncStorage.setItem('accessToken', user.access_token);
         yield put(LoginActions.loginSuccess(user, message));
-        // BackHandler.removeEventListener('hardwareBackPress', undefined);
-        yield put(NavigationActions.navigate({ routeName: 'Home' }));
         yield put(LoginActions.resetStateOnNavigation());
       } else {
         yield put(LoginActions.loginFailure())
