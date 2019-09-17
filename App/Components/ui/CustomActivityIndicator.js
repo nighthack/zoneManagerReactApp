@@ -43,5 +43,5 @@ CustomActivityIndicator.propTypes = {
   text: PropTypes.string
 }
 CustomActivityIndicator.defaultProps = {
-  text: 'ನಿರಿಕ್ಷಿಸಿ'
+  text: 'ನಿರೀಕ್ಷಿಸಿ'
 }
