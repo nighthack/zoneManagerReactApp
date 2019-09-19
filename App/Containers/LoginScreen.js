@@ -56,7 +56,6 @@ class SignInScreen extends React.Component {
       'Exit App',
       'Exiting the application?', [{
         text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
         style: 'cancel'
       }, {
         text: 'OK',

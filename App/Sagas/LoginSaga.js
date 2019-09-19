@@ -318,3 +318,44 @@ export function* getPositionsList({ searchParam }) {
     yield put(LoginActions.getPositionsListFail())
   }
 }
+
+export function* getPanchayatsList({ accessToken }) {
+  try {
+    const options = {
+      method: 'GET',
+    };
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}commons/panchayats?access_token=${accessToken}`, options);
+    switch (status) {
+      case undefined: {
+        yield put(LoginActions.getPanchayatListFail(503));
+        yield put(ToastActionsCreators.displayWarning('Check your internet Connection'))
+        break;
+      }
+      case 401: {
+        yield put(NavigationActions.navigate({ routeName: 'Login' }))
+        yield put(LoginActions.getPanchayatListFail(status));
+        yield put(ToastActionsCreators.displayWarning('Invalid Access'));
+        yield put(LoginActions.logoutRequest(accessToken));
+        // TO DO ADD LOGOUT
+        break;
+      }
+      case 200: {
+        yield put(LoginActions.getPanchayatListSuccess(body))
+        break;
+      }
+      default: {
+        yield put(LoginActions.getPanchayatListFail(status || 503));
+        if (body && body.message && typeof body.message === 'string') {
+          yield put(ToastActionsCreators.displayInfo(message));
+        } else {
+          yield put(ToastActionsCreators.displayInfo('oops!!'));
+        }
+      }
+    }
+
+  } catch (error) {
+    console.log(error);
+    yield put(LoginActions.getPanchayatListFail(503));
+    yield put(ToastActionsCreators.displayInfo('oops!!'));
+  }
+}

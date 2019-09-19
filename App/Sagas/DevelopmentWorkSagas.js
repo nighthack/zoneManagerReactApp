@@ -9,12 +9,13 @@ import request from '../Services/request'
 // import { ModuleSelectors } from '../Redux/ModuleRedux'
 const moduleURL = 'development_works';
 
-export function* getDevWorksList({ accessToken, pageNo }) {
+export function* getDevWorksList({ accessToken, pageNo, panchayat_id }) {
   try {
     const options = {
       method: 'GET',
     };
-    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}?access_token=${accessToken}&page=${pageNo}`, options);
+    const panchayattag = panchayat_id ? `&panchayat_id=${panchayat_id}` : '';
+    const { status, body } = yield call(request, `${BASE_URL}${API_VERSION}${moduleURL}?access_token=${accessToken}&page=${pageNo}${panchayattag}`, options);
     switch (status) {
       case undefined: {
         yield put(DevWorkActions.devWorkOnListFailure(503));

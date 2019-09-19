@@ -26,6 +26,7 @@ import {
     onVerifyUser,
     getPlacesListForSearch,
     getPositionsList,
+    getPanchayatsList,
 } from './LoginSaga'
 import { getUserDetails, editUserDetails } from './RootSagas';
 import { getBeneficiaryList, getBeneficiaryDetails } from './BeneficiarySagas'
@@ -57,6 +58,7 @@ export default function* root() {
     takeLatest(LoginTypes.VERIFY_USER, onVerifyUser),
     takeLatest(LoginTypes.GET_POSITIONS_LIST, getPositionsList),
     takeLatest(LoginTypes.GET_PRE_LOGIN_PLACES_LIST, getPlacesListForSearch),
+    takeLatest(LoginTypes.GET_PANCHAYAT_LIST, getPanchayatsList),
     
     // Root Redux
     takeLatest(RootTypes.GET_USER_DETAILS, getUserDetails),
