@@ -8,7 +8,7 @@ import {
   CoursePriceTag
 } from './ui'
 import { TabHeader } from './headers'
-import { Title, SubHeading, DetailsWrapper } from './list-items/CourseListItem'
+import { SubHeading, DetailsWrapper } from './list-items/CourseListItem'
 import { CourseLessonListItem } from './list-items'
 import { defaultStackNavigatorHeaderStyle, tabHeaderStyle } from './Styles/DevDetailStyle'
 
@@ -78,6 +78,12 @@ export const StatItemWrapper = styled.View`
   align-items: center;
 `;
 
+export const Title = styled.Text.attrs({
+})`
+ 
+  font-size: 14;
+  margin-right: 8;
+`
 export default class DevelopmentDetailsScreen extends React.Component {
   static navigationOptions = {
     title: 'Course Details',

@@ -17,6 +17,7 @@ import PhotoPicker from './photoPicker';
 import TimePicker from './TimePicker';
 import LinkButton from './LinkButton';
 import PositionPicker from './positionPicker';
+import PanchayatPicker from './panchayatPicker';
 
 export {
   CoursePriceTag,
@@ -38,4 +39,5 @@ export {
   TimePicker,
   LinkButton,
   PositionPicker,
+  PanchayatPicker,
 }

@@ -41,7 +41,12 @@ const { Types, Creators } = createActions({
 // Get Places List
   getPositionsList: '',
   getPositionsListSuccess: ['data'],
-  getPositionsListFail:['data'],  
+  getPositionsListFail:['data'], 
+  
+  // Get Places List
+  getPanchayatList: ['accessToken'],
+  getPanchayatListSuccess: ['data'],
+  getPanchayatListFail:['data'], 
 
   logoutRequest: ['accessToken'],
 })
@@ -59,7 +64,9 @@ export const INITIAL_STATE = Immutable({
   verifyOtpResponse: {},
   placesList: [],
   positionsList: [],
+  panchayatList: [],
   getOtpStatus: null,
+  fetching_panchayat: false,
 })
 
 /* ------------- Selectors ------------- */
@@ -132,6 +139,12 @@ export const onPositionsListsSuccess = (state, { data }) => {
 }
 export const onPositionsListsFail = state => state.merge({ positionsList: [], fetching: false });
 
+export const onPanchayatLists = (state) => state.merge({ fetching_panchayat: true });
+export const onPanchayatListsSuccess = (state, { data }) => {
+  return state.merge({ panchayatList: data, fetching_panchayat: false  });
+}
+export const onPanchayatFail = state => state.merge({ panchayatList: [], fetching_panchayat: false });
+
 export const onLogout = state =>
   state.merge(INITIAL_STATE)
 
@@ -170,6 +183,10 @@ export const reducer = createReducer(INITIAL_STATE, {
   [Types.GET_POSITIONS_LIST]: onPositionsLists,
   [Types.GET_POSITIONS_LIST_SUCCESS]: onPositionsListsSuccess,
   [Types.GET_POSITIONS_LIST_FAIL]: onPositionsListsFail,
+
+  [Types.GET_PANCHAYAT_LIST]: onPanchayatLists,
+  [Types.GET_PANCHAYAT_LIST_SUCCESS]: onPanchayatListsSuccess,
+  [Types.GET_PANCHAYAT_LIST_FAIL]: onPanchayatFail,
   
   // Logout Request
   [Types.LOGOUT_REQUEST]: onLogout,

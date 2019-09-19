@@ -7,7 +7,7 @@ const Wrapper = styled(Button).attrs({
   full: true,
   rounded: true
 })`
-  height: 50;
+  height: 42;
   justify-content: center;
   align-items: center;
   margin: 25px 0px 10px;

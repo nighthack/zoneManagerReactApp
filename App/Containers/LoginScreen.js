@@ -1,9 +1,11 @@
 import React from 'react'
 import { Container } from 'native-base'
 import { connect } from 'react-redux'
-import { AsyncStorage, Platform } from 'react-native'
+import { AsyncStorage, Platform, BackHandler, Alert } from 'react-native'
 import styled from 'styled-components/native'
 import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui'
+import { NavigationEvents } from 'react-navigation';
+import RNEexitApp from 'react-native-exit-app';
 import LoginActions from '../Redux/LoginRedux'
 import { SignInForm } from '../Components/forms'
 
@@ -26,42 +28,38 @@ class SignInScreen extends React.Component {
   constructor(props) {
     super(props)
     AsyncStorage.getItem('id_token').then((userToken) => {
-      if (userToken) {
-        BackHandler.removeEventListener('hardwareBackPress', undefined);
-      }
       props.navigation.navigate(userToken ? 'App' : 'Auth');
     });
   }
 
-  componentDidMount() {
-    if (Platform.OS === 'ios') return
-    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
-  }
-
-  componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', undefined);
+  componentWillReceiveProps(nextProps) {
+    const _this = this;
+    if (nextProps.user.access_token) {
+      this.goToPage('App');
+    }
   }
 
   goToPage = (route) => {
     const { navigation } = this.props;
-    navigation.navigate(route);
-    this.props.onNavigationResetState();
+      navigation.navigate(route);
+      this.props.onNavigationResetState(); 
+
   }
   onFormSubmit(values) {
     this.setState({ formLoading: true })
     const { phone, password } = values
     this.props.attemptLogin(phone, password);
   }
+  
   handleBackButton = () => {
     Alert.alert(
       'Exit App',
       'Exiting the application?', [{
         text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
         style: 'cancel'
       }, {
         text: 'OK',
-        onPress: () => BackHandler.exitApp()
+        onPress: () => RNEexitApp.exitApp()
       },], {
         cancelable: false
       }
@@ -69,11 +67,25 @@ class SignInScreen extends React.Component {
     return true;
   }
 
+  bindBackButton() {
+    if (Platform.OS === 'ios') return
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  unBindBackButton() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
 
   render() {
     const { navigation, fetching } = this.props
     return (
       <SafeAreaViewWrapper extraStyles={{ backgroundColor: '#f5f5f2' }}>
+        <NavigationEvents
+          onWillBlur={() => {
+            this.unBindBackButton();
+          }}
+          onDidFocus={() => this.bindBackButton()}
+        />
         <Container>
           <CustomStatusBar />
           <PageContentWrapper>
@@ -94,6 +106,7 @@ const mapStateToProps = (state) => {
   return {
     fetching: state.login.fetching,
     error: state.login.error,
+    user: state.login.user,
   }
 }
 

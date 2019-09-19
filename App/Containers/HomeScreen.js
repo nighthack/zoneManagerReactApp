@@ -1,6 +1,6 @@
 import React from 'react'
 import { Container, Content } from 'native-base';
-import { AsyncStorage } from 'react-native'
+import { AsyncStorage, BackHandler, Alert, Platform } from 'react-native'
 import { connect } from 'react-redux'
 import { NavigationEvents } from 'react-navigation';
 import styled from 'styled-components/native'
@@ -8,6 +8,7 @@ import EventActions from '../Redux/EventRedux'
 import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui'
 import { FeaturedCoursesListView } from '../Components/list-views'
 import { CourseCategoriesGridView } from '../Components/grid-views'
+import RNEexitApp from 'react-native-exit-app';
 
 
 export const SAMPLE_COURSE_CATEGORIES = [
@@ -40,11 +41,41 @@ class HomeScreen extends React.Component {
     });
   }
 
+  handleBackButton = () => {
+    Alert.alert(
+      'Exit App',
+      'Exiting the application?', [{
+        text: 'Cancel',
+        style: 'cancel'
+      }, {
+        text: 'OK',
+        onPress: () => RNEexitApp.exitApp()
+      },], {
+        cancelable: false
+      }
+    )
+    return true;
+  }
+
+
+  bindBackButton() {
+    if (Platform.OS === 'ios') return
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  unBindBackButton() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
   render() {
     const { loading, data } = this.props
     const { navigation } = this.props
     return (
       <SafeAreaViewWrapper>
+        <NavigationEvents
+          onWillBlur={() => this.unBindBackButton()}
+          onDidFocus={() => this.bindBackButton()}
+        />
         <Container>
           <CustomStatusBar />
           <Content>

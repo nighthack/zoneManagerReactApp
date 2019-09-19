@@ -29,7 +29,6 @@ class FeedbackDetailView extends Component {
 
   renderContent() {
     const { data, detailError } = this.props;
-    console.log(data);
     const componentPayload = {
       title: data.beneficiary_name,
       images: data.images,

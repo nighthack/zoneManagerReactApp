@@ -23,7 +23,9 @@ export default function FormContainer({
   onSubmitButtonPress,
   loading,
   children,
-  showLinkButton
+  showLinkButton,
+  onCancelButtonPress,
+  showCancel,
 }) {
   return (
     <KeyboardAwareScrollView enableOnAndroid>
@@ -42,6 +44,13 @@ export default function FormContainer({
             />
 
         }
+        {
+          showCancel && <LinkButton
+            text="ಕ್ಲೋಸ್ ಮಾಡಿ"
+            onPress={() => onCancelButtonPress()}
+          />
+
+        }
 
         {actionText && <ActionText>{actionText}</ActionText>}
 
@@ -55,6 +64,8 @@ FormContainer.propTypes = {
   actionText: PropTypes.string,
   submitButtonText: PropTypes.string.isRequired,
   onSubmitButtonPress: PropTypes.func.isRequired,
+  onCancelButtonPress: PropTypes.func,
+  showCancel: PropTypes.bool,
   loading: PropTypes.bool,
   children: PropTypes.node.isRequired
 }
