@@ -17,7 +17,7 @@ export const IconWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   border-radius: ${iconWrapperDims / 2};
-  background-color: #278d27;
+  background-color: #3C5A99;
 `
 
 export const Title = styled.Text.attrs({

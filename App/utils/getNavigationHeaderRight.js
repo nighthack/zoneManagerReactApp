@@ -1,5 +1,7 @@
 import React from 'react'
 import { Icon } from 'native-base';
+import styled from 'styled-components/native'
+import { Images } from '../Themes'
 
 const onIconPress = (navigation, routeName) => {
 
@@ -7,14 +9,23 @@ const onIconPress = (navigation, routeName) => {
     navigation.navigate('EditProfile')
   }
 }
-
+const profilePhotoDimensions = 40
+const ProfilePhoto = styled.Image.attrs({
+  source: Images.sunil,
+})`
+  width: ${profilePhotoDimensions};
+  height: ${profilePhotoDimensions};
+  border-radius: ${profilePhotoDimensions / 2};
+  border-color: #fff;
+  align-self: center;
+  margin-right: 10;
+`
 export default function getNavigationHeaderRight(navigation) {
   const { routeName } = navigation.state.routes[navigation.state.index];
   let iconName;
   let type;
-  if (routeName === 'Profile123') {
-    iconName = 'account-edit',
-    type='MaterialCommunityIcons'
+  if (routeName === 'Home') {
+    return <ProfilePhoto />
   }
 
   return (

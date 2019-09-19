@@ -47,16 +47,16 @@ class BeneficiaryList extends Component {
     this.goToPage('first');
   }
 
-  goToPage = (option) => {
+  goToPage = (option, panchayatID) => {
     const { lastCalledPage } = this.props;
     if (option === 'next') {
-      this.onTableFetchRequest(lastCalledPage + 1);
+      this.onTableFetchRequest(lastCalledPage + 1, panchayatID);
     } else if (option === 'prev') {
-      this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
+      this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1, panchayatID);
     } else if (option === 'first') {
-      this.onTableFetchRequest(1);
+      this.onTableFetchRequest(1, panchayatID);
     } else if (option === 'refresh') {
-      this.onTableFetchRequest(lastCalledPage);
+      this.onTableFetchRequest(lastCalledPage, panchayatID);
     }
   }
 
@@ -122,11 +122,10 @@ class BeneficiaryList extends Component {
 
   renderContent = () => {
     const { listError, data, fetching } = this.props;
-    const { panchayat_name } = this.state;
+    const { panchayat_name, panchayat_id } = this.state;
     if (listError) {
       return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
     }
-    console.log(panchayat_name);
     return (
       <Content>
         {
@@ -176,10 +175,10 @@ class BeneficiaryList extends Component {
                 fetching ? <CustomActivityIndicator /> : null
               }
               <FooterComponent
-                goToFirstPage={() => this.goToPage('first')}
-                goToNextPage={() => this.goToPage('next')}
-                goToPrevPage={() => this.goToPage('prev')}
-                refreshPage={() => this.goToPage('refresh')}
+                goToFirstPage={() => this.goToPage('first', panchayat_id)}
+                goToNextPage={() => this.goToPage('next', panchayat_id)}
+                goToPrevPage={() => this.goToPage('prev', panchayat_id)}
+                refreshPage={() => this.goToPage('refresh', panchayat_id)}
                 data={data}
                 currentPage={lastCalledPage}
               />
