@@ -68,7 +68,7 @@ class Register extends Component {
 
   onOTPFormSubmit = (values) => {
     const { formObj } = this.state;
-    const tempFormObj = { ...formObj, ...values };
+    const tempFormObj = { ...formObj };
     this.setState({ formObj: { ...formObj, ...values } });
     let data = new FormData();
     for (let property in tempFormObj) {
@@ -85,6 +85,9 @@ class Register extends Component {
       }  else if (property !== 'last_name' && property !== 'first_name') {
         data.append(`user[${property}]`, tempFormObj[property]);
       }
+    }
+    for (let property in values) { 
+       data.append([property], values[property]);
     }
     this.props.attempSingUp(data);
   }
