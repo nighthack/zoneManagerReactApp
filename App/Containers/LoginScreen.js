@@ -1,179 +1,103 @@
-import React, { Component } from 'react'
+import React from 'react'
+import { Container } from 'native-base'
 import { connect } from 'react-redux'
-import { StatusBar, TouchableOpacity, TextInput, Image, AsyncStorage, Dimensions, Keyboard } from 'react-native'
-import { Container, Header, Content, Icon, Text, View  } from 'native-base'
-import { ToastActionsCreators } from 'react-native-redux-toast';
-// import YourActions from '../Redux/YourRedux'
-import { Images } from '../Themes/'
+import { AsyncStorage, Platform, BackHandler, Alert } from 'react-native'
+import styled from 'styled-components/native'
+import { SafeAreaViewWrapper, CustomStatusBar } from '../Components/ui'
+import { NavigationEvents } from 'react-navigation';
+import RNEexitApp from 'react-native-exit-app';
 import LoginActions from '../Redux/LoginRedux'
-import LoadingOverlay from '../Components/LoadingOverlay';
-// Styles
-import Styles from './Styles/LoginScreenStyle'
-const { width: viewportWidth, height: viewportHeight } = Dimensions.get('window');
-class LoginScreen extends Component {
+import { SignInForm } from '../Components/forms'
+
+export const onboardingHeaderStyle = {
+  backgroundColor: '#f5f5f2',
+  borderBottomColor: 'transparent'
+}
+
+export const PageContentWrapper = styled.View`
+  flex: 1;
+  padding: 16px;
+  background-color: #f5f5f2;
+`
+
+class SignInScreen extends React.Component {
+  static navigationOptions = {
+    title: 'ಲಾಗಿನ್',
+    headerStyle: onboardingHeaderStyle,
+  }
   constructor(props) {
     super(props)
-    this.state = {
-      formObj: {},
-      errorObj: {},
-      showPassword: false,
-    }
     AsyncStorage.getItem('id_token').then((userToken) => {
       props.navigation.navigate(userToken ? 'App' : 'Auth');
-   });
+    });
   }
 
-  dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
-  
-  onFormChange = (value, key) => {
-    const { formObj } = this.state;
-    this.setState({
-      formObj: { ...formObj, [key]: value }
-    })
+  componentWillReceiveProps(nextProps) {
+    const _this = this;
+    if (nextProps.user.access_token) {
+      this.goToPage('App');
+    }
   }
 
   goToPage = (route) => {
     const { navigation } = this.props;
-    navigation.navigate(route);
-    this.props.onNavigationResetState();
-    this.setState({
-      formObj: {},
-      errorObj: {},
-      showPassword: false,
-    });
-  }
-  togglePasswordShow = () => {
-    const { showPassword } = this.state;
-    this.setState({
-      showPassword: !showPassword,
-    });
+      navigation.navigate(route);
+      this.props.onNavigationResetState(); 
 
   }
-  onFormSubmit = () => {
-    this.dismissKeyboard();
-    const regex = /^[6-9]\d{9}$/; //eslint-disable-line
-    const passwordRegx = /.*\S.*/;
-    const { phone, password } = this.state.formObj;
-    let errorCount = 0;
-    const errorObj = {};
-    if(!regex.test(phone)) {
-      errorCount += 1;
-      errorObj.phone = 'Please Enter a valid Phone Number'
-    } else {
-      errorObj.phone = null;
-    }
-    if(!passwordRegx.test(password) || !password) {
-      errorCount += 1;
-      errorObj.password = "Please check your password"
-    } else {
-       errorObj.password = null;
-    }
-    this.setState({
-      errorObj,
-    })
-    if (!errorCount) {
-      this.isAttempting = true
-      this.props.attemptLogin(phone, password);
-    } else {
-      this.props.warningToast('Please check your input');
-    }
-  };
+  onFormSubmit(values) {
+    this.setState({ formLoading: true })
+    const { phone, password } = values
+    this.props.attemptLogin(phone, password);
+  }
+  
+  handleBackButton = () => {
+    Alert.alert(
+      'Exit App',
+      'Exiting the application?', [{
+        text: 'Cancel',
+        style: 'cancel'
+      }, {
+        text: 'OK',
+        onPress: () => RNEexitApp.exitApp()
+      },], {
+        cancelable: false
+      }
+    )
+    return true;
+  }
+
+  bindBackButton() {
+    if (Platform.OS === 'ios') return
+    BackHandler.addEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
+  unBindBackButton() {
+    BackHandler.removeEventListener('hardwareBackPress', this.handleBackButton);
+  }
+
   render() {
-    const { fetching, navigation, error } = this.props;
-    const { formObj, errorObj, showPassword } = this.state;
-    const { navigate } = navigation;
+    const { navigation, fetching } = this.props
     return (
-      <Container>
-        <Header style={Styles.navigation}>
-          <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
-          <View style={Styles.nav}>
-            <View style={Styles.navMiddle} />
-            <View style={Styles.navRight} />
-          </View>
-        </Header>
-
-        <Content contentContainerStyle={Styles.layoutDefault}>
-
-          <Image source={Images.background} style={Styles.bgImg} />
-          <View style={Styles.bgLayout}>
-            <View style={Styles.hTop}>
-            <Image source={Images.sunil} style={[Styles.hImg]}/>
-              <Text style={Styles.hTopText}>Login</Text>
-              <Text style={Styles.hTopDesc}>Login to see development in Bhatkal</Text>
-            </View>
-            <View style={Styles.regForm}>
-              <View style={Styles.infoBox}>
-                <View style={(errorObj && errorObj.phone) || error ? Styles.fRowError : Styles.fRow }>
-                  <Icon name='cellphone-android' type="MaterialCommunityIcons" style={Styles.fIcon} />
-                  <TextInput
-                    keyboardType="phone-pad" 
-                    onChangeText={(text) => this.onFormChange(text, 'phone')}
-                    style={Styles.fInput}
-                    placeholder='Mobile Number'
-                    placeholderTextColor='rgba(36,42,56,0.4)'
-                    textContentType="telephoneNumber"
-                    value={formObj.phone}
-                   />
-                    <Text style={Styles.fErrorLabel}>{errorObj.phone}</Text>
-                </View>
-               
-                <View style={(errorObj && errorObj.password) || error ? Styles.fRowError : Styles.fRow }>
-                  <Icon name='key' type="MaterialCommunityIcons" style={Styles.fIcon} />
-                  <TextInput
-                    secureTextEntry={!showPassword}
-                    onChangeText={(text) => this.onFormChange(text, 'password')}
-                    style={Styles.fInput}
-                    placeholder='Password'
-                    placeholderTextColor='rgba(36,42,56,0.4)'
-                    textContentType="password"
-                    value={formObj.password}
-                  />
-                  <Icon
-                    name={showPassword ? 'eye-off' :'eye'}
-                    type="MaterialCommunityIcons"
-                    style={Styles.fIcon}
-                    onPress={this.togglePasswordShow}
-                  />
-                   <Text style={Styles.fErrorLabel}>{errorObj.password}</Text>
-                </View>
-               
-                <View>
-                  <TouchableOpacity style={Styles.accountBtn} onPress={() => this.goToPage('ForgotPassword')}>
-                    <Text style={Styles.forgotPassword}>Forgot your password?</Text>
-                  </TouchableOpacity>
-                </View>
-                {
-                  error ? <Text style={Styles.errorText}>Invalid Credentials</Text> : null
-                }
-                <TouchableOpacity
-                  style={Styles.fBtn}
-                  onPress={this.onFormSubmit}
-                  disabled={fetching}
-                >
-                  <Text style={Styles.fBtnText}>Sign in</Text>
-                  <Icon name='arrow-right' type="FontAwesome" style={Styles.fBtnIcon} />
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={Styles.account}>
-              <Text style={Styles.accountText}>Don't you have an account?</Text>
-              <TouchableOpacity style={Styles.accountBtn} onPress={() => this.goToPage("RegisterScreen")}>
-                <Text style={Styles.accountBtnText}>Sign up now!</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Content>
-        <LoadingOverlay
-          visible={fetching}
-          color="white"
-          indicatorSize="large"
-          messageFontSize={24}
-          message="Loading..."
+      <SafeAreaViewWrapper extraStyles={{ backgroundColor: '#f5f5f2' }}>
+        <NavigationEvents
+          onWillBlur={() => {
+            this.unBindBackButton();
+          }}
+          onDidFocus={() => this.bindBackButton()}
         />
-      </Container>
-
+        <Container>
+          <CustomStatusBar />
+          <PageContentWrapper>
+            <SignInForm
+              loading={fetching}
+              onSubmit={values => this.onFormSubmit(values)}
+              onSignUpPress={() => this.goToPage("RegisterScreen")}
+              onForgotPasswordPress={() => this.goToPage("ForgotPassword")}
+            />
+          </PageContentWrapper>
+        </Container>
+      </SafeAreaViewWrapper>
     )
   }
 }
@@ -182,6 +106,7 @@ const mapStateToProps = (state) => {
   return {
     fetching: state.login.fetching,
     error: state.login.error,
+    user: state.login.user,
   }
 }
 
@@ -194,4 +119,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(SignInScreen)

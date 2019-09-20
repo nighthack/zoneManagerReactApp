@@ -6,8 +6,9 @@ import {
 } from 'react-navigation-redux-helpers'
 import { connect } from 'react-redux'
 import AppNavigation from './AppNavigation'
+import { withNavigation } from 'react-navigation';
 
-createReactNavigationReduxMiddleware(
+export const appNavigatorMiddleware = createReactNavigationReduxMiddleware(
   'root',
   (state) => state.nav
 )
@@ -19,10 +20,6 @@ class ReduxNavigation extends React.Component {
     if (Platform.OS === 'ios') return
     BackHandler.addEventListener('hardwareBackPress', () => {
       const { dispatch, nav } = this.props
-      // change to whatever is your first screen, otherwise unpredictable results may occur
-      if (nav.routes.length === 1 && (nav.routes[0].routeName === 'Splash')) {
-        return false
-      }
       // if (shouldCloseApp(nav)) return false
       dispatch({ type: 'Navigation/BACK' })
       return true

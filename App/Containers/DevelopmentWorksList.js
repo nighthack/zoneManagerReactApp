@@ -1,17 +1,28 @@
-import React, { Component } from "react";
-import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
-import { connect } from "react-redux";
-import { format } from 'date-fns';
-import HeaderComponent from "../Components/HeaderComponent";
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { AsyncStorage, TouchableOpacity, FlatList } from 'react-native'
+import { Container, Content } from 'native-base'
+import styled from 'styled-components/native'
 import DevelopmentWorksActions from "../Redux/DevelopmentWorkRedux";
-import LoadingOverlay from '../Components/LoadingOverlay';
+import { format } from 'date-fns';
+import { DevWorksFIlterForm } from '../Components/forms'
+import { CustomActivityIndicator, LinkButton, CoursePriceTag } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
-import { Images } from '../Themes/'
-// Styles
-import Styles from './Styles/BenefeciaryDetailViewStyle'
+import { NavigationEvents } from 'react-navigation';
+import ListCardComponent from '../Components/ListCardComponent';
+import EmptyListComponent from '../Components/EmptyList';
 
+const StyledBadge = styled.View`
+justify-content: center;
+align-items: center;
+display: flex;
+`;
+
+const Wrapper = styled.View`
+  justify-content: center;
+  align-items: center;
+`
 
 function randomString(length, chars) {
   var result = '';
@@ -19,216 +30,194 @@ function randomString(length, chars) {
   return result;
 }
 
-class DevelopmentWorksList extends Component {
+class BeneficiaryList extends Component {
+  static navigationOptions = {
+    title: 'ಅಭಿವೃಧ್ಧಿ ಕಾಮಗಾರಿ',
+    headerBackTitle: null,
+  }
 
   constructor(props) {
     super(props);
-    this.renderRow = this.renderRow.bind(this);
-  }
-
-
-  componentDidMount() {
-    this.onTableFetchRequest(1);
-  }
-  goToPage = (option) => {
-    const { lastCalledPage } = this.props;
-    if (option === 'next') {
-      this.onTableFetchRequest(lastCalledPage + 1);
-    } else if (option === 'prev') {
-      this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
-    } else if (option === 'first') {
-      this.onTableFetchRequest(1);
-    } else if(option === 'refresh') {
-      this.onTableFetchRequest(lastCalledPage);
+    this.state = {
+      showFilter: false,
     }
   }
-  onTableFetchRequest = (pageID) => {
+
+  componentDidMount() {
+    this.goToPage('first');
+  }
+
+  goToPage = (option, panchayatID) => {
+    const { lastCalledPage } = this.props;
+    if (option === 'next') {
+      this.onTableFetchRequest(lastCalledPage + 1, panchayatID);
+    } else if (option === 'prev') {
+      this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1, panchayatID);
+    } else if (option === 'first') {
+      this.onTableFetchRequest(1, panchayatID);
+    } else if (option === 'refresh') {
+      this.onTableFetchRequest(lastCalledPage, panchayatID);
+    }
+  }
+
+  onTableFetchRequest = (pageID, panchayatID) => {
     const { fetching } = this.props;
     AsyncStorage.getItem('accessToken').then((accessToken) => {
       if (!fetching) {
-        this.props.getDevelopmentWorkslist(accessToken, pageID);
+        this.props.getListData(accessToken, pageID, panchayatID);
       }
     });
   }
 
-
-  onRefresh = () => {
-    this.onTableFetchRequest();
-  }
   goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
-    navigate("DevelopmentWorkDetail", { selectedData });
+    navigate('DevelopmentWorkDetail', { selectedData });
   }
 
-  renderRow({ item, index }) {
+  formatData(data) {
     return (
-      <TouchableOpacity onPress={() => this.goToDetailView(item)}>
-        <View style={Styles.tripItem}>
-          <View style={[Styles.truckInfo, { flexDirection: 'column'}]}>
-            <View>
-              <Text style={Styles.infoLabel}> ಸ್ಥಳ/Place</Text>
-              <Text style={Styles.truckData}>{item.place}</Text>
-            </View>
-            <View>
-              <Text style={Styles.infoLabel}>ಕಾಮಗಾರಿ/Work</Text>
-              <Text style={Styles.truckTrip}>{item.name}</Text>
-            </View>
-            <View>
-              <Text style={Styles.infoLabel}>ವಿವರಗಳು/Details</Text>
-              <Text style={Styles.truckTrip}>{item.desc}</Text>
-            </View>
-          </View>
-          <View style={Styles.tripInfo}>
-            <View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-              <Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
-              <Text style={Styles.truckData}>{item.department}</Text>
-            </View>
-            <View style={[Styles.rowSpaceAlignment, { marginTop: 10 }]}>
-              <View style={Styles.tripPlaces}>
-                <Icon
-                  name="circle-o"
-                  type="FontAwesome"
-                  style={Styles.tripIcon}
-                />
-                <Text style={Styles.placeText}>ಮಂಜೂರಾದ ಮೊತ್ತ / Sanctioned</Text>
-              </View>
-              <View style={[Styles.tripPlaces, { flex: 2 }]}>
-                <Icon
-                  name="cash-multiple"
-                  type="MaterialCommunityIcons"
-                  style={Styles.checkIcon}
-                />
-                <Text style={[Styles.placeText]}>₹ {item.sanctioned_amount}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={Styles.tripInfo}>
-            <View style={Styles.rowSpaceAlignment}>
-              <View style={Styles.tripPlaces}>
-                <Icon
-                  name="circle-o"
-                  type="FontAwesome"
-                  style={Styles.tripIcon}
-                />
-                <Text style={Styles.placeText}>ಅಡಿಗಲ್ಲು ದಿನಾಂಕ / Foundation date</Text>
-              </View>
-              <View style={[Styles.tripPlaces, { flex: 2 }]}>
-                <Icon
-                  name="calendar-clock"
-                  type="MaterialCommunityIcons"
-                  style={Styles.checkIcon}
-                />
-                <Text style={Styles.placeText}>{item.foundation_date || 'NA'}</Text>
-              </View>
-            </View>
-            <Text style={Styles.lineTracker}>|</Text>
-            <View style={Styles.rowSpaceAlignment}>
-              <View style={Styles.tripPlaces}>
-                <Icon
-                  name="circle-o"
-                  type="FontAwesome"
-                  style={Styles.tripIcon}
-                />
-                <Text style={Styles.placeText}>ಉದ್ಘಾಟನೆ ದಿನಾಂಕ/Inauguration Date</Text>
-              </View>
-              <View style={[Styles.tripPlaces, { flex: 2 }]}>
-                <Icon
-                  name="calendar-clock"
-                  type="MaterialCommunityIcons"
-                  style={Styles.checkIcon}
-                />
-                <Text style={Styles.placeText}>{item.inaugration_date || 'NA'}</Text>
-              </View>
-            </View>
-          </View>
-          <View style={Styles.more}>
-            <Text style={Styles.postedOn}>Last Updated at: {item.updated_at ? format(new Date(item.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
+      {
+        title: data.name,
+        image: data.image,
+        subTitle: data.department,
+        desc: data.desc,
+        createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+        lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+        metaData: [
+          { title: 'ಸ್ಥಳ', description: data.place },
+          { title: 'ಮಂಜೂರಾದ ಮೊತ್ತ', description: data.sanctioned_amount, hasIcon: true, iconName: 'cash-multiple', isCash: true, },
+          { title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status },
+          { title: 'ಅಡಿಗಲ್ಲು ದಿನಾಂಕ', description: data.foundation_date, iconName: 'calendar', hasIcon: true },
+          { title: 'ಉದ್ಘಾಟನೆ ದಿನಾಂಕ', description: data.inaugration_date, iconName: 'calendar', hasIcon: true },
+          { title: 'ಷರಾ', description: data.remarks },
+        ]
+      }
+    )
   }
+
+  toggleFilter = () => {
+    const { showFilter } = this.state;
+    this.setState({
+      showFilter: !showFilter,
+    });
+  }
+
+  onFormSubmit = ({ panchayat_id, panchayat_name }) => {
+    this.onTableFetchRequest(1, panchayat_id);
+    this.setState({
+      showFilter: false,
+      panchayat_id,
+      panchayat_name,
+    });
+  }
+
+  onClearFilter = () => {
+    this.setState({
+      showFilter: false,
+      panchayat_id: '',
+      panchayat_name: '',
+    });
+    this.onTableFetchRequest(1);
+  }
+
   renderContent = () => {
-    const { listError, lastCalledPage, data, fetching } = this.props;
+    const { listError, data, fetching } = this.props;
+    const { panchayat_name, panchayat_id } = this.state;
     if (listError) {
       return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
-    } else {
-      return (
-        <View style={{ flex: 1 }}>
-          <Content
-            contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-          >
-            <Image source={Images.background} style={Styles.bgImg} />
-            <View style={Styles.bgLayout}>
-              <View style={Styles.hTop}>
-                <Icon name='package' type="MaterialCommunityIcons" style={Styles.hImg} />
-                <TouchableOpacity style={Styles.hContent} onPress={() => {
-                  this.goToPage('first')
-                }}>
-                  <Text style={Styles.hTopText}>Development Works</Text>
-
-                  <Text style={Styles.hTopDesc}>View all the development works</Text>
-                </TouchableOpacity>
-              </View>
-              <FlatList
-                style={{ marginBottom: 80 }}
-                contentContainerStyle={Styles.listContent}
-                keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-                data={data}
-                removeClippedSubview
-                renderItem={this.renderRow}
-              />
-
-            </View>
-          </Content>
-
-          <FooterComponent
-            goToFirstPage={() => this.goToPage('first')}
-            goToNextPage={() => this.goToPage('next')}
-            goToPrevPage={() => this.goToPage('prev')}
-            refreshPage={()=> this.goToPage('refresh')}
-            data={data}
-            currentPage={lastCalledPage}
-          />
-        </View>
-      )
     }
+    return (
+      <Content>
+        {
+          data.length ? <LinkButton
+            text={"ಫಿಲ್ಟರ್ ಮಾಡಿ"}
+            onPress={() => this.toggleFilter()}
+          /> : null
+        }
+        <StyledBadge>
+          {
+            panchayat_name ? <React.Fragment>
+              <CoursePriceTag price={panchayat_name} showCloseButton onClick={() => this.onClearFilter()}/>
+            </React.Fragment> : null
+          }
+        </StyledBadge>
+
+        <FlatList
+          keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+          data={data}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => this.goToDetailView(item)}>
+              <ListCardComponent
+                {...this.formatData(item)}
+              />
+            </TouchableOpacity>
+          )}
+          removeClippedSubview
+          ListEmptyComponent={() => <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
+        />
+      </Content>
+    )
   }
+
   render() {
-    const { data, fetching } = this.props;
+    const { fetching, lastCalledPage, data } = this.props;
+    const { showFilter, panchayat_id } = this.state;
     return (
       <Container>
-        <HeaderComponent title={''} {...this.props} />
-        {this.renderContent()}
-        <LoadingOverlay
-          visible={fetching}
-          color="white"
-          indicatorSize="large"
-          messageFontSize={24}
-          message="Loading..."
+        <NavigationEvents
+          onDidFocus={() => this.goToPage('first')}
         />
+        {
+          !showFilter ?
+            <React.Fragment>
+              {this.renderContent()}
+              {
+                fetching ? <CustomActivityIndicator /> : null
+              }
+              <FooterComponent
+                goToFirstPage={() => this.goToPage('first', panchayat_id)}
+                goToNextPage={() => this.goToPage('next', panchayat_id)}
+                goToPrevPage={() => this.goToPage('prev', panchayat_id)}
+                refreshPage={() => this.goToPage('refresh', panchayat_id)}
+                data={data}
+                currentPage={lastCalledPage}
+              />
+            </React.Fragment> : <Content contentContainerStyle={{
+              flexGrow: 1,
+              backgroundColor: '#F1F2F6'
+            }}>
+              <DevWorksFIlterForm
+                loading={fetching}
+                onSubmit={values => this.onFormSubmit(values)}
+                onCancel={() => { this.toggleFilter(); }}
+                onClearFilter={() => this.onClearFilter()}
+                panchayat_id={panchayat_id}
+              />
+            </Content>
+        }
       </Container>
-    );
+    )
   }
 }
 
-const mapStateToProps = state => {
+
+
+const mapStateToProps = (state) => {
   return {
+    // currentPage: state.beneficiary.pageNo,
+    // listError: state.beneficiary.listError,
     data: state.development.listData,
     fetching: state.development.fetching,
     lastCalledPage: state.development.lastCalledPage,
     listError: state.development.listError,
-  };
-};
+  }
+}
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
-    getDevelopmentWorkslist: (accessToken, pageNo) =>
-      dispatch(DevelopmentWorksActions.devWorkOnListRequest(accessToken, pageNo))
-  };
-};
+    getListData: (accessToken, pageNo, panchayatID) =>
+      dispatch(DevelopmentWorksActions.devWorkOnListRequest(accessToken, pageNo, panchayatID))
+  }
+}
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(DevelopmentWorksList);
+export default connect(mapStateToProps, mapDispatchToProps)(BeneficiaryList)

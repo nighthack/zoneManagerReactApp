@@ -40,7 +40,7 @@ class ModuleListView extends Component {
       <View style={Styles.tripItem}>
         <View style={Styles.truckInfo}>
           <View>
-            <Text style={Styles.truckTrip}>ವಿಷಯ/Title</Text>
+            <Text style={Styles.truckTrip}>ವಿಷಯ</Text>
             <Text style={Styles.truckData}>{item.name}</Text>
           </View>
         </View>
@@ -93,19 +93,19 @@ class ModuleListView extends Component {
 //   <TouchableOpacity style={Styles.msgItem}>
 //   <View>
 //     <View>
-//       <Text style={Styles.msgName}>ವಿಷಯ/Title</Text>
+//       <Text style={Styles.msgName}>ವಿಷಯ</Text>
 //       <Text style={Styles.msgContent}>{item.name}</Text>
 //     </View>
 //     <View>
-//       <Text style={Styles.msgName}>ಇಲಾಖೆ/Department</Text>
+//       <Text style={Styles.msgName}>ಇಲಾಖೆ</Text>
 //       <Text style={Styles.msgContent}>{item.department}</Text>
 //     </View>
 //     <View>
-//       <Text style={Styles.msgName}>ಹಾಲಿ ಸ್ಥಿತಿ/Status</Text>
+//       <Text style={Styles.msgName}>ಹಾಲಿ ಸ್ಥಿತಿ</Text>
 //       <Text style={Styles.msgContent}>{item.status}</Text>
 //     </View>
 //     <View>
-//       <Text style={Styles.msgName}>ಕ್ರಿಯೆ/Action</Text>
+//       <Text style={Styles.msgName}>ಕ್ರಿಯೆ</Text>
 //       <Text style={Styles.msgContent}>{item.action_taken}</Text>
 //     </View>
 //   </View>

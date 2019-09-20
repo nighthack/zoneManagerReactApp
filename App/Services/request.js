@@ -1,8 +1,7 @@
 export default function request(url, options) {
-  // console.log(url, options);
+  console.log(url, options);
   return fetch(url, options)
     .then(r => {
-      // console.log(r);
       return r.json().then(
         data => ({
           status: r.status,

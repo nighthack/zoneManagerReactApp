@@ -1,18 +1,22 @@
 import React, { Component } from 'react'
-import { StatusBar, TouchableOpacity, AsyncStorage, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, TabHeading, ScrollableTab, Card, Left, Right, Body, Input, Tabs, Tab, Footer, View, FooterTab, Badge } from 'native-base'
+import { AsyncStorage } from 'react-native'
+import { Container } from 'native-base'
 import { connect } from 'react-redux'
 import { format } from 'date-fns';
-import { Images } from '../Themes/'
+import DetailView from '../Components/DevDetail';
 import ErrorPage from '../Components/NetworkErrorScreen';
-import LoadingOverlay from '../Components/LoadingOverlay';
-import ImageViewerComponent from '../Components/ImageViewer';
-// import EventActions from '../Redux/EventRedux'
+import { CustomActivityIndicator } from '../Components/ui';
+import { NavigationEvents } from 'react-navigation';
+
 import EventActions from '../Redux/EventRedux'
-// Styles
-import Styles from './Styles/EventsListStyle'
 
 class EventDetail extends Component {
+  static navigationOptions = {
+    title: 'ದಿನಂಪ್ರತಿ ಕಾರ್ಯಕ್ರಮಗಳು',
+  }
+  componentDidMount() {
+    this.refreshPage();
+  }
 
   refreshPage() {
     const { navigation, fetching } = this.props;
@@ -25,102 +29,38 @@ class EventDetail extends Component {
       });
     }
   }
+
   renderContent() {
     const { data, detailError } = this.props;
+    const componentPayload = {
+      title: data.name,
+      images: data.images,
+      subTitle: data.venue,
+      desc: data.details,
+      createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+      lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+      metaData: [ 
+        {title: 'ಸಮಯ', description: `${data.date} ${data.start_time ? format(new Date(data.start_time), 'hh:mm A') : ''} - ${data.end_time ? format(new Date(data.end_time), 'hh:mm A') : ''}`, iconName: 'calendar', hasIcon: true},
+        {title: 'ಷರಾ', description: data.remarks},
+      ]
+    };
     if (detailError) {
       return <ErrorPage status={detailError} onButtonClick={() => this.refreshPage()} />
     }
     return (
-      <Content contentContainerStyle={Styles.layoutDefault}>
-        <Image source={Images.background} style={Styles.bgImg} />
-        <View style={Styles.bgLayout}>
-          <View style={Styles.hTop}>
-            <Icon name='calendar-check-o' type="FontAwesome" style={Styles.hImg} />
-            <View style={Styles.hContent}>
-              <Text style={Styles.hTopText}>{data.name}</Text>
-            </View>
-          </View>
-          <View style={Styles.infoBox}>
-            <View style={Styles.bookingItem}>
-              <View style={Styles.tripTo} />
-              <View style={Styles.truckInfo}>
-                <View style={{ flexDirection: 'row' }}>
-                  <Icon name="date-range" type="MaterialIcons" style={Styles.truckIcon} />
-                  <Text style={Styles.truckText}>{data.date} {data.start_time ? format(new Date(data.start_time), 'hh:mm A'): ''} - {data.end_time ? format(new Date(data.end_time), 'hh:mm A'): ''}</Text>
-                </View>
-
-              </View>
-              <View style={Styles.tripDest}>
-                <View style={Styles.locations}>
-                  <View style={{ flexDirection: 'row' }}>
-                    <Icon name="location-pin" type="Entypo" style={[Styles.locationIcon, Styles.colorGreen]} />
-                    <Text style={Styles.placeText}>{data.venue}</Text>
-                  </View>
-                </View>
-              </View>
-
-              <View style={Styles.msgBox}>
-                <Text style={[Styles.placeText, { marginBottom: 10 }]}>ವಿವರಗಳು/Details</Text>
-                <Text style={Styles.msgText}>{data.details}</Text>
-              </View>
-              <View style={Styles.msgBox}>
-                <Text style={[Styles.placeText, { marginBottom: 10 }]}>ಷರಾ/Remarks</Text>
-                <Text style={Styles.msgText}>{data.remarks}</Text>
-              </View>
-              <View style={Styles.orderDetails}>
-                <Text style={Styles.orderText}>Updated at {data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-        {
-          data.images && data.images.length ? <ImageViewerComponent data={data.images}/> : null
-        }
-      </Content>
+      <DetailView data={componentPayload} />
     )
   }
 
-  renderHeader = () => {
-    const { navigation } = this.props;
-    return (
-      <Header style={Styles.navigation}>
-          <StatusBar backgroundColor="#242A38" animated barStyle="light-content" />
-          <View style={Styles.nav}>
-            <View style={Styles.navLeft}>
-              <TouchableOpacity style={Styles.navLeft} onPress={() => {
-                navigation.navigate("EventsListScreen")
-              }}>
-                <Icon name='arrow-back' type="MaterialIcons" style={Styles.navIcon} />
-              </TouchableOpacity>
-            </View>
-            <View style={Styles.navMiddle} />
-            <View style={Styles.navRight} />
-          </View>
-        </Header>
-    )
-  }
   render() {
-    const { data, navigation, fetching } = this.props;
-    const parentProps = navigation.getParam('selectedData', null);
-    if (parentProps && data && (parentProps.id !== data.id)) {
-      const { fetching } = this.props;
-      AsyncStorage.getItem('accessToken').then((accessToken) => {
-        if (!fetching) {
-          this.props.getDetailsForSelection(accessToken, parentProps.id);
-        }
-      });
-    }
+    const { fetching } = this.props;
     return (
       <Container>
-        {this.renderHeader()}
+        <NavigationEvents
+					onDidFocus={() => this.refreshPage()}
+				/>
         {this.renderContent()}
-        <LoadingOverlay
-          visible={fetching}
-          color="white"
-          indicatorSize="large"
-          messageFontSize={24}
-          message="Loading..."
-        />
+        {fetching ? <CustomActivityIndicator /> : null}
       </Container>
     )
   }
@@ -129,7 +69,7 @@ class EventDetail extends Component {
 const mapStateToProps = (state) => {
   return {
     data: state.event.detailData,
-    fectching: state.event.fetchingDetails,
+    fectching: state.event.fetchingDetail,
     detailError: state.event.detailError,
   }
 }

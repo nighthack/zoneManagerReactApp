@@ -1,15 +1,22 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { Images } from '../Themes/'
-import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
+import styled from 'styled-components/native';
+import { AsyncStorage, TouchableOpacity, FlatList } from 'react-native'
+import { Container, Content, View } from 'native-base'
 import { format } from 'date-fns';
-import HeaderComponent from '../Components/HeaderComponent'
-import LoadingOverlay from '../Components/LoadingOverlay';
+import { CustomActivityIndicator, RegularButton } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import FeedbackActions from '../Redux/FeedbackRedux';
-import Styles from './Styles/BenefeciaryDetailViewStyle';
+import { NavigationEvents } from 'react-navigation';
+import ListCardComponent from '../Components/ListCardComponent';
+import EmptyListComponent from '../Components/EmptyList';
+
+const StartButtonWrapper = styled(View)`
+  justify-content: flex-start;
+  align-items: stretch;
+  margin: 0px 16px;
+`
 
 function randomString(length, chars) {
 	var result = '';
@@ -17,15 +24,17 @@ function randomString(length, chars) {
 	return result;
 }
 class FeedbackList extends Component {
-
-	componentDidMount() {
-		this.onTableFetchRequest(1);
+	static navigationOptions = {
+		title: 'ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ',
 	}
-
 	onTableFetchRequest = (pageNo) => {
 		AsyncStorage.getItem('accessToken').then((accessToken) => {
 			this.props.getFeedbackList(accessToken, pageNo);
 		});
+	}
+
+	componentDidMount() {
+		this.goToPage('first');
 	}
 
 	goToPage = (option) => {
@@ -45,84 +54,69 @@ class FeedbackList extends Component {
 		const { navigate } = this.props.navigation;
 		navigate("FeedbackDetailScreen", { selectedData });
 	}
+	formatData(data) {
+		return (
+			{
+				title: data.name,
+				image: data.image,
+				subTitle: data.feedback_type,
+				createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+				lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+				metaData: [
+					{ title: 'ಸ್ಥಳ', description: data.place },
+					{ title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status },
+					{ title: 'ಷರಾ', description: data.remarks },
+				]
+			}
+		)
+	}
 
 	renderContent = () => {
-		const { listError, currentPage, data, fetching, navigation } = this.props;
+		const { listError, data, fetching } = this.props;
 		if (listError) {
 			return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
 		}
 		return (
-			<View style={{ flex: 1 }}>
-				<Content
-					contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-				>
-					<Image source={Images.background} style={Styles.bgImg} />
-					<View style={Styles.bgLayout}>
-						<View style={Styles.hTop}>
-							<Icon name='google-maps' type="MaterialCommunityIcons" style={Styles.hImg} />
-							<TouchableOpacity style={Styles.hContent} onPress={() => {
-								this.goToPage('first')
-							}}>
-								<Text style={Styles.hTopText}>Feedback</Text>
-								<Text style={Styles.hTopDesc}>View the Feedback</Text>
-							</TouchableOpacity>
-						</View>
-						<View style={[Styles.decisionBox, { paddingHorizontal: 15 }]}>
-							<TouchableOpacity style={Styles.acceptBtn} onPress={() => {
-								navigation.navigate("FeedbackScreen")
-							}}>
-								<Text style={Styles.btnText}>Give Feedback</Text>
-							</TouchableOpacity>
-						</View>
+			<Content>
+				<FlatList
+					data={data}
+					refreshing={fetching}
+					showsHorizontalScrollIndicator={false}
+					removeClippedSubview
+					keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
+					onEndReached={this.getMoreItems}
+					ListEmptyComponent={() => <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
+					renderItem={({ item, separators }) => (
+						<TouchableOpacity onPress={() => this.goToDetailView(item)}>
+							<ListCardComponent
+								{...this.formatData(item)}
+							/>
+						</TouchableOpacity>
 
-						<FlatList
-							style={{ marginBottom: 80 }}
-							data={data}
-							refreshing={fetching}
-							showsHorizontalScrollIndicator={false}
-							removeClippedSubview
-							keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-							onEndReached={this.getMoreItems}
+					)}
+				/>
+			</Content>
+		)
+	}
 
-							renderItem={({ item, separators }) => (
-								<TouchableOpacity onPress={() => this.goToDetailView(item)}>
-									<View style={Styles.tripItem}>
-										<View style={Styles.truckInfo}>
-											<View>
-												<Text style={Styles.infoLabel}>ವಿಷಯ/Title</Text>
-												<Text style={Styles.truckData}>{item.name}</Text>
-												<Text style={Styles.infoLabel}>ಸ್ಥಳ/Place</Text>
-												<Text style={Styles.truckData}>{item.place}</Text>
-												<View>
-													<Text style={Styles.infoLabel}> Type/ದೂರು/ಸಲಹೆ/ಬೇಡಿಕೆ</Text>
-													<Text style={Styles.truckData}>{item.feedback_type}</Text>
-												</View>
-											</View>
-										</View>
-										<View style={Styles.tripInfo}>
-											<View style={{ flexDirection: "column", alignItems: "flex-start" }}>
-												<Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
-												<Text style={Styles.truckData}>{item.department}</Text>
-											</View>
-											<View>
-												<Text style={Styles.infoLabel}>ಹಾಲಿ ಸ್ಥಿತಿ/Status</Text>
-												<Text style={Styles.truckData}>{item.status}</Text>
-											</View>
-											<View>
-												<Text style={Styles.infoLabel}>ಕ್ರಿಯೆ/Action</Text>
-												<Text style={Styles.truckData}>{item.action_taken || 'NA'}</Text>
-											</View>
-										</View>
-										<View style={Styles.more}>
-											<Text style={Styles.postedOn}>Last Updated at: {item.updated_at ? format(new Date(item.updated_at), 'DD-MM-YYYY') : 'NA'}</Text>
-										</View>
-									</View>
-								</TouchableOpacity>
-
-							)}
-						/>
-					</View>
-				</Content>
+	render() {
+		const { fetching, data, currentPage, navigation } = this.props;
+		return (
+			<Container>
+				<NavigationEvents
+					onDidFocus={() => this.goToPage('first')}
+				/>
+				<StartButtonWrapper>
+					<RegularButton
+						text="ದೂರು/ಬೇಡಿಕೆ/ಸಲಹೆ ಸಲ್ಲಿಸಿ"
+						onPress={() => navigation.navigate("Feedback")}
+						primary
+					/>
+				</StartButtonWrapper>
+				{this.renderContent()}
+				{
+					fetching ? <CustomActivityIndicator /> : null
+				}
 				<FooterComponent
 					goToFirstPage={() => this.goToPage('first')}
 					goToNextPage={() => this.goToPage('next')}
@@ -130,24 +124,6 @@ class FeedbackList extends Component {
 					refreshPage={() => this.goToPage('refresh')}
 					data={data}
 					currentPage={currentPage}
-				/>
-			</View>
-
-		)
-	}
-
-	render() {
-		const { fetching } = this.props;
-		return (
-			<Container>
-				<HeaderComponent title={''} {...this.props} />
-				{this.renderContent()}
-				<LoadingOverlay
-					visible={fetching}
-					color="white"
-					indicatorSize="large"
-					messageFontSize={24}
-					message="Loading..."
 				/>
 			</Container>
 		)
@@ -171,22 +147,3 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(FeedbackList)
-
-
-// onPress={() => {
-// 											navigation.navigate("FeedbackDetailScreen", { selectedItem: item })
-// 										}}
-
-
-
-
-
-// {/* <View>
-// 											<Text style={Styles.infoLabel}>ವಿಷಯ/Title</Text>
-// 											<Text style={Styles.truckData}>{item.name}</Text>
-// 										</View>
-// 										<View>
-// 											<Text style={Styles.infoLabel}>ಇಲಾಖೆ/Department</Text>
-// 											<Text style={Styles.truckData}>{item.department}</Text>
-// 										</View>
-// 										 */}

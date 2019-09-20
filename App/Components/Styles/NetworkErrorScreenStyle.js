@@ -34,7 +34,6 @@ export default StyleSheet.create({
   },
   hTopText: {
     fontSize: 20,
-    // 
     color: '#FFF',
     marginBottom: 5
   },

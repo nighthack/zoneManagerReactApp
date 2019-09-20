@@ -1,16 +1,15 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { AsyncStorage, TouchableOpacity, TextInput, StyleSheet, Image, ImageBackground, Dimensions, ScrollView, Platform, SafeAreaView, FlatList, ToolbarAndroid, RefreshControl } from 'react-native'
-import { Container, Header, Content, Button, Icon, Text, Card, Left, Right, Body, Input, Footer, View, FooterTab, Badge, CheckBox } from 'native-base'
+import { AsyncStorage, TouchableOpacity, Image, FlatList } from 'react-native'
+import { Container, Content, Icon, Text, View } from 'native-base'
 import BeneficiaryActions from '../Redux/BeneficiaryRedux'
 import { format } from 'date-fns';
-import HeaderComponent from '../Components/HeaderComponent'
-import LoadingOverlay from '../Components/LoadingOverlay';
+import { CustomActivityIndicator } from '../Components/ui';
 import FooterComponent from '../Components/ListFooter';
 import ErrorPage from '../Components/NetworkErrorScreen';
 import { NavigationEvents } from 'react-navigation';
-import { Images } from '../Themes/'
-import Styles from './Styles/BenefeciaryDetailViewStyle'
+import ListCardComponent from '../Components/ListCardComponent';
+import EmptyListComponent from '../Components/EmptyList';
 
 
 function randomString(length, chars) {
@@ -18,15 +17,14 @@ function randomString(length, chars) {
   for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
   return result;
 }
-class BeneficiaryList extends Component {
 
-  constructor(props) {
-    super(props);
-    this.renderRow = this.renderRow.bind(this);
+class BeneficiaryList extends Component {
+  static navigationOptions = {
+    title: 'ಫಲಾನುಭವಿಗಳು',
   }
 
   componentDidMount() {
-    this.onTableFetchRequest(1);
+    this.goToPage('first');
   }
 
   goToPage = (option) => {
@@ -37,7 +35,7 @@ class BeneficiaryList extends Component {
       this.onTableFetchRequest(lastCalledPage - 1 >= 0 ? lastCalledPage - 1 : 1);
     } else if (option === 'first') {
       this.onTableFetchRequest(1);
-    } else if(option === 'refresh') {
+    } else if (option === 'refresh') {
       this.onTableFetchRequest(lastCalledPage);
     }
   }
@@ -51,108 +49,73 @@ class BeneficiaryList extends Component {
     });
   }
 
-  goToBeneficiaryDetailView(selectedData) {
+  goToDetailView(selectedData) {
     const { navigate } = this.props.navigation;
     navigate('BenfeciaryDetail', { selectedData });
   }
 
-  renderRow({ item, index }) {
+  formatData(data) {
     return (
-      <TouchableOpacity onPress={() => this.goToBeneficiaryDetailView(item)}>
-        <View style={Styles.tripItem}>
-          <View style={Styles.truckInfo}>
-            <View>
-              <Text style={Styles.infoLabel}>ಹೆಸರು/Name</Text>
-              <Text style={Styles.truckData}>{item.beneficiary_name}</Text>
-              <View>
-                <View>
-                  <Text style={Styles.infoLabel}>ಸ್ಥಳ/Place</Text>
-                </View>
-                <View style={Styles.tripPlaces}>
-                  <Icon name='map-marker' type="FontAwesome" style={Styles.tripIcon} />
-                  <Text style={Styles.placeText}>{item.place}</Text>
-                </View>
-                <View>
-                  <Text style={Styles.infoLabel}>ಯೋಜನೆ/Scheme</Text>
-                  <Text style={Styles.truckData}>{item.scheme_type}</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-          <View style={Styles.tripInfo}>
-            <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginVertical: 5 }}>
-              <Text style={Styles.infoLabel}> ಹಾಲಿ ಸ್ಥಿತಿ/Status </Text>
-              <Text style={Styles.truckData}>{item.status}</Text>
-            </View>
-            <View style={{ flexDirection: 'column', alignItems: 'flex-start', marginVertical: 5 }}>
-              <Text style={Styles.infoLabel}>ಮಂಜುರಿ ವಿವರ/Granted Relief</Text>
-              <Text style={Styles.truckData}>{item.granted_relief}</Text>
-            </View>
-
-          </View>
-          <View style={Styles.more}>
-            <Text style={Styles.postedOn}>Applied on: {item.application_date ? format(new Date(item.application_date), 'DD-MM-YYYY') : 'NA'}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
+      {
+        title: data.beneficiary_name,
+        image: data.image,
+        subTitle: data.scheme_type,
+        desc: data.granted_relief,
+        createdDate: data.created_at ? format(new Date(data.created_at), 'DD-MM-YYYY') : 'NA',
+        lastUpdatedAt: data.updated_at ? format(new Date(data.updated_at), 'DD-MM-YYYY') : 'NA',
+        metaData: [
+          { title: 'ಸ್ಥಳ', description: data.place },
+          { title: 'ಅರ್ಜಿ ದಿನಾಂಕ', description: data.application_date },
+          { title: 'ಹಾಲಿ ಸ್ಥಿತಿ', description: data.status },
+          { title: 'ಷರಾ', description: data.remarks },
+        ]
+      }
     )
   }
 
   renderContent = () => {
-    const { listError, lastCalledPage, data, fetching } = this.props;
+    const { listError, data } = this.props;
     if (listError) {
       return <ErrorPage status={listError} onButtonClick={() => this.onTableFetchRequest(1)} />
     }
     return (
-      <View style={{ flex: 1 }}>
-        <Content
-          contentContainerStyle={[Styles.layoutDefault, { flex: 1 }]}
-        >
-          <Image source={Images.background} style={Styles.bgImg} />
-          <View style={Styles.bgLayout}>
-            <View style={Styles.hTop}>
-              <Icon name='package' type="MaterialCommunityIcons" style={Styles.hImg} />
-              <TouchableOpacity style={Styles.hContent} onPress={() => {
-                this.goToPage('first')
-              }}>
-                <Text style={Styles.hTopText}>Beneficiary Schemes</Text>
-                <Text style={Styles.hTopDesc}>View all the beneficiary schemes</Text>
-              </TouchableOpacity>
-            </View>
-            <FlatList
-              style={{ marginBottom: 80 }}
-              contentContainerStyle={Styles.listContent}
-              keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
-              data={data}
-              renderItem={this.renderRow}
-              removeClippedSubview
-            />
-          </View>
-        </Content>
-        <FooterComponent
-          goToFirstPage={() => this.goToPage('first')}
-          goToNextPage={() => this.goToPage('next')}
-          goToPrevPage={() => this.goToPage('prev')}
-          refreshPage={()=> this.goToPage('refresh')}
+      <Content>
+        <FlatList
+          keyExtractor={() => randomString(6, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ')}
           data={data}
-          currentPage={lastCalledPage}
+          ListEmptyComponent={()=> <EmptyListComponent onButtonClick={() => this.onTableFetchRequest(1)} />}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => this.goToDetailView(item)}>
+              <ListCardComponent
+                {...this.formatData(item)}
+              />
+            </TouchableOpacity>
+          )}
+          removeClippedSubview
         />
-      </View>
+      </Content>
     )
   }
 
   render() {
-    const { fetching } = this.props;
+    const { fetching, lastCalledPage, data } = this.props;
     return (
       <Container>
-        <HeaderComponent title={''} {...this.props} />
+        <NavigationEvents
+          onDidFocus={() => this.goToPage('first')}
+        />
+
         {this.renderContent()}
-        <LoadingOverlay
-          visible={fetching}
-          color="white"
-          indicatorSize="large"
-          messageFontSize={24}
-          message="Loading..."
+        {
+          fetching ? <CustomActivityIndicator /> : null
+        }
+        <FooterComponent
+          goToFirstPage={() => this.goToPage('first')}
+          goToNextPage={() => this.goToPage('next')}
+          goToPrevPage={() => this.goToPage('prev')}
+          refreshPage={() => this.goToPage('refresh')}
+          data={data}
+          currentPage={lastCalledPage}
         />
       </Container>
 

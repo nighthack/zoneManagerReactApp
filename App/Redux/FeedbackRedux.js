@@ -43,7 +43,6 @@ export const INITIAL_STATE = Immutable({
   detailError: null,
   detailData: {},
   plantsList: [],
-  departments: [],
   statuses: [],
   createFeedbackErrorCode: null,
 })
